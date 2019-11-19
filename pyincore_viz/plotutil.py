@@ -13,7 +13,7 @@ import ipywidgets as ipywgt
 import matplotlib.pyplot as plt
 import numpy
 from owslib.wms import WebMapService
-from pyincoreviz import globals
+from pyincore_viz import globals
 from scipy.stats import lognorm, norm
 
 
