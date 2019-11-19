@@ -1,0 +1,60 @@
+# python binaries
+*.pyc
+bin/
+/*/bin
+.cache/
+
+# virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
+hs_err_pid*
+
+# vim swap files
+*.swp
+
+# IDEA:
+.idea/*
+**.iml
+**.iml
+
+# setup and build
+**/build/
+**/dist/
+**/pyincore-viz.egg-info/
+
+# VSCODE
+.vscode
+
+# IDEA - generated artifacts
+**/out/
+
+# Apple metadata
+**/.DS_Store
+
+# incore pw file
+tests/.incorepw
+
+# incore download data or test data
+tests/data/
+cache_data/
+original/
+
+# pytest cache
+.pytest_cache
+
+# jupyter notebook checkpoints folder
+.ipynb_checkpoints
+
+# jupyter notebook
+.user
+
+# possible output file
+*.csv
+*.jpg
+*.jpeg
+*.png
+*.gif
+*.dbf
+*.fix
+*.prj
+*.qix
+*.shp
+*.shx
