@@ -33,6 +33,7 @@ setup(
         "numpy>=1.16.1",
         "scipy>=1.2.0",
         "folium>=0.7.0",
+        "networkx>=2.2",
         "owslib>=0.17.1",
         "matplotlib>=2.1.0",
         "plotly>=3.6.0",
