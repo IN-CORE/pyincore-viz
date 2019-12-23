@@ -10,5 +10,5 @@ from logging import config as logging_config
 
 PACKAGE_VERSION = "0.1.0"
 
-INCORE_GEOSERVER_WMS_URL = "http://incore2-geoserver.ncsa.illinois.edu:9999/geoserver/incore/wms"
-INCORE_GEOSERVER_DEV_WMS_URL = "http://incore2-mongo-dev.ncsa.illinois.edu/geoserver/incore/wms"
+INCORE_GEOSERVER_WMS_URL = "https://incore-geoserver.ncsa.illinois.edu/geoserver/incore/wms"
+INCORE_GEOSERVER_DEV_WMS_URL = "https://incore-dev-kube.ncsa.illinois.edu/geoserver/incore/wms"
