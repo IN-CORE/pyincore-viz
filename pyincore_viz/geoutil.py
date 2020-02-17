@@ -4,11 +4,27 @@
 # terms of the Mozilla Public License v2.0 which accompanies this distribution,
 # and is available at https://www.mozilla.org/en-US/MPL/2.0/
 
+import os
+import json
+import folium
+import pandas as pd
 import networkx as nx
 import matplotlib.pyplot as plt
+import ipyleaflet as ipylft
+import ipywidgets as ipywgt
+
+from pyincore_viz import globals
+from branca.colormap import linear
+from owslib.wms import WebMapService
+from pyincore_viz import PlotUtil
 
 class GeoUtil:
     """Utility methods for georeferenced data."""
+
+    inventory_df = None
+    inventory_json = None
+    csv_dir_map_dropdown = None
+    csv_dir_map = None
 
     @staticmethod
     def plot_graph_network(graph, coords):
@@ -57,4 +73,251 @@ class GeoUtil:
 
         return graph, node_coords
 
+    @staticmethod
+    def map_csv_from_dir(inventory_dataset, column, file_path=None):
+        inventory_df = PlotUtil.inventory_to_geodataframe(inventory_dataset)
+        inventory_df = PlotUtil.remove_null_inventories(inventory_df, 'guid')
 
+        GeoUtil.m = GeoUtil.create_basemap_ipylft(inventory_df)
+
+        if file_path is None:
+            file_path = os.getcwd()
+        data, outfiles = GeoUtil.load_all_data(file_path, column)
+        GeoUtil.inventory_df = GeoUtil.merge_inventory_data(data, inventory_df)
+        GeoUtil.inventory_json = json.loads(GeoUtil.inventory_df.to_json())
+        GeoUtil.create_map_widgets(outfiles)
+
+        m = GeoUtil.m
+
+        return m
+
+    def create_basemap_ipylft(geo_dataframe):
+        ext = geo_dataframe.total_bounds
+        cen_x, cen_y = (ext[1] + ext[3]) / 2, (ext[0] + ext[2]) / 2
+        m = ipylft.Map(center=(cen_x, cen_y), zoom=12, basemap=ipylft.basemaps.Stamen.Toner, crs='EPSG3857',
+                       scroll_wheel_zoom=True)
+        return m
+
+    def load_all_data(path_to_data, column_name):
+        """ loading in all data in output path """
+        temp_outfiles = os.listdir(path_to_data)
+        outfiles = []
+        for temp_outfile in temp_outfiles:
+            file_root, file_extension = os.path.splitext(temp_outfile)
+            if file_extension.lower() == '.csv':
+                outfiles.append(temp_outfile)
+        csv_index = 0
+        data = None
+        for i, file in enumerate(outfiles):
+            filename = os.path.join(path_to_data, file)
+            if csv_index == 0:
+                data = pd.read_csv(filename, dtype=str)
+                # data[column_name] = df.Day.astype(str)
+                try:
+                    data[file] = data[column_name].astype(float)
+                except KeyError as err:
+                    print(err, "Error!, Given colum name does not exist or the column is not number.")
+                    print("Failed to load the dataset csv file. Process aborted")
+                    exit(1)
+                # data = data.replace(string_to_num_dict)
+                # col_keys = [i for i in data.keys() if 'sample' in i]
+                # data[file] = data[col_keys].mean(axis=1)
+                data = data[['guid', file]]
+
+            else:
+                temp = pd.read_csv(filename, dtype=str)
+                temp[file] = temp[column_name].astype(float)
+
+                # temp = temp.replace(string_to_num_dict)		# replacing string values with damage ratio values (e.g. "Moderate" => 0.155)
+                # col_keys = [i for i in temp.keys() if 'sample' in i]
+                # temp[file] = temp[col_keys].mean(axis=1)
+                temp = temp[['guid', file]]
+                data = data.merge(temp, on='guid')
+            csv_index += 1
+        return data, outfiles
+
+    def merge_inventory_data(data, data_df):
+        data_df = data_df.merge(data, on='guid')
+        return data_df
+
+    def create_map_widgets(outfiles):
+        GeoUtil.csv_dir_map_dropdown = ipywgt.Dropdown(description='Outputfile - 1', options=outfiles, width=500)
+        file_control1 = ipylft.WidgetControl(widget=GeoUtil.csv_dir_map_dropdown, position='bottomleft')
+
+        # self.dropdown2 = ipywgt.Dropdown(description = 'Outputfile - 2', options = outfiles, width=500)
+        # file_control2 = ipylft.WidgetControl(widget=self.dropdown2, position='bottomleft')
+
+        button = ipywgt.Button(description='Generate Map', button_style='info')
+        button.on_click(GeoUtil.on_button_clicked)
+        generatemap_control = ipylft.WidgetControl(widget=button, position='bottomleft')
+
+        GeoUtil.m.add_control(ipylft.LayersControl(position='topright', style='info'))
+        GeoUtil.m.add_control(ipylft.FullScreenControl(position='topright'))
+        GeoUtil.m.add_control(generatemap_control)
+        # GeoUtil.m.add_control(file_control2)
+        GeoUtil.m.add_control(file_control1)
+
+    def on_button_clicked(b):
+    # def on_button_clicked(b, csv_dir_map_dropdown, inventory_df, inventory_json):
+        print('Loading: ', GeoUtil.csv_dir_map_dropdown.value)
+        key = GeoUtil.csv_dir_map_dropdown.value
+        GeoUtil.create_choropleth_layer(key)
+        print('\n')
+
+    def create_choropleth_layer(key):
+        # vmax_val = max(self.bldg_data_df[key])
+        vmax_val = 1
+        temp_id = list(range(len(GeoUtil.inventory_df['guid'])))
+        temp_id = [str(i) for i in temp_id]
+        choro_data = dict(zip(temp_id, GeoUtil.inventory_df[key]))
+        layer = ipylft.Choropleth(geo_data=GeoUtil.inventory_json, choro_data=choro_data, colormap=linear.YlOrRd_04,
+                                  value_min=0, value_max=vmax_val, border_color='black', style={'fillOpacity': 0.8},
+                                  name='CSV map')
+        GeoUtil.m.add_layer(layer)
+        # self.m
+        print('done')
+
+    def create_legend(self):
+        legend = linear.YlOrRd_04.scale(0, self.vmax_val)
+        self.m.colormap = legend
+        out = ipywgt.Output(layout={'border': '1px solid black'})
+        with out:
+            display(legend)
+        widget_control = ipylft.WidgetControl(widget=out, position='topright')
+        GeoUtil.m.add_control(widget_control)
+        display(GeoUtil.m)
+
+    @staticmethod
+    def get_geopandas_map(geodataframe, width=600, height=400):
+        """Get GeoPandas map.
+
+        Args:
+            geodataframe (pd.DataFrame): Geo referenced DataFrame.
+
+        Returns:
+            pd.DataFrame: A map GeoPandas layers.
+
+        """
+        m = folium.Map(width=width, height=height, tiles="Stamen Terrain")
+        folium.GeoJson(geodataframe.to_json(), name='hospital').add_to(m)
+        ext = geodataframe.total_bounds
+        m.fit_bounds([[ext[1], ext[0]], [ext[3], ext[2]]])
+        return m
+
+    @staticmethod
+    def get_gdf_wms_map(gdf, layers_config,
+                        width=600, height=400, url=globals.INCORE_GEOSERVER_WMS_URL):
+        """Get GDF (GeoDataFrame) and WMS map.
+
+        Args:
+            gdf (GeoDataFrame): A layer with various infrastructure (hospital).
+            layers_config (list): Layers configurations with id, name and style.
+
+        Returns:
+            obj: A folium map with layers.
+
+        """
+        m = folium.Map(width=width, height=height, tiles="Stamen Terrain")
+        folium.GeoJson(gdf.to_json(), name='hospital').add_to(m)
+        bbox_all = gdf.total_bounds
+
+        for layer in layers_config:
+            wms_layer = folium.raster_layers.WmsTileLayer(url, name=layer['name'],
+                                                          fmt='image/png',
+                                                          transparent=True,
+                                                          layers='incore:' + layer['id'],
+                                                          styles=layer['style'])
+
+            wms_layer.add_to(m)
+            wms = WebMapService(url)
+            bbox = wms[layer['id']].boundingBox
+            # merge bbox
+            if bbox[0] < bbox_all[0]:
+                bbox_all[0] = bbox[0]
+            if bbox[1] < bbox_all[1]:
+                bbox_all[1] = bbox[1]
+            if bbox[2] > bbox_all[2]:
+                bbox_all[2] = bbox[2]
+            if bbox[3] > bbox_all[3]:
+                bbox_all[3] = bbox[3]
+
+        m.fit_bounds([[bbox_all[1], bbox_all[0]], [bbox_all[3], bbox_all[2]]])
+        return m
+
+    @staticmethod
+    def get_wms_map(layers_config: list,
+                    width=600, height=400, url=globals.INCORE_GEOSERVER_WMS_URL, ):
+        """Get a map with WMS layers.
+
+        Args:
+            layers_config (list): Layers configurations with id, name and style.
+
+        Returns:
+            obj: A map with WMS layers.
+
+        """
+        m = folium.Map(width=width, height=height, tiles="Stamen Terrain")
+        bbox_all = [9999, 9999, -9999, -9999]
+        for layer in layers_config:
+            wms_layer = folium.raster_layers.WmsTileLayer(url, name=layer['name'], fmt='image/png', transparent=True,
+                                                          layers='incore:' + layer['id'], styles=layer['style'])
+            wms_layer.add_to(m)
+            wms = WebMapService(url)
+            bbox = wms[layer['id']].boundingBox
+            # merge bbox
+            if bbox[0] < bbox_all[0]: bbox_all[0] = bbox[0]
+            if bbox[1] < bbox_all[1]: bbox_all[1] = bbox[1]
+            if bbox[2] > bbox_all[2]: bbox_all[2] = bbox[2]
+            if bbox[3] > bbox_all[3]: bbox_all[3] = bbox[3]
+
+        folium.LayerControl().add_to(m)
+        bounds = ((bbox_all[1], bbox_all[0]), (bbox_all[3], bbox_all[2]))
+        m.fit_bounds(bounds)
+
+        return m
+
+    @staticmethod
+    def damage_map_viewer():
+        pass
+
+    @staticmethod
+    def create_geo_map(inventory_df, key='hazardval'):
+
+        ext = inventory_df.total_bounds
+        cen_x, cen_y = (ext[1] + ext[3]) / 2, (ext[0] + ext[2]) / 2
+        base_map = ipylft.Map(center=(cen_x, cen_y), zoom=12, basemap=ipylft.basemaps.Stamen.Toner, crs='EPSG3857',
+                              scroll_wheel_zoom=True)
+
+        bldg_data_json = json.loads(inventory_df.to_json())
+        geo = ipylft.GeoJSON(data=bldg_data_json)
+        base_map.add_layer(geo)
+
+        title = key
+        guid = 'guid'
+        value = 'click icon'
+        html = ipywgt.HTML(
+            '''
+                <h4>{}</h4>
+                <p>{}</p>
+                <p>{}</p>
+            '''.format(title, guid, value))
+
+        widget_control1 = ipylft.WidgetControl(widget=html, position='topright')
+        base_map.add_control(widget_control1)
+
+        def on_click(event, feature, **kwargs):
+            title = key
+            guid = feature['properties']['guid']
+            value = feature['properties'][key]
+            update_html(title, guid, value)
+
+        def update_html(title, guid, value):
+            html.value = '''
+                    <h4>{}</h4>
+                    <p>{}</p>
+                    <p>{}</p>
+                '''.format(title, guid, value)
+
+        geo.on_click(on_click)
+
+        return base_map
