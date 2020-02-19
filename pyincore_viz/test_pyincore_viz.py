@@ -4,6 +4,7 @@ from pyincore import IncoreClient, Dataset
 from pyincore.analyses.bridgedamage import BridgeDamage
 from pyincore.analyses.buildingdamage import BuildingDamage
 from pyincore.analyses.meandamage import MeanDamage
+
 import json, os
 
 def run_with_base_class():
@@ -19,37 +20,39 @@ def run_with_base_class():
     # Use liquefaction (LIQ) column of bridges to modify fragility curve
     use_liquefaction = False
 
-    # # Create bridge damage
-    # # NBSR bridges
-    # bridge_dataset_id = "5a284f2dc7d30d13bc082040"
-    # # Default Bridge Fragility Mapping on incore-service
-    # mapping_id = "5b47bcce337d4a37755e0cb2"
-    # bridge_dmg = BridgeDamage(client)
-    # # Load input datasets
-    # bridge_dmg.load_remote_input_dataset("bridges", bridge_dataset_id)
-    # # Specify the result name
-    # result_name = "bridge_result"
-    # # Set analysis parameters
-    # bridge_dmg.set_parameter("result_name", result_name)
-    # bridge_dmg.set_parameter("mapping_id", mapping_id)
-    # bridge_dmg.set_parameter("hazard_type", hazard_type)
-    # bridge_dmg.set_parameter("hazard_id", hazard_id)
-    # bridge_dmg.set_parameter("num_cpu", 1)
-    #
-    # bridge_inventory = bridge_dmg.get_input_dataset('bridges')
+    # Create bridge damage
+    # NBSR bridges
+    bridge_dataset_id = "5a284f2dc7d30d13bc082040"
+    # Default Bridge Fragility Mapping on incore-service
+    mapping_id = "5b47bcce337d4a37755e0cb2"
+    bridge_dmg = BridgeDamage(client)
+    # Load input datasets
+    bridge_dmg.load_remote_input_dataset("bridges", bridge_dataset_id)
+    # Specify the result name
+    result_name = "bridge_result"
+    # Set analysis parameters
+    bridge_dmg.set_parameter("result_name", result_name)
+    bridge_dmg.set_parameter("mapping_id", mapping_id)
+    bridge_dmg.set_parameter("hazard_type", hazard_type)
+    bridge_dmg.set_parameter("hazard_id", hazard_id)
+    bridge_dmg.set_parameter("num_cpu", 1)
+
+    bridge_inventory = bridge_dmg.get_input_dataset('bridges')
 
     # building inventory
     bldg_dmg = BuildingDamage(client)  # initializing pyincore
     bldg_dataset_id = "5df40388b9219c06cf8b0c80"  # defining building dataset (GIS point layer)
     bldg_dmg.load_remote_input_dataset("buildings", bldg_dataset_id)  # loading in the above
     mapping_id = "5d2789dbb9219c3c553c7977"  # specifiying mapping id from fragilites to building types
-    building_inventory = bldg_dmg.get_input_dataset('buildings')
+    bldg_dataset_id = "5df40388b9219c06cf8b0c80"  # defining building dataset (GIS point layer)
+    bldg_dmg.load_remote_input_dataset("buildings", bldg_dataset_id)  # loading in the above
+    building_dataset = bldg_dmg.get_input_dataset('buildings').get_inventory_reader()
 
     # inventory, column to map, and downloaded file path
     # bridge_dmg.run_analysis()
     # csv_dir_map = GeoUtil.map_csv_from_dir(bridge_inventory, column='hazardval')
     csv_dir = os.path.join('C:\\rest\\output', 'mc_output')
-    csv_dir_map = GeoUtil.map_csv_from_dir(building_inventory, column='failure_probability', file_path=csv_dir)
+    csv_dir_map = GeoUtil.map_csv_from_dir(building_dataset, column='failure_probability', file_path=csv_dir)
     csv_dir_map.show()
 
     # Run bridge damage analysis

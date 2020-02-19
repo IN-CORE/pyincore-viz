@@ -12,11 +12,14 @@ import networkx as nx
 import matplotlib.pyplot as plt
 import ipyleaflet as ipylft
 import ipywidgets as ipywgt
+import geopandas as gpd
 
 from pyincore_viz import globals
 from branca.colormap import linear
 from owslib.wms import WebMapService
 from pyincore_viz import PlotUtil
+from pyincore import baseanalysis
+
 
 class GeoUtil:
     """Utility methods for georeferenced data."""
@@ -74,8 +77,10 @@ class GeoUtil:
         return graph, node_coords
 
     @staticmethod
+    # the method creates map window with given inventory with multiple csv file using folder location
     def map_csv_from_dir(inventory_dataset, column, file_path=None):
-        inventory_df = PlotUtil.inventory_to_geodataframe(inventory_dataset)
+        # converting from fiona to geopandas
+        inventory_df = gpd.GeoDataFrame.from_features([feature for feature in inventory_dataset], crs='EPSG3857')
         inventory_df = PlotUtil.remove_null_inventories(inventory_df, 'guid')
 
         GeoUtil.m = GeoUtil.create_basemap_ipylft(inventory_df)
@@ -88,6 +93,8 @@ class GeoUtil:
         GeoUtil.create_map_widgets(outfiles)
 
         m = GeoUtil.m
+
+        # GeoUtil.create_choropleth_layer('mc_failure_probability_buildings_cumulative_10000yr.csv')
 
         return m
 
@@ -281,8 +288,8 @@ class GeoUtil:
         pass
 
     @staticmethod
+    # this method create a map window with single inventory with given column name
     def create_geo_map(inventory_df, key='hazardval'):
-
         ext = inventory_df.total_bounds
         cen_x, cen_y = (ext[1] + ext[3]) / 2, (ext[0] + ext[2]) / 2
         base_map = ipylft.Map(center=(cen_x, cen_y), zoom=12, basemap=ipylft.basemaps.Stamen.Toner, crs='EPSG3857',
