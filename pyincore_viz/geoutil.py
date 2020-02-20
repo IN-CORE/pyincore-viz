@@ -117,15 +117,8 @@ class GeoUtil:
             filename = os.path.join(path_to_data, file)
             if csv_index == 0:
                 data = pd.read_csv(filename, dtype=str)
-                # data[column_name] = df.Day.astype(str)
-                try:
-                    data[file] = data[column_name].astype(float)
-                except KeyError as err:
-                    print("Error!, Given colum name does not exist or the column is not number.", err)
-                    print("Failed to load the dataset csv file. Process aborted")
-                    exit(1)
+                data[file] = data[column_name].astype(float)
                 data = data[['guid', file]]
-
             else:
                 temp = pd.read_csv(filename, dtype=str)
                 temp[file] = temp[column_name].astype(float)

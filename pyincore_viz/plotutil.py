@@ -162,13 +162,7 @@ class PlotUtil:
     @staticmethod
     def histogram_from_csv_with_column(plot_title, x_title, y_title, column, in_csv, num_bins, figure_size):
         data_frame = pd.read_csv(in_csv)
-        ax = None
-        try:
-            ax = data_frame[column].hist(bins=num_bins, figsize=figure_size)
-        except KeyError as err:
-            print("Error!, Given colum name does not exist or the column is not number.", err)
-            print("Failed to load the dataset csv file. Process aborted")
-            exit(1)
+        ax = data_frame[column].hist(bins=num_bins, figsize=figure_size)
         ax.set_title(plot_title)
         ax.set_xlabel(x_title)
         ax.set_ylabel(y_title)
