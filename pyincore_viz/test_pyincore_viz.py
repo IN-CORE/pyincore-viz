@@ -48,6 +48,22 @@ def run_with_base_class():
     bldg_dmg.load_remote_input_dataset("buildings", bldg_dataset_id)  # loading in the above
     building_dataset = bldg_dmg.get_input_dataset('buildings').get_inventory_reader()
 
+    """
+    histogram from csv
+    """
+    in_csv = 'C:\\rest\\output\\mc_output\\mc_failure_probability_buildings_eq_100yr.csv'
+    plot_title = 'CSV histogram'
+    x_title = 'x axis'
+    y_title = 'y axix'
+    column = 'failure_probability1'
+    num_bins = 30
+    figure_size = (10, 5)
+    fig = PlotUtil.histogram_from_csv_with_column(plot_title, x_title, y_title, column, in_csv, num_bins, figure_size)
+    fig.show()
+
+    """
+    csv directory map
+    """
     # inventory, column to map, and downloaded file path
     # bridge_dmg.run_analysis()
     # csv_dir_map = GeoUtil.map_csv_from_dir(bridge_inventory, column='hazardval')
@@ -64,16 +80,9 @@ def run_with_base_class():
     inventory_df = PlotUtil.merge_inventory_w_dmg(inventory_df, bldg_damge_df)
     inventory_df.head()
 
-    # csv directory map
-    in_csv = 'C:\\rest\\output\\mc_output\\mc_failure_probability_buildings_eq_100yr.csv'
-    plot_title = 'CSV histogram'
-    x_title = 'x axis'
-    y_title = 'y axix'
-    column = 'failure_probability'
-    fig = PlotUtil.histogram_from_csv_with_column(plot_title, x_title, y_title, column, in_csv, 30)
-    fig.show()
-
-    # geo map
+    """
+    geo map
+    """
     new_map = PlotUtil.create_geo_map(inventory_df, key='hazardval')
     new_map
 

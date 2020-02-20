@@ -121,21 +121,14 @@ class GeoUtil:
                 try:
                     data[file] = data[column_name].astype(float)
                 except KeyError as err:
-                    print(err, "Error!, Given colum name does not exist or the column is not number.")
+                    print("Error!, Given colum name does not exist or the column is not number.", err)
                     print("Failed to load the dataset csv file. Process aborted")
                     exit(1)
-                # data = data.replace(string_to_num_dict)
-                # col_keys = [i for i in data.keys() if 'sample' in i]
-                # data[file] = data[col_keys].mean(axis=1)
                 data = data[['guid', file]]
 
             else:
                 temp = pd.read_csv(filename, dtype=str)
                 temp[file] = temp[column_name].astype(float)
-
-                # temp = temp.replace(string_to_num_dict)		# replacing string values with damage ratio values (e.g. "Moderate" => 0.155)
-                # col_keys = [i for i in temp.keys() if 'sample' in i]
-                # temp[file] = temp[col_keys].mean(axis=1)
                 temp = temp[['guid', file]]
                 data = data.merge(temp, on='guid')
             csv_index += 1
