@@ -24,11 +24,6 @@ from pyincore import baseanalysis
 class GeoUtil:
     """Utility methods for georeferenced data."""
 
-    inventory_df = None
-    inventory_json = None
-    csv_dir_map_dropdown = None
-    csv_dir_map = None
-
     @staticmethod
     def plot_graph_network(graph, coords):
         """Plot graph.
@@ -76,28 +71,29 @@ class GeoUtil:
 
         return graph, node_coords
 
+    """
+    creates map window with given inventory with multiple csv file using folder location
+    """
     @staticmethod
-    # the method creates map window with given inventory with multiple csv file using folder location
     def map_csv_from_dir(inventory_dataset, column, file_path=None):
         # converting from fiona to geopandas
         inventory_df = gpd.GeoDataFrame.from_features([feature for feature in inventory_dataset], crs='EPSG3857')
         inventory_df = PlotUtil.remove_null_inventories(inventory_df, 'guid')
 
-        GeoUtil.m = GeoUtil.create_basemap_ipylft(inventory_df)
+        csv_map = GeoUtil.create_basemap_ipylft(inventory_df)
 
         if file_path is None:
             file_path = os.getcwd()
         data, outfiles = GeoUtil.load_all_data(file_path, column)
-        GeoUtil.inventory_df = GeoUtil.merge_inventory_data(data, inventory_df)
-        GeoUtil.inventory_json = json.loads(GeoUtil.inventory_df.to_json())
-        GeoUtil.create_map_widgets(outfiles)
+        inventory_df = inventory_df.merge(data, on='guid')
+        inventory_json = json.loads(inventory_df.to_json())
+        GeoUtil.create_map_widgets(outfiles, csv_map, inventory_df, inventory_json)
 
-        m = GeoUtil.m
+        return csv_map
 
-        # GeoUtil.create_choropleth_layer('mc_failure_probability_buildings_cumulative_10000yr.csv')
-
-        return m
-
+    ''' 
+    create base ipyleaflet map using geopandas dataframe
+    '''
     def create_basemap_ipylft(geo_dataframe):
         ext = geo_dataframe.total_bounds
         cen_x, cen_y = (ext[1] + ext[3]) / 2, (ext[0] + ext[2]) / 2
@@ -105,8 +101,10 @@ class GeoUtil:
                        scroll_wheel_zoom=True)
         return m
 
+    """ 
+    loading in all data in output path 
+    """
     def load_all_data(path_to_data, column_name):
-        """ loading in all data in output path """
         temp_outfiles = os.listdir(path_to_data)
         outfiles = []
         for temp_outfile in temp_outfiles:
@@ -143,56 +141,55 @@ class GeoUtil:
             csv_index += 1
         return data, outfiles
 
-    def merge_inventory_data(data, data_df):
-        data_df = data_df.merge(data, on='guid')
-        return data_df
+    '''
+    create csv map's actual widgets
+    '''
+    def create_map_widgets(outfiles, csv_map, inventory_df, inventory_json):
+        csv_dir_map_dropdown = ipywgt.Dropdown(description='Outputfile - 1', options=outfiles, width=500)
+        file_control1 = ipylft.WidgetControl(widget=csv_dir_map_dropdown, position='bottomleft')
 
-    def create_map_widgets(outfiles):
-        GeoUtil.csv_dir_map_dropdown = ipywgt.Dropdown(description='Outputfile - 1', options=outfiles, width=500)
-        file_control1 = ipylft.WidgetControl(widget=GeoUtil.csv_dir_map_dropdown, position='bottomleft')
-
-        # self.dropdown2 = ipywgt.Dropdown(description = 'Outputfile - 2', options = outfiles, width=500)
-        # file_control2 = ipylft.WidgetControl(widget=self.dropdown2, position='bottomleft')
+        # csv_dir_map_dropdown2 = ipywgt.Dropdown(description = 'Outputfile - 2', options = outfiles, width=500)
+        # file_control2 = ipylft.WidgetControl(widget=csv_dir_map_dropdown2, position='bottomleft')
 
         button = ipywgt.Button(description='Generate Map', button_style='info')
-        button.on_click(GeoUtil.on_button_clicked)
+
         generatemap_control = ipylft.WidgetControl(widget=button, position='bottomleft')
 
-        GeoUtil.m.add_control(ipylft.LayersControl(position='topright', style='info'))
-        GeoUtil.m.add_control(ipylft.FullScreenControl(position='topright'))
-        GeoUtil.m.add_control(generatemap_control)
-        # GeoUtil.m.add_control(file_control2)
-        GeoUtil.m.add_control(file_control1)
+        csv_map.add_control(ipylft.LayersControl(position='topright', style='info'))
+        csv_map.add_control(ipylft.FullScreenControl(position='topright'))
+        csv_map.add_control(generatemap_control)
+        # csv_map.add_control(file_control2)
+        csv_map.add_control(file_control1)
 
-    def on_button_clicked(b):
-    # def on_button_clicked(b, csv_dir_map_dropdown, inventory_df, inventory_json):
-        print('Loading: ', GeoUtil.csv_dir_map_dropdown.value)
-        key = GeoUtil.csv_dir_map_dropdown.value
-        GeoUtil.create_choropleth_layer(key)
-        print('\n')
+        def _on_click(event):
+            print('Loading: ', csv_dir_map_dropdown.value)
+            key = csv_dir_map_dropdown.value
+            _create_choropleth_layer(key)
+            print('\n')
 
-    def create_choropleth_layer(key):
-        # vmax_val = max(self.bldg_data_df[key])
-        vmax_val = 1
-        temp_id = list(range(len(GeoUtil.inventory_df['guid'])))
-        temp_id = [str(i) for i in temp_id]
-        choro_data = dict(zip(temp_id, GeoUtil.inventory_df[key]))
-        layer = ipylft.Choropleth(geo_data=GeoUtil.inventory_json, choro_data=choro_data, colormap=linear.YlOrRd_04,
-                                  value_min=0, value_max=vmax_val, border_color='black', style={'fillOpacity': 0.8},
-                                  name='CSV map')
-        GeoUtil.m.add_layer(layer)
-        # self.m
-        print('done')
+        def _create_choropleth_layer(key):
+            # vmax_val = max(self.bldg_data_df[key])
+            vmax_val = 1
+            temp_id = list(range(len(inventory_df['guid'])))
+            temp_id = [str(i) for i in temp_id]
+            choro_data = dict(zip(temp_id, inventory_df[key]))
+            layer = ipylft.Choropleth(geo_data=inventory_json, choro_data=choro_data, colormap=linear.YlOrRd_04,
+                                      value_min=0, value_max=vmax_val, border_color='black', style={'fillOpacity': 0.8},
+                                      name='CSV map')
+            csv_map.add_layer(layer)
+            print('done')
 
-    def create_legend(self):
-        legend = linear.YlOrRd_04.scale(0, self.vmax_val)
-        self.m.colormap = legend
-        out = ipywgt.Output(layout={'border': '1px solid black'})
-        with out:
-            display(legend)
-        widget_control = ipylft.WidgetControl(widget=out, position='topright')
-        GeoUtil.m.add_control(widget_control)
-        display(GeoUtil.m)
+        # def _create_legend(self):
+        #     legend = linear.YlOrRd_04.scale(0, self.vmax_val)
+        #     self.m.colormap = legend
+        #     out = ipywgt.Output(layout={'border': '1px solid black'})
+        #     with out:
+        #         display(legend)
+        #     widget_control = ipylft.WidgetControl(widget=out, position='topright')
+        #     csv_map.add_control(widget_control)
+        #     display(csv_map)
+
+        button.on_click(_on_click)
 
     @staticmethod
     def get_geopandas_map(geodataframe, width=600, height=400):

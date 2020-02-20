@@ -158,3 +158,15 @@ class PlotUtil:
         fig = ax.get_figure()
 
         return fig
+
+    @staticmethod
+    def histogram_from_csv_with_column(plot_title, x_title, y_title, column, in_csv, num_bins, figure_size):
+        data_frame = pd.read_csv(in_csv)
+        ax = data_frame[column].hist(bins=num_bins, figsize=figure_size)
+        ax.set_title(plot_title)
+        ax.set_xlabel(x_title)
+        ax.set_ylabel(y_title)
+
+        fig = ax.get_figure()
+
+        return fig
