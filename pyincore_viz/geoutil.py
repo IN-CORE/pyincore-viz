@@ -292,8 +292,8 @@ class GeoUtil:
                 <p>{}</p>
             '''.format(title, guid, value))
 
-        widget_control1 = ipylft.WidgetControl(widget=html, position='topright')
-        base_map.add_control(widget_control1)
+        # widget_control1 = ipylft.WidgetControl(widget=html, position='topright')
+        # base_map.add_control(widget_control1)
 
         def on_click(event, feature, **kwargs):
             title = key
@@ -308,6 +308,6 @@ class GeoUtil:
                     <p>{}</p>
                 '''.format(title, guid, value)
 
-        geo.on_click(on_click)
+        # geo.on_click(on_click)
 
         return base_map
