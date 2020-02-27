@@ -26,6 +26,7 @@ setup(
                       "and facilitates moving and synthesizing results."),
     # TODO need to figure out what are the dependency requirements
     install_requires=[
+        "branca==0.3.1",
         "ipyleaflet>=0.12.2",
         "ipywidgets>=7.4.2",
         "pandas>=0.24.1",
