@@ -77,7 +77,14 @@ class GeoUtil:
     @staticmethod
     def map_csv_from_dir(inventory_dataset, column, file_path=None):
         # converting from fiona to geopandas
-        inventory_df = gpd.GeoDataFrame.from_features([feature for feature in inventory_dataset], crs='EPSG3857')
+        #ToDo
+        #the following line makes an crs error when using the gdal/pyproj installed using conda
+        # doesn't have a problem if you install it with pip.
+        # for now, I will remove crs='EPSG3857' and it should work for all the incore data
+        # since it only use geographic projection.
+        # But might be better if it get fixed... maybe related to proj.db file
+        # inventory_df = gpd.GeoDataFrame.from_features([feature for feature in inventory_dataset], crs='EPSG3857')
+        inventory_df = gpd.GeoDataFrame.from_features([feature for feature in inventory_dataset])
         inventory_df = PlotUtil.remove_null_inventories(inventory_df, 'guid')
 
         csv_map = GeoUtil.create_basemap_ipylft(inventory_df)
