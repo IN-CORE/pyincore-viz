@@ -26,7 +26,7 @@ setup(
                       "and facilitates moving and synthesizing results."),
     # TODO need to figure out what are the dependency requirements
     install_requires=[
-        "ipyleaflet>=0.11.4",
+        "ipyleaflet>=0.12.2",
         "ipywidgets>=7.4.2",
         "pandas>=0.24.1",
         "geopandas>=0.6.1",
