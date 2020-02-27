@@ -55,7 +55,7 @@ def run_with_base_class():
     plot_title = 'CSV histogram'
     x_title = 'x axis'
     y_title = 'y axix'
-    column = 'failure_probability1'
+    column = 'failure_probability'
     num_bins = 30
     figure_size = (10, 5)
     fig = PlotUtil.histogram_from_csv_with_column(plot_title, x_title, y_title, column, in_csv, num_bins, figure_size)
@@ -69,7 +69,6 @@ def run_with_base_class():
     # csv_dir_map = GeoUtil.map_csv_from_dir(bridge_inventory, column='hazardval')
     csv_dir = os.path.join('C:\\rest\\output', 'mc_output')
     csv_dir_map = GeoUtil.map_csv_from_dir(building_dataset, column='failure_probability', file_path=csv_dir)
-    csv_dir_map.show()
 
     # Run bridge damage analysis
     # bridge_dmg.run_analysis()
