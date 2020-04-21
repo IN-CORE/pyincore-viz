@@ -50,6 +50,7 @@ original/
 .user
 
 # possible output file
+*.csv
 *.jpg
 *.jpeg
 *.png
