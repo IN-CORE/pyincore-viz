@@ -286,11 +286,10 @@ class GeoUtil:
                               scroll_wheel_zoom=True)
 
         bldg_data_json = json.loads(inventory_df.to_json())
+        print(bldg_data_json)
         geo = ipylft.GeoJSON(data=bldg_data_json)
-        try:
-            base_map.add_layer(geo)
-        except:
-            print("error")
+        base_map.add_layer(geo)
+
         title = key
         guid = 'guid'
         value = 'click icon'
