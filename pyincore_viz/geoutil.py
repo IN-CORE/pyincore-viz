@@ -282,6 +282,7 @@ class GeoUtil:
     def create_geo_map(inventory_df, key='hazardval'):
         ext = inventory_df.total_bounds
         cen_x, cen_y = (ext[1] + ext[3]) / 2, (ext[0] + ext[2]) / 2
+        print(cen_x, cen_y)
         base_map = ipylft.Map(center=(cen_x, cen_y), zoom=12, basemap=ipylft.basemaps.Stamen.Toner, crs='EPSG3857',
                               scroll_wheel_zoom=True)
 
