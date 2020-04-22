@@ -290,7 +290,7 @@ class GeoUtil:
         geo = ipylft.GeoJSON(data=bldg_data_json)
 
         if geo.data['features'][0]['geometry']['type'] == 'Point':
-            base_map = GeoUtil.create_point_icon(base_map, geo)
+            base_map = GeoUtil.create_point_icon(base_map, geo, key)
         else:
             base_map.add_layer(geo)
 
