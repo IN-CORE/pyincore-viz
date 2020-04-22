@@ -320,7 +320,7 @@ class GeoUtil:
                     <p>{}</p>
                 '''.format(title, guid, value)
 
-        geo.on_click(on_click)
+        # geo.on_click(on_click)
 
         def create_point_icon(base_map, geojson, field):
             features = geojson.data['features']
