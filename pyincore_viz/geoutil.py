@@ -18,7 +18,6 @@ from pyincore_viz import globals
 from branca.colormap import linear
 from owslib.wms import WebMapService
 from pyincore_viz import PlotUtil
-from pyincore import baseanalysis
 
 
 class GeoUtil:
@@ -282,14 +281,18 @@ class GeoUtil:
     def create_geo_map(inventory_df, key='hazardval'):
         ext = inventory_df.total_bounds
         cen_x, cen_y = (ext[1] + ext[3]) / 2, (ext[0] + ext[2]) / 2
-        print(cen_x, cen_y)
+
         base_map = ipylft.Map(center=(cen_x, cen_y), zoom=12, basemap=ipylft.basemaps.Stamen.Toner, crs='EPSG3857',
                               scroll_wheel_zoom=True)
 
         bldg_data_json = json.loads(inventory_df.to_json())
-        print(bldg_data_json)
+
         geo = ipylft.GeoJSON(data=bldg_data_json)
-        base_map.add_layer(geo)
+
+        if geo.data['features'][0]['geometry']['type'] == 'Point':
+            base_map = GeoUtil.create_point_icon(base_map, geo)
+        else:
+            base_map.add_layer(geo)
 
         title = key
         guid = 'guid'
@@ -318,5 +321,48 @@ class GeoUtil:
                 '''.format(title, guid, value)
 
         # geo.on_click(on_click)
+
+        def create_point_icon(base_map, geojson, field):
+            features = geojson.data['features']
+
+            for i in range(len(features)):
+                location = (features[i]['geometry']['coordinates'][1], features[i]['geometry']['coordinates'][0])
+                instructors = features[i]['properties'][field]
+                html = "<p><h4><b>Instructors</b>:" + str(instructors) + "</h4></p>"
+                icon = ipylft.Icon(
+                    icon_url='https://developers.google.com/maps/documentation/javascript/images/default-marker.png',
+                    icon_size=[50, 50])
+                marker = ipylft.Marker(location=location, icon=icon)
+
+                # Popup associated to a layer
+                marker.popup = ipywgt.HTML(html)
+                base_map.add_layer(marker)
+
+            return base_map
+
+        return base_map
+
+    """
+    create a point icon
+    """
+    # TODO: this is a temporary solution to fix the point icon display error in jupyterlab.
+    #  Point layer is displayed without problem in jupyter notebook
+    #  but not in the jupyterlab due to jupyterlab bug
+    @staticmethod
+    def create_point_icon(base_map, geojson, field):
+        features = geojson.data['features']
+
+        for i in range(len(features)):
+            location = (features[i]['geometry']['coordinates'][1], features[i]['geometry']['coordinates'][0])
+            instructors = features[i]['properties'][field]
+            html = "<p><h4><b>Instructors</b>:" + str(instructors) + "</h4></p>"
+            icon = ipylft.Icon(
+                icon_url='https://developers.google.com/maps/documentation/javascript/images/default-marker.png',
+                icon_size=[50, 50])
+            marker = ipylft.Marker(location=location, icon=icon)
+
+            # Popup associated to a layer
+            marker.popup = ipywgt.HTML(html)
+            base_map.add_layer(marker)
 
         return base_map
