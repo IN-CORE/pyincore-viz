@@ -322,26 +322,6 @@ class GeoUtil:
 
         # geo.on_click(on_click)
 
-        def create_point_icon(base_map, geojson, field):
-            features = geojson.data['features']
-
-            for i in range(len(features)):
-                location = (features[i]['geometry']['coordinates'][1], features[i]['geometry']['coordinates'][0])
-                instructors = features[i]['properties'][field]
-                html = "<p><h4><b>" + str(field) + "</b>:" + str(instructors) + "</h4></p>"
-                icon = ipylft.Icon(
-                    icon_url='http://maps.google.com/mapfiles/ms/icons/red.png',
-                    icon_size=[50, 50])
-                marker = ipylft.Marker(location=location, icon=icon)
-
-                # Popup associated to a layer
-                marker.popup = ipywgt.HTML(html)
-                base_map.add_layer(marker)
-
-            return base_map
-
-        return base_map
-
     """
     create a point icon
     """
@@ -353,11 +333,12 @@ class GeoUtil:
         features = geojson.data['features']
 
         for i in range(len(features)):
+            print(field)
             location = (features[i]['geometry']['coordinates'][1], features[i]['geometry']['coordinates'][0])
             instructors = features[i]['properties'][field]
-            html = "<p><h4><b>Instructors</b>:" + str(instructors) + "</h4></p>"
+            html = "<p><h4><b>" + str(field) + "</b>:" + str(instructors) + "</h4></p>"
             icon = ipylft.Icon(
-                icon_url='https://developers.google.com/maps/documentation/javascript/images/default-marker.png',
+                icon_url='http://maps.google.com/mapfiles/ms/icons/red.png',
                 icon_size=[50, 50])
             marker = ipylft.Marker(location=location, icon=icon)
 
