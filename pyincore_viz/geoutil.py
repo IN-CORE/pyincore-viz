@@ -304,8 +304,8 @@ class GeoUtil:
                 <p>{}</p>
             '''.format(title, guid, value))
 
-        # widget_control1 = ipylft.WidgetControl(widget=html, position='topright')
-        # base_map.add_control(widget_control1)
+        widget_control1 = ipylft.WidgetControl(widget=html, position='topright')
+        base_map.add_control(widget_control1)
 
         def on_click(event, feature, **kwargs):
             title = key
@@ -320,7 +320,7 @@ class GeoUtil:
                     <p>{}</p>
                 '''.format(title, guid, value)
 
-        # geo.on_click(on_click)
+        geo.on_click(on_click)
 
         def create_point_icon(base_map, geojson, field):
             features = geojson.data['features']
@@ -328,9 +328,9 @@ class GeoUtil:
             for i in range(len(features)):
                 location = (features[i]['geometry']['coordinates'][1], features[i]['geometry']['coordinates'][0])
                 instructors = features[i]['properties'][field]
-                html = "<p><h4><b>Instructors</b>:" + str(instructors) + "</h4></p>"
+                html = "<p><h4><b>" + str(field) + "</b>:" + str(instructors) + "</h4></p>"
                 icon = ipylft.Icon(
-                    icon_url='https://developers.google.com/maps/documentation/javascript/images/default-marker.png',
+                    icon_url='http://maps.google.com/mapfiles/ms/icons/red.png',
                     icon_size=[50, 50])
                 marker = ipylft.Marker(location=location, icon=icon)
 
