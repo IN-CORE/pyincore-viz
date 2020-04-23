@@ -5,6 +5,14 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## [Unreleased]
+
+### [Updated]
+- updated jupyter notebook test file more generic so it can run without any modification [INCORE1-556](https://opensource.ncsa.illinois.edu/jira/browse/INCORE1-556)
+
+### [Fixed]
+- fixed geomap error in displaying point layer due to jupyterlab bug [INCORE1-563](https://opensource.ncsa.illinois.edu/jira/browse/INCORE1-563)
+
 ## [0.2.0] - 2020-02-28
 
 ### Added
@@ -15,14 +23,12 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [0.1.1] - 2019-12-23
 
-### Fixed
-
+### [Fixed]
 - Geoserver urls to point to the ones in Kubernetes environment
 
 ## [0.1.0] - 2019-12-20
 pyIncore viz release for IN-CORE v1.0
 
-### Added
-
+### [Added]
 - CHANGELOG, CONTRIBUTORS, and LICENSE
 
