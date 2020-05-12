@@ -4,24 +4,131 @@
 # terms of the Mozilla Public License v2.0 which accompanies this distribution,
 # and is available at https://www.mozilla.org/en-US/MPL/2.0/
 
-import os
 import json
+import os
+from pathlib import Path
+
+import contextily as ctx
 import folium
-import pandas as pd
-import networkx as nx
-import matplotlib.pyplot as plt
+import geopandas as gpd
 import ipyleaflet as ipylft
 import ipywidgets as ipywgt
-import geopandas as gpd
-
-from pyincore_viz import globals
+import matplotlib.pyplot as plt
+import networkx as nx
+import pandas as pd
+import rasterio
+import rasterio.plot
 from branca.colormap import linear
 from owslib.wms import WebMapService
-from pyincore_viz import PlotUtil
+from pyincore import Dataset, baseanalysis
+from pyincore.dataservice import DataService
+from pyincore.hazardservice import HazardService
+from pyincore_viz import PlotUtil, globals
 
 
 class GeoUtil:
-    """Utility methods for georeferenced data."""
+    """Utility methods for Geospatial Visualization"""
+
+    @staticmethod
+    def plot_gdf_map(gdf, column, category=False, basemap=True):
+        """Plot Geopandas DataFrame
+
+        Args:
+            gdf (GeoDataFrame):  Geopandas DataFarme object
+            column (str): column name to be plot
+            category (boolean): turn on/off category option
+            basemap (boolean): turn on/off base map (e.g. openstreetmap)
+
+        """
+        gdf = gdf.to_crs(epsg=3857)
+        ax = gdf.plot(figsize=(10, 10), column=column, categorical=category, legend=True)
+        if(basemap):
+            ctx.add_basemap(ax)  
+
+    @staticmethod
+    def join_datasets(geodataset, dataset):
+        """Join Geospatial Dataset and non-geospatial Dataset
+
+        Args:
+            geodataset (Dataset):  pyincore Dataset object with geospatial data
+            dataset (Dataset): pyincore Dataset object without geospatial data
+
+        Returns:
+            GeoDataFrame: Geopandas DataFrame object
+
+        """
+
+        # TODO: maybe this method should be moved to Dataset Class
+        gdf = gpd.read_file(geodataset.local_file_path)
+        df = dataset.get_dataframe_from_csv()
+        join_gdf = gdf.set_index("guid").join(df.set_index("guid"))
+
+        return join_gdf
+
+    @staticmethod
+    def plot_map(dataset, column, category=False, basemap=True):
+        """Plot a map of geospatial dataset
+
+        Args:
+            dataset (Dataset):  pyincore Dataset object with geospatial data
+            column (str): column name to be plot
+            category (boolean): turn on/off category option
+            basemap (boolean): turn on/off base map (e.g. openstreetmap)
+
+        """
+        gdf = gpd.read_file(dataset.local_file_path) # maybe this part should be moved to Dataset Class
+        GeoUtil.plot_gdf_map(gdf, column, category, basemap)
+
+    @staticmethod
+    def plot_join_map(geodataset, dataset, column, category=False, basemap=True):
+        """Plot a map from geospatial dataset and non-geospatial dataset
+
+        Args:
+            geodataset (Dataset):  pyincore Dataset object with geospatial data
+            dataset (Dataset): pyincore Dataset object without geospatial data
+            column (str): column name to be plot
+            category (boolean): turn on/off category option
+            basemap (boolean): turn on/off base map (e.g. openstreetmap)            
+
+        """        
+        gdf = GeoUtil.join_datasets(geodataset, dataset)
+        GeoUtil.plot_gdf_map(gdf, column, category, basemap)
+
+    @staticmethod
+    def plot_tornado(tornado_id, client, category=False, basemap=True):
+        """Plot a tornado path
+
+        Args:
+            tornado_id (str):  ID of tornado hazard
+            client (Client): pyincore service Client Object
+            category (boolean): turn on/off category option
+            basemap (boolean): turn on/off base map (e.g. openstreetmap)            
+
+        """  
+        # it needs descartes pakcage for polygon plotting
+        # getting tornado dataset should be part of Tornado Hazard code
+        tornado_dataset_id = HazardService(client).get_tornado_hazard_metadata(tornado_id)['datasetId']
+        tornado_dataset = Dataset.from_data_service(tornado_dataset_id, DataService(client))
+        tornado_gdf = gpd.read_file(tornado_dataset.local_file_path)
+
+        GeoUtil.plot_gdf_map(tornado_gdf, 'ef_rating', category, basemap)
+
+    @staticmethod
+    def plot_earthquake(earthquake_id, client):
+        """Plot earthquake raster data
+        
+        Args:
+            earthquake_id (str):  ID of tornado hazard
+            client (Client): pyincore service Client Object
+        
+        """
+        eq_metadata  = HazardService(client).get_earthquake_hazard_metadata(earthquake_id)
+        eq_dataset_id = eq_metadata['rasterDataset']['datasetId']
+
+        eq_dataset = Dataset.from_data_service(eq_dataset_id, DataService(client))
+        raster_file_path = Path(eq_dataset.local_file_path).joinpath(eq_dataset.fileDescriptors[0]['filename'])
+        raster = rasterio.open(raster_file_path)
+        rasterio.plot.show(raster)
 
     @staticmethod
     def plot_graph_network(graph, coords):
@@ -32,6 +139,7 @@ class GeoUtil:
             coords (dict): Position coordinates.
 
         """
+        # TODO: need to use dataset for input arguements
         # nx.draw(graph, coords, with_lables=True, font_weithg='bold')
 
         # other ways to draw
@@ -53,6 +161,9 @@ class GeoUtil:
             obj, dict: Graph and node coordinates.
 
         """
+
+        # TODO: need to use dataset for input arguements
+
         geom = nx.read_shp(filename)
         node_coords = {k: v for k, v in enumerate(geom.nodes())}
         # create graph
@@ -70,299 +181,147 @@ class GeoUtil:
 
         return graph, node_coords
 
-    """
-    creates map window with given inventory with multiple csv file using folder location
-    """
     @staticmethod
-    def map_csv_from_dir(inventory_dataset, column, file_path=None):
-        # converting from fiona to geopandas
-        #ToDo
-        #the following line makes an crs error when using the gdal/pyproj installed using conda
-        # doesn't have a problem if you install it with pip.
-        # for now, I will remove crs='EPSG3857' and it should work for all the incore data
-        # since it only use geographic projection.
-        # But might be better if it get fixed... maybe related to proj.db file
-        # inventory_df = gpd.GeoDataFrame.from_features([feature for feature in inventory_dataset], crs='EPSG3857')
-        inventory_df = gpd.GeoDataFrame.from_features([feature for feature in inventory_dataset])
-        inventory_df = PlotUtil.remove_null_inventories(inventory_df, 'guid')
+    def merge_bbox(bbox1, bbox2):
+        """merge bbox to create bigger bbox to contain both bbox
 
-        csv_map = GeoUtil.create_basemap_ipylft(inventory_df)
+        Args:
+            bbox1 (list): [min_lat, min_lon, max_lat, max_lon]
+            bbox2 (list): [min_lat, min_lon, max_lat, max_lon]
 
-        if file_path is None:
-            file_path = os.getcwd()
-        data, outfiles = GeoUtil.load_all_data(file_path, column)
-        inventory_df = inventory_df.merge(data, on='guid')
-        inventory_json = json.loads(inventory_df.to_json())
-        GeoUtil.create_map_widgets(outfiles, csv_map, inventory_df, inventory_json)
+        Returns:
+            list: merged bbox [min_lat, min_lon, max_lat, max_lon]
 
-        return csv_map
+        """
+        bbox = [0,0,0,0]
 
-    ''' 
-    create base ipyleaflet map using geopandas dataframe
-    '''
-    def create_basemap_ipylft(geo_dataframe):
-        ext = geo_dataframe.total_bounds
-        cen_x, cen_y = (ext[1] + ext[3]) / 2, (ext[0] + ext[2]) / 2
-        m = ipylft.Map(center=(cen_x, cen_y), zoom=12, basemap=ipylft.basemaps.Stamen.Toner, crs='EPSG3857',
+        if bbox2[0] < bbox1[0]: bbox[0] = bbox2[0]
+        if bbox2[1] < bbox1[1]: bbox[1] = bbox2[1]
+        if bbox2[2] > bbox1[2]: bbox[2] = bbox2[2]
+        if bbox2[3] > bbox1[3]: bbox[3] = bbox2[3]
+
+        return bbox
+
+
+    @staticmethod
+    def get_gdf_map(datasets: list):
+        """Get ipyleaflet map with list of datasets with geopandas .
+
+        Args:
+            datasets (list): a list of pyincore Dataset objects
+
+        Returns:
+            ipyleaflet.Map: ipyleaflet Map object
+
+        """
+
+        # TODO: how to add a style for each dataset
+        # TODO: performance issue. If there are a lot of data, the browser will crash
+        geo_data_list  = []
+        bbox_all = [9999, 9999, -9999, -9999]  # (min_lat, min_lon, max_lat, max_lon)
+
+        for dataset in datasets:
+            gdf = gpd.read_file(dataset.local_file_path) # maybe this part should be moved to Dataset Class
+            geo_data = ipylft.GeoData(geo_dataframe = gdf, name=dataset.metadata['title'])
+            geo_data_list.append(geo_data)
+
+            bbox = gdf.total_bounds
+            bbox_all = GeoUtil.merge_bbox(bbox_all, bbox)
+
+        cen_lat, cen_lon = (bbox_all[2] + bbox_all[0] ) / 2.0, (bbox_all[3] + bbox_all[1] ) / 2.0
+        
+        # TODO: ipylft doesn't have fit bound methods, we need to find a way to zoom level to show all data
+        m = ipylft.Map(center=(cen_lon, cen_lat), zoom=11, basemap=ipylft.basemaps.Stamen.Toner, crs='EPSG3857',
                        scroll_wheel_zoom=True)
+        for l in geo_data_list:
+            m.add_layer(l)
+        
+        m.add_control(ipylft.LayersControl())
         return m
 
-    """ 
-    loading in all data in output path 
-    """
-    def load_all_data(path_to_data, column_name):
-        temp_outfiles = os.listdir(path_to_data)
-        outfiles = []
-        for temp_outfile in temp_outfiles:
-            file_root, file_extension = os.path.splitext(temp_outfile)
-            if file_extension.lower() == '.csv':
-                outfiles.append(temp_outfile)
-        csv_index = 0
-        data = None
-        for i, file in enumerate(outfiles):
-            filename = os.path.join(path_to_data, file)
-            if csv_index == 0:
-                data = pd.read_csv(filename, dtype=str)
-                data[file] = data[column_name].astype(float)
-                data = data[['guid', file]]
-            else:
-                temp = pd.read_csv(filename, dtype=str)
-                temp[file] = temp[column_name].astype(float)
-                temp = temp[['guid', file]]
-                data = data.merge(temp, on='guid')
-            csv_index += 1
-        return data, outfiles
-
-    '''
-    create csv map's actual widgets
-    '''
-    def create_map_widgets(outfiles, csv_map, inventory_df, inventory_json):
-        csv_dir_map_dropdown = ipywgt.Dropdown(description='Outputfile - 1', options=outfiles, width=500)
-        file_control1 = ipylft.WidgetControl(widget=csv_dir_map_dropdown, position='bottomleft')
-
-        # csv_dir_map_dropdown2 = ipywgt.Dropdown(description = 'Outputfile - 2', options = outfiles, width=500)
-        # file_control2 = ipylft.WidgetControl(widget=csv_dir_map_dropdown2, position='bottomleft')
-
-        button = ipywgt.Button(description='Generate Map', button_style='info')
-
-        generatemap_control = ipylft.WidgetControl(widget=button, position='bottomleft')
-
-        csv_map.add_control(ipylft.LayersControl(position='topright', style='info'))
-        csv_map.add_control(ipylft.FullScreenControl(position='topright'))
-        csv_map.add_control(generatemap_control)
-        # csv_map.add_control(file_control2)
-        csv_map.add_control(file_control1)
-
-        def _on_click(event):
-            print('Loading: ', csv_dir_map_dropdown.value)
-            key = csv_dir_map_dropdown.value
-            _create_choropleth_layer(key)
-            print('\n')
-
-        def _create_choropleth_layer(key):
-            # vmax_val = max(self.bldg_data_df[key])
-            vmax_val = 1
-            temp_id = list(range(len(inventory_df['guid'])))
-            temp_id = [str(i) for i in temp_id]
-            choro_data = dict(zip(temp_id, inventory_df[key]))
-            layer = ipylft.Choropleth(geo_data=inventory_json, choro_data=choro_data, colormap=linear.YlOrRd_04,
-                                      value_min=0, value_max=vmax_val, border_color='black', style={'fillOpacity': 0.8},
-                                      name='CSV map')
-            csv_map.add_layer(layer)
-            print('done')
-
-        # def _create_legend(self):
-        #     legend = linear.YlOrRd_04.scale(0, self.vmax_val)
-        #     self.m.colormap = legend
-        #     out = ipywgt.Output(layout={'border': '1px solid black'})
-        #     with out:
-        #         display(legend)
-        #     widget_control = ipylft.WidgetControl(widget=out, position='topright')
-        #     csv_map.add_control(widget_control)
-        #     display(csv_map)
-
-        button.on_click(_on_click)
-
     @staticmethod
-    def get_geopandas_map(geodataframe, width=600, height=400):
-        """Get GeoPandas map.
+    def get_wms_map(datasets: list, wms_url=globals.INCORE_GEOSERVER_WMS_URL):
+        """Get a map with WMS layers from list of datasets
 
         Args:
-            geodataframe (pd.DataFrame): Geo referenced DataFrame.
+            datasets (list): list of pyincore Dataset objects
+            wmr_url (str): URL of WMS server
 
         Returns:
-            pd.DataFrame: A map GeoPandas layers.
+            obj: A ipylfealet Map object
 
         """
-        m = folium.Map(width=width, height=height, tiles="Stamen Terrain")
-        folium.GeoJson(geodataframe.to_json(), name='hospital').add_to(m)
-        ext = geodataframe.total_bounds
-        m.fit_bounds([[ext[1], ext[0]], [ext[3], ext[2]]])
+        # TODO: how to add a style for each WMS layers (pre-defined styules on WMS server)
+        wms_layers = []
+        bbox_all = [9999, 9999, -9999, -9999]  # (min_lat, min_lon, max_lat, max_lon)
+        for dataset in datasets:
+            wms_layer_name = 'incore:'+dataset.id
+            wms_layer = ipylft.WMSLayer(url=wms_url, layers=wms_layer_name, format='image/png', transparent=True, name=dataset.metadata['title'])
+            wms_layers.append(wms_layer)
+
+            bbox = dataset.metadata['boundingBox']
+            
+            bbox_all = GeoUtil.merge_bbox(bbox_all, bbox)
+
+        cen_lat, cen_lon = (bbox_all[2] + bbox_all[0] ) / 2.0, (bbox_all[3] + bbox_all[1] ) / 2.0
+
+        # TODO: ipylft doesn't have fit bound methods, we need to find a way to zoom level to show all data
+        m = ipylft.Map(center = (cen_lon, cen_lat), zoom=11, basemap=ipylft.basemaps.Stamen.Toner, crs='EPSG3857', scroll_wheel_zoom=True)
+        for l in wms_layers:
+            m.add_layer(l)
+
+        m.add_control(ipylft.LayersControl())
+
         return m
 
     @staticmethod
-    def get_gdf_wms_map(gdf, layers_config,
-                        width=600, height=400, url=globals.INCORE_GEOSERVER_WMS_URL):
-        """Get GDF (GeoDataFrame) and WMS map.
+    def get_gdf_wms_map(datasets, wms_datasets, wms_url=globals.INCORE_GEOSERVER_WMS_URL):
+        """Get a map with WMS layers from list of datasets for geopandas and list of datasets for WMS
 
         Args:
-            gdf (GeoDataFrame): A layer with various infrastructure (hospital).
-            layers_config (list): Layers configurations with id, name and style.
+            datasets (list): list of pyincore Dataset objects
+            wms_datasets (list): list of pyincore Dataset objects for wms layers
+            wmr_url (str): URL of WMS server
 
         Returns:
-            obj: A folium map with layers.
+            obj: A ipylfealet Map object
 
         """
-        m = folium.Map(width=width, height=height, tiles="Stamen Terrain")
-        folium.GeoJson(gdf.to_json(), name='hospital').add_to(m)
-        bbox_all = gdf.total_bounds
 
-        for layer in layers_config:
-            wms_layer = folium.raster_layers.WmsTileLayer(url, name=layer['name'],
-                                                          fmt='image/png',
-                                                          transparent=True,
-                                                          layers='incore:' + layer['id'],
-                                                          styles=layer['style'])
+        # TODO: how to add a style for each WMS layers (pre-defined styules on WMS server) and gdf layers
 
-            wms_layer.add_to(m)
-            wms = WebMapService(url)
-            bbox = wms[layer['id']].boundingBox
-            # merge bbox
-            if bbox[0] < bbox_all[0]:
-                bbox_all[0] = bbox[0]
-            if bbox[1] < bbox_all[1]:
-                bbox_all[1] = bbox[1]
-            if bbox[2] > bbox_all[2]:
-                bbox_all[2] = bbox[2]
-            if bbox[3] > bbox_all[3]:
-                bbox_all[3] = bbox[3]
+        bbox_all = [9999, 9999, -9999, -9999]  # (min_lat, min_lon, max_lat, max_lon)
 
-        m.fit_bounds([[bbox_all[1], bbox_all[0]], [bbox_all[3], bbox_all[2]]])
-        return m
+        geo_data_list  = []
+        for dataset in datasets:
+            gdf = gpd.read_file(dataset.local_file_path) # maybe this part should be moved to Dataset Class
+            geo_data = ipylft.GeoData(geo_dataframe = gdf, name=dataset.metadata['title'])
+            geo_data_list.append(geo_data)
 
-    @staticmethod
-    def get_wms_map(layers_config: list,
-                    width=600, height=400, url=globals.INCORE_GEOSERVER_WMS_URL, ):
-        """Get a map with WMS layers.
+            bbox = gdf.total_bounds
+            bbox_all = GeoUtil.merge_bbox(bbox_all, bbox)
 
-        Args:
-            layers_config (list): Layers configurations with id, name and style.
+        wms_layers = []
+        for dataset in wms_datasets:
+            wms_layer_name = 'incore:'+dataset.id
+            wms_layer = ipylft.WMSLayer(url=wms_url, layers=wms_layer_name, format='image/png', transparent=True, name=dataset.metadata['title']+'-WMS')
+            wms_layers.append(wms_layer)
 
-        Returns:
-            obj: A map with WMS layers.
+            bbox = dataset.metadata['boundingBox']
+            bbox_all = GeoUtil.merge_bbox(bbox_all, bbox)
+        
+        cen_lat, cen_lon = (bbox_all[2] + bbox_all[0] ) / 2.0, (bbox_all[3] + bbox_all[1] ) / 2.0
 
-        """
-        m = folium.Map(width=width, height=height, tiles="Stamen Terrain")
-        bbox_all = [9999, 9999, -9999, -9999]
-        for layer in layers_config:
-            wms_layer = folium.raster_layers.WmsTileLayer(url, name=layer['name'], fmt='image/png', transparent=True,
-                                                          layers='incore:' + layer['id'], styles=layer['style'])
-            wms_layer.add_to(m)
-            wms = WebMapService(url)
-            bbox = wms[layer['id']].boundingBox
-            # merge bbox
-            if bbox[0] < bbox_all[0]: bbox_all[0] = bbox[0]
-            if bbox[1] < bbox_all[1]: bbox_all[1] = bbox[1]
-            if bbox[2] > bbox_all[2]: bbox_all[2] = bbox[2]
-            if bbox[3] > bbox_all[3]: bbox_all[3] = bbox[3]
+        # TODO: ipylft doesn't have fit bound methods, we need to find a way to zoom level to show all data
+        m = ipylft.Map(center = (cen_lon, cen_lat), zoom=11, basemap=ipylft.basemaps.Stamen.Toner, crs='EPSG3857', scroll_wheel_zoom=True)
+        for l in wms_layers:
+            m.add_layer(l)
+        
+        for g in geo_data_list:
+            m.add_layer(g)
 
-        folium.LayerControl().add_to(m)
-        bounds = ((bbox_all[1], bbox_all[0]), (bbox_all[3], bbox_all[2]))
-        m.fit_bounds(bounds)
+        m.add_control(ipylft.LayersControl())
 
         return m
 
-    @staticmethod
-    def damage_map_viewer():
-        pass
 
-    @staticmethod
-    # this method create a map window with single inventory with given column name
-    def create_geo_map(inventory_df, key='hazardval'):
-        ext = inventory_df.total_bounds
-        cen_x, cen_y = (ext[1] + ext[3]) / 2, (ext[0] + ext[2]) / 2
-
-        base_map = ipylft.Map(center=(cen_x, cen_y), zoom=12, basemap=ipylft.basemaps.Stamen.Toner, crs='EPSG3857',
-                              scroll_wheel_zoom=True)
-
-        bldg_data_json = json.loads(inventory_df.to_json())
-
-        geo = ipylft.GeoJSON(data=bldg_data_json)
-
-        if geo.data['features'][0]['geometry']['type'] == 'Point':
-            base_map = GeoUtil.create_point_icon(base_map, geo, key)
-        else:
-            base_map.add_layer(geo)
-
-        title = key
-        guid = 'guid'
-        value = 'click icon'
-        html = ipywgt.HTML(
-            '''
-                <h4>{}</h4>
-                <p>{}</p>
-                <p>{}</p>
-            '''.format(title, guid, value))
-
-        # widget_control1 = ipylft.WidgetControl(widget=html, position='topright')
-        # base_map.add_control(widget_control1)
-
-        def on_click(event, feature, **kwargs):
-            title = key
-            guid = feature['properties']['guid']
-            value = feature['properties'][key]
-            update_html(title, guid, value)
-
-        def update_html(title, guid, value):
-            html.value = '''
-                    <h4>{}</h4>
-                    <p>{}</p>
-                    <p>{}</p>
-                '''.format(title, guid, value)
-
-        # geo.on_click(on_click)
-
-        def create_point_icon(base_map, geojson, field):
-            features = geojson.data['features']
-
-            for i in range(len(features)):
-                location = (features[i]['geometry']['coordinates'][1], features[i]['geometry']['coordinates'][0])
-                instructors = features[i]['properties'][field]
-                html = "<p><h4><b>" + str(field) + "</b>:" + str(instructors) + "</h4></p>"
-                icon = ipylft.Icon(
-                    icon_url='http://maps.google.com/mapfiles/ms/icons/red.png',
-                    icon_size=[50, 50])
-                marker = ipylft.Marker(location=location, icon=icon)
-
-                # Popup associated to a layer
-                marker.popup = ipywgt.HTML(html)
-                base_map.add_layer(marker)
-
-            return base_map
-
-        return base_map
-
-    """
-    create a point icon
-    """
-    # TODO: this is a temporary solution to fix the point icon display error in jupyterlab.
-    #  Point layer is displayed without problem in jupyter notebook
-    #  but not in the jupyterlab due to jupyterlab bug
-    @staticmethod
-    def create_point_icon(base_map, geojson, field):
-        features = geojson.data['features']
-
-        for i in range(len(features)):
-            location = (features[i]['geometry']['coordinates'][1], features[i]['geometry']['coordinates'][0])
-            instructors = features[i]['properties'][field]
-            html = "<p><h4><b>" + str(field) + "</b>:" + str(instructors) + "</h4></p>"
-            icon = ipylft.Icon(
-                icon_url='http://maps.google.com/mapfiles/ms/icons/red.png',
-                icon_size=[50, 50])
-            marker = ipylft.Marker(location=location, icon=icon)
-
-            # Popup associated to a layer
-            marker.popup = ipywgt.HTML(html)
-            base_map.add_layer(marker)
-
-        return base_map
