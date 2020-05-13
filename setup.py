@@ -31,6 +31,7 @@ setup(
         "ipywidgets==7.5.0",
         "pandas>=0.24.1",
         "geopandas>=0.6.1",
+        "descartes>=1.1.0",
         "numpy>=1.16.1",
         "scipy>=1.2.0",
         "folium>=0.7.0",
