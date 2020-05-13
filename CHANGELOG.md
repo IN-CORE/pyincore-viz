@@ -7,25 +7,21 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
-### [Fixed]
-- fixed geomap error in displaying point layer due to jupyterlab bug [INCORE1-563](https://opensource.ncsa.illinois.edu/jira/browse/INCORE1-563)
-- removed unused code and folium package
-- made consistent API regarding arguments of methods
-- added geo utility methods (e.g. mergeing bounding box)
-- added dependent python modules
-
-### [Updated]
-- updated jupyter notebook test file more generic so it can run without any modification [INCORE1-556](https://opensource.ncsa.illinois.edu/jira/browse/INCORE1-556)
+### Added
 - added jupyter notebook example under examples folder
+- added geo utility methods (e.g. mergeing bounding box)
 
-### [Known Issues]
-- can't fit the map (ipyleaflet) with given bounding box
-- can't plot multiple datasets (with geopandas.plot() and rasterio.plot())
-- can't make ipyleaflet map with raster datasets 
-- can't specify styles of layers (datasets)
-- network visualization code has not been cleaned yet
-- performance issue with ipyleaflet with large vector dataset (e.g. joplin building inventory) causes crash of browser
-- needed to update pytest 
+### Fixed
+- fixed geomap error in displaying point layer due to jupyterlab bug [INCORE1-563](https://opensource.ncsa.illinois.edu/jira/browse/INCORE1-563)
+- made consistent API regarding arguments of methods
+
+### Removed
+- Unused code (methods) are removed (map_csv_from_dir, create_basemap_ipylft, load_all_data, create_map_widgets, create_geo_map, create_point_icon)
+
+### Updated
+- updated jupyter notebook test file more generic so it can run without any modification [INCORE1-556](https://opensource.ncsa.illinois.edu/jira/browse/INCORE1-556)
+- updated dependent python modules in setup.py
+
 
 ## [0.2.0] - 2020-02-28
 
@@ -37,12 +33,12 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [0.1.1] - 2019-12-23
 
-### [Fixed]
+### Fixed
 - Geoserver urls to point to the ones in Kubernetes environment
 
 ## [0.1.0] - 2019-12-20
 pyIncore viz release for IN-CORE v1.0
 
-### [Added]
+### Added
 - CHANGELOG, CONTRIBUTORS, and LICENSE
 
