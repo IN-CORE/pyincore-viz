@@ -23,6 +23,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - can't plot multiple datasets (with geopandas.plot() and rasterio.plot())
 - can't make ipyleaflet map with raster datasets 
 - can't specify styles of layers (datasets)
+- network visualization code has not been cleaned yet
 - performance issue with ipyleaflet with large vector dataset (e.g. joplin building inventory) causes crash of browser
 - needed to update pytest 
 
