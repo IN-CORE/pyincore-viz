@@ -21,8 +21,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### [Known Issues]
 - can't fit the map (ipyleaflet) with given bounding box
 - can't plot multiple datasets (with geopandas.plot() and rasterio.plot())
-- can't make ipyleafet map with raster datasets 
+- can't make ipyleaflet map with raster datasets 
 - can't specify styles of layers (datasets)
+- performance issue with ipyleaflet with large vector dataset (e.g. joplin building inventory) causes crash of browser
+- needed to update pytest 
 
 ## [0.2.0] - 2020-02-28
 
