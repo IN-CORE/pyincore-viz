@@ -11,18 +11,14 @@ from pathlib import Path
 import contextily as ctx
 import geopandas as gpd
 import ipyleaflet as ipylft
-import ipywidgets as ipywgt
 import matplotlib.pyplot as plt
 import networkx as nx
-import pandas as pd
 import rasterio
 import rasterio.plot
-from branca.colormap import linear
-from owslib.wms import WebMapService
-from pyincore import Dataset, baseanalysis
+from pyincore import Dataset
 from pyincore.dataservice import DataService
 from pyincore.hazardservice import HazardService
-from pyincore_viz import PlotUtil, globals
+from pyincore_viz import globals
 
 
 class GeoUtil:
@@ -41,7 +37,7 @@ class GeoUtil:
         """
         gdf = gdf.to_crs(epsg=3857)
         ax = gdf.plot(figsize=(10, 10), column=column, categorical=category, legend=True)
-        if(basemap):
+        if basemap:
             ctx.add_basemap(ax)  
 
     @staticmethod
