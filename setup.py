@@ -33,7 +33,7 @@ setup(
         "geopandas>=0.6.1",
         "rasterio>=1.1.3",
         "descartes>=1.1.0",
-        "contexily>=1.0.0",
+        "contextily>=1.0.0",
         "numpy>=1.16.1",
         "scipy>=1.2.0",
         "networkx>=2.2",
