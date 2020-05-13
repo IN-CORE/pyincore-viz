@@ -9,9 +9,20 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### [Fixed]
 - fixed geomap error in displaying point layer due to jupyterlab bug [INCORE1-563](https://opensource.ncsa.illinois.edu/jira/browse/INCORE1-563)
+- removed unused code and folium package
+- made consistent API regarding arguments of methods
+- added geo utility methods (e.g. mergeing bounding box)
+- added dependent python modules
 
 ### [Updated]
 - updated jupyter notebook test file more generic so it can run without any modification [INCORE1-556](https://opensource.ncsa.illinois.edu/jira/browse/INCORE1-556)
+- added jupyter notebook example under examples folder
+
+### [Known Issues]
+- can't fit the map (ipyleaflet) with given bounding box
+- can't plot multiple datasets (with geopandas.plot() and rasterio.plot())
+- can't make ipyleafet map with raster datasets 
+- can't specify styles of layers (datasets)
 
 ## [0.2.0] - 2020-02-28
 
