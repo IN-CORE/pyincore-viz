@@ -9,7 +9,6 @@ import os
 from pathlib import Path
 
 import contextily as ctx
-import folium
 import geopandas as gpd
 import ipyleaflet as ipylft
 import ipywidgets as ipywgt
@@ -260,7 +259,6 @@ class GeoUtil:
             wms_layers.append(wms_layer)
 
             bbox = dataset.metadata['boundingBox']
-            
             bbox_all = GeoUtil.merge_bbox(bbox_all, bbox)
 
         cen_lat, cen_lon = (bbox_all[2] + bbox_all[0] ) / 2.0, (bbox_all[3] + bbox_all[1] ) / 2.0
@@ -323,5 +321,3 @@ class GeoUtil:
         m.add_control(ipylft.LayersControl())
 
         return m
-
-
