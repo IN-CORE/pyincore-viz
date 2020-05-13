@@ -8,7 +8,7 @@ from setuptools import setup, find_packages
 
 setup(
     name='pyincore-viz',
-    version='0.2.0',
+    version='0.2.1',
     packages=find_packages(where=".", exclude=["*.tests", "*.tests.*", "tests.*", "tests"]),
     include_package_data=True,
     package_data={
@@ -31,15 +31,17 @@ setup(
         "ipywidgets==7.5.0",
         "pandas>=0.24.1",
         "geopandas>=0.6.1",
+        "rasterio>=1.1.3",
         "descartes>=1.1.0",
+        "contexily>=1.0.0",
         "numpy>=1.16.1",
         "scipy>=1.2.0",
-        "folium>=0.7.0",
         "networkx>=2.2",
         "owslib>=0.17.1",
         "matplotlib>=2.1.0",
         "plotly>=3.6.0",
-        "pytest>=3.9.0"
+        "pytest>=3.9.0",
+        "pyincore>=0.6.2"
     ],
     python_requires=">=3.5",
     classifiers=[
