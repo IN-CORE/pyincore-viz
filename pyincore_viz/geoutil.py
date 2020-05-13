@@ -125,7 +125,7 @@ class GeoUtil:
         eq_dataset_id = eq_metadata['rasterDataset']['datasetId']
 
         eq_dataset = Dataset.from_data_service(eq_dataset_id, DataService(client))
-        raster_file_path = Path(eq_dataset.local_file_path).joinpath(eq_dataset.fileDescriptors[0]['filename'])
+        raster_file_path = Path(eq_dataset.local_file_path).joinpath(eq_dataset.metadata['fileDescriptors'][0]['filename'])
         raster = rasterio.open(raster_file_path)
         rasterio.plot.show(raster)
 
@@ -192,7 +192,7 @@ class GeoUtil:
             list: merged bbox [min_lat, min_lon, max_lat, max_lon]
 
         """
-        bbox = [0,0,0,0]
+        bbox = [bbox1[0],bbox1[1],bbox1[2],bbox1[3]]
 
         if bbox2[0] < bbox1[0]: bbox[0] = bbox2[0]
         if bbox2[1] < bbox1[1]: bbox[1] = bbox2[1]
@@ -201,13 +201,13 @@ class GeoUtil:
 
         return bbox
 
-
     @staticmethod
-    def get_gdf_map(datasets: list):
+    def get_gdf_map(datasets: list, zoom_level):
         """Get ipyleaflet map with list of datasets with geopandas .
 
         Args:
             datasets (list): a list of pyincore Dataset objects
+            zoom_level (int): initial zoom level
 
         Returns:
             ipyleaflet.Map: ipyleaflet Map object
@@ -230,7 +230,7 @@ class GeoUtil:
         cen_lat, cen_lon = (bbox_all[2] + bbox_all[0] ) / 2.0, (bbox_all[3] + bbox_all[1] ) / 2.0
         
         # TODO: ipylft doesn't have fit bound methods, we need to find a way to zoom level to show all data
-        m = ipylft.Map(center=(cen_lon, cen_lat), zoom=11, basemap=ipylft.basemaps.Stamen.Toner, crs='EPSG3857',
+        m = ipylft.Map(center=(cen_lon, cen_lat), zoom=zoom_level, basemap=ipylft.basemaps.Stamen.Toner, crs='EPSG3857',
                        scroll_wheel_zoom=True)
         for l in geo_data_list:
             m.add_layer(l)
@@ -239,11 +239,12 @@ class GeoUtil:
         return m
 
     @staticmethod
-    def get_wms_map(datasets: list, wms_url=globals.INCORE_GEOSERVER_WMS_URL):
+    def get_wms_map(datasets: list, zoom_level, wms_url=globals.INCORE_GEOSERVER_WMS_URL):
         """Get a map with WMS layers from list of datasets
 
         Args:
             datasets (list): list of pyincore Dataset objects
+            zoom_level (int): initial zoom level
             wmr_url (str): URL of WMS server
 
         Returns:
@@ -264,7 +265,7 @@ class GeoUtil:
         cen_lat, cen_lon = (bbox_all[2] + bbox_all[0] ) / 2.0, (bbox_all[3] + bbox_all[1] ) / 2.0
 
         # TODO: ipylft doesn't have fit bound methods, we need to find a way to zoom level to show all data
-        m = ipylft.Map(center = (cen_lon, cen_lat), zoom=11, basemap=ipylft.basemaps.Stamen.Toner, crs='EPSG3857', scroll_wheel_zoom=True)
+        m = ipylft.Map(center = (cen_lon, cen_lat), zoom=zoom_level, basemap=ipylft.basemaps.Stamen.Toner, crs='EPSG3857', scroll_wheel_zoom=True)
         for l in wms_layers:
             m.add_layer(l)
 
@@ -273,12 +274,13 @@ class GeoUtil:
         return m
 
     @staticmethod
-    def get_gdf_wms_map(datasets, wms_datasets, wms_url=globals.INCORE_GEOSERVER_WMS_URL):
+    def get_gdf_wms_map(datasets, wms_datasets, zoom_level, wms_url=globals.INCORE_GEOSERVER_WMS_URL):
         """Get a map with WMS layers from list of datasets for geopandas and list of datasets for WMS
 
         Args:
             datasets (list): list of pyincore Dataset objects
             wms_datasets (list): list of pyincore Dataset objects for wms layers
+            zoom_level (int): initial zoom level
             wmr_url (str): URL of WMS server
 
         Returns:
@@ -311,7 +313,7 @@ class GeoUtil:
         cen_lat, cen_lon = (bbox_all[2] + bbox_all[0] ) / 2.0, (bbox_all[3] + bbox_all[1] ) / 2.0
 
         # TODO: ipylft doesn't have fit bound methods, we need to find a way to zoom level to show all data
-        m = ipylft.Map(center = (cen_lon, cen_lat), zoom=11, basemap=ipylft.basemaps.Stamen.Toner, crs='EPSG3857', scroll_wheel_zoom=True)
+        m = ipylft.Map(center = (cen_lon, cen_lat), zoom=zoom_level, basemap=ipylft.basemaps.Stamen.Toner, crs='EPSG3857', scroll_wheel_zoom=True)
         for l in wms_layers:
             m.add_layer(l)
         
