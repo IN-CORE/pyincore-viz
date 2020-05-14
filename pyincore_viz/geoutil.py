@@ -36,9 +36,10 @@ class GeoUtil:
 
         """
         gdf = gdf.to_crs(epsg=3857)
-        ax = gdf.plot(figsize=(10, 10), column=column, categorical=category, legend=True)
+        ax = gdf.plot(figsize=(10, 10), column=column,
+                      categorical=category, legend=True)
         if basemap:
-            ctx.add_basemap(ax)  
+            ctx.add_basemap(ax)
 
     @staticmethod
     def join_datasets(geodataset, dataset):
@@ -71,7 +72,8 @@ class GeoUtil:
             basemap (boolean): turn on/off base map (e.g. openstreetmap)
 
         """
-        gdf = gpd.read_file(dataset.local_file_path) # maybe this part should be moved to Dataset Class
+        # maybe this part should be moved to Dataset Class (reading csv to create gdf)
+        gdf = gpd.read_file(dataset.local_file_path)
         GeoUtil.plot_gdf_map(gdf, column, category, basemap)
 
     @staticmethod
@@ -85,7 +87,7 @@ class GeoUtil:
             category (boolean): turn on/off category option
             basemap (boolean): turn on/off base map (e.g. openstreetmap)            
 
-        """        
+        """
         gdf = GeoUtil.join_datasets(geodataset, dataset)
         GeoUtil.plot_gdf_map(gdf, column, category, basemap)
 
@@ -99,11 +101,13 @@ class GeoUtil:
             category (boolean): turn on/off category option
             basemap (boolean): turn on/off base map (e.g. openstreetmap)            
 
-        """  
+        """
         # it needs descartes pakcage for polygon plotting
         # getting tornado dataset should be part of Tornado Hazard code
-        tornado_dataset_id = HazardService(client).get_tornado_hazard_metadata(tornado_id)['datasetId']
-        tornado_dataset = Dataset.from_data_service(tornado_dataset_id, DataService(client))
+        tornado_dataset_id = HazardService(
+            client).get_tornado_hazard_metadata(tornado_id)['datasetId']
+        tornado_dataset = Dataset.from_data_service(
+            tornado_dataset_id, DataService(client))
         tornado_gdf = gpd.read_file(tornado_dataset.local_file_path)
 
         GeoUtil.plot_gdf_map(tornado_gdf, 'ef_rating', category, basemap)
@@ -111,17 +115,20 @@ class GeoUtil:
     @staticmethod
     def plot_earthquake(earthquake_id, client):
         """Plot earthquake raster data
-        
+
         Args:
             earthquake_id (str):  ID of tornado hazard
             client (Client): pyincore service Client Object
-        
+
         """
-        eq_metadata  = HazardService(client).get_earthquake_hazard_metadata(earthquake_id)
+        eq_metadata = HazardService(
+            client).get_earthquake_hazard_metadata(earthquake_id)
         eq_dataset_id = eq_metadata['rasterDataset']['datasetId']
 
-        eq_dataset = Dataset.from_data_service(eq_dataset_id, DataService(client))
-        raster_file_path = Path(eq_dataset.local_file_path).joinpath(eq_dataset.metadata['fileDescriptors'][0]['filename'])
+        eq_dataset = Dataset.from_data_service(
+            eq_dataset_id, DataService(client))
+        raster_file_path = Path(eq_dataset.local_file_path).joinpath(
+            eq_dataset.metadata['fileDescriptors'][0]['filename'])
         raster = rasterio.open(raster_file_path)
         rasterio.plot.show(raster)
 
@@ -138,7 +145,8 @@ class GeoUtil:
         # nx.draw(graph, coords, with_lables=True, font_weithg='bold')
 
         # other ways to draw
-        nx.draw_networkx_nodes(graph, coords, cmap=plt.get_cmap('jet'), node_size=100, node_color='g', with_lables=True, font_weithg='bold')
+        nx.draw_networkx_nodes(graph, coords, cmap=plt.get_cmap(
+            'jet'), node_size=100, node_color='g', with_lables=True, font_weithg='bold')
         nx.draw_networkx_labels(graph, coords)
         nx.draw_networkx_edges(graph, coords, edge_color='r', arrows=True)
         plt.show()
@@ -188,12 +196,16 @@ class GeoUtil:
             list: merged bbox [min_lat, min_lon, max_lat, max_lon]
 
         """
-        bbox = [bbox1[0],bbox1[1],bbox1[2],bbox1[3]]
+        bbox = [bbox1[0], bbox1[1], bbox1[2], bbox1[3]]
 
-        if bbox2[0] < bbox1[0]: bbox[0] = bbox2[0]
-        if bbox2[1] < bbox1[1]: bbox[1] = bbox2[1]
-        if bbox2[2] > bbox1[2]: bbox[2] = bbox2[2]
-        if bbox2[3] > bbox1[3]: bbox[3] = bbox2[3]
+        if bbox2[0] < bbox1[0]:
+            bbox[0] = bbox2[0]
+        if bbox2[1] < bbox1[1]:
+            bbox[1] = bbox2[1]
+        if bbox2[2] > bbox1[2]:
+            bbox[2] = bbox2[2]
+        if bbox2[3] > bbox1[3]:
+            bbox[3] = bbox2[3]
 
         return bbox
 
@@ -212,25 +224,29 @@ class GeoUtil:
 
         # TODO: how to add a style for each dataset
         # TODO: performance issue. If there are a lot of data, the browser will crash
-        geo_data_list  = []
-        bbox_all = [9999, 9999, -9999, -9999]  # (min_lat, min_lon, max_lat, max_lon)
+        geo_data_list = []
+        # (min_lat, min_lon, max_lat, max_lon)
+        bbox_all = [9999, 9999, -9999, -9999]
 
         for dataset in datasets:
-            gdf = gpd.read_file(dataset.local_file_path) # maybe this part should be moved to Dataset Class
-            geo_data = ipylft.GeoData(geo_dataframe = gdf, name=dataset.metadata['title'])
+            # maybe this part should be moved to Dataset Class
+            gdf = gpd.read_file(dataset.local_file_path)
+            geo_data = ipylft.GeoData(
+                geo_dataframe=gdf, name=dataset.metadata['title'])
             geo_data_list.append(geo_data)
 
             bbox = gdf.total_bounds
             bbox_all = GeoUtil.merge_bbox(bbox_all, bbox)
 
-        cen_lat, cen_lon = (bbox_all[2] + bbox_all[0] ) / 2.0, (bbox_all[3] + bbox_all[1] ) / 2.0
-        
+        cen_lat, cen_lon = (bbox_all[2] + bbox_all[0]) / \
+            2.0, (bbox_all[3] + bbox_all[1]) / 2.0
+
         # TODO: ipylft doesn't have fit bound methods, we need to find a way to zoom level to show all data
         m = ipylft.Map(center=(cen_lon, cen_lat), zoom=zoom_level, basemap=ipylft.basemaps.Stamen.Toner, crs='EPSG3857',
                        scroll_wheel_zoom=True)
         for l in geo_data_list:
             m.add_layer(l)
-        
+
         m.add_control(ipylft.LayersControl())
         return m
 
@@ -249,19 +265,23 @@ class GeoUtil:
         """
         # TODO: how to add a style for each WMS layers (pre-defined styules on WMS server)
         wms_layers = []
-        bbox_all = [9999, 9999, -9999, -9999]  # (min_lat, min_lon, max_lat, max_lon)
+        # (min_lat, min_lon, max_lat, max_lon)
+        bbox_all = [9999, 9999, -9999, -9999]
         for dataset in datasets:
             wms_layer_name = 'incore:'+dataset.id
-            wms_layer = ipylft.WMSLayer(url=wms_url, layers=wms_layer_name, format='image/png', transparent=True, name=dataset.metadata['title'])
+            wms_layer = ipylft.WMSLayer(url=wms_url, layers=wms_layer_name,
+                                        format='image/png', transparent=True, name=dataset.metadata['title'])
             wms_layers.append(wms_layer)
 
             bbox = dataset.metadata['boundingBox']
             bbox_all = GeoUtil.merge_bbox(bbox_all, bbox)
 
-        cen_lat, cen_lon = (bbox_all[2] + bbox_all[0] ) / 2.0, (bbox_all[3] + bbox_all[1] ) / 2.0
+        cen_lat, cen_lon = (bbox_all[2] + bbox_all[0]) / \
+            2.0, (bbox_all[3] + bbox_all[1]) / 2.0
 
         # TODO: ipylft doesn't have fit bound methods, we need to find a way to zoom level to show all data
-        m = ipylft.Map(center = (cen_lon, cen_lat), zoom=zoom_level, basemap=ipylft.basemaps.Stamen.Toner, crs='EPSG3857', scroll_wheel_zoom=True)
+        m = ipylft.Map(center=(cen_lon, cen_lat), zoom=zoom_level,
+                       basemap=ipylft.basemaps.Stamen.Toner, crs='EPSG3857', scroll_wheel_zoom=True)
         for l in wms_layers:
             m.add_layer(l)
 
@@ -286,12 +306,15 @@ class GeoUtil:
 
         # TODO: how to add a style for each WMS layers (pre-defined styules on WMS server) and gdf layers
 
-        bbox_all = [9999, 9999, -9999, -9999]  # (min_lat, min_lon, max_lat, max_lon)
+        # (min_lat, min_lon, max_lat, max_lon)
+        bbox_all = [9999, 9999, -9999, -9999]
 
-        geo_data_list  = []
+        geo_data_list = []
         for dataset in datasets:
-            gdf = gpd.read_file(dataset.local_file_path) # maybe this part should be moved to Dataset Class
-            geo_data = ipylft.GeoData(geo_dataframe = gdf, name=dataset.metadata['title'])
+            # maybe this part should be moved to Dataset Class
+            gdf = gpd.read_file(dataset.local_file_path)
+            geo_data = ipylft.GeoData(
+                geo_dataframe=gdf, name=dataset.metadata['title'])
             geo_data_list.append(geo_data)
 
             bbox = gdf.total_bounds
@@ -300,19 +323,22 @@ class GeoUtil:
         wms_layers = []
         for dataset in wms_datasets:
             wms_layer_name = 'incore:'+dataset.id
-            wms_layer = ipylft.WMSLayer(url=wms_url, layers=wms_layer_name, format='image/png', transparent=True, name=dataset.metadata['title']+'-WMS')
+            wms_layer = ipylft.WMSLayer(url=wms_url, layers=wms_layer_name, format='image/png',
+                                        transparent=True, name=dataset.metadata['title']+'-WMS')
             wms_layers.append(wms_layer)
 
             bbox = dataset.metadata['boundingBox']
             bbox_all = GeoUtil.merge_bbox(bbox_all, bbox)
-        
-        cen_lat, cen_lon = (bbox_all[2] + bbox_all[0] ) / 2.0, (bbox_all[3] + bbox_all[1] ) / 2.0
+
+        cen_lat, cen_lon = (bbox_all[2] + bbox_all[0]) / \
+            2.0, (bbox_all[3] + bbox_all[1]) / 2.0
 
         # TODO: ipylft doesn't have fit bound methods, we need to find a way to zoom level to show all data
-        m = ipylft.Map(center = (cen_lon, cen_lat), zoom=zoom_level, basemap=ipylft.basemaps.Stamen.Toner, crs='EPSG3857', scroll_wheel_zoom=True)
+        m = ipylft.Map(center=(cen_lon, cen_lat), zoom=zoom_level,
+                       basemap=ipylft.basemaps.Stamen.Toner, crs='EPSG3857', scroll_wheel_zoom=True)
         for l in wms_layers:
             m.add_layer(l)
-        
+
         for g in geo_data_list:
             m.add_layer(g)
 
