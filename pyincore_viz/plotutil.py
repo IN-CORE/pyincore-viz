@@ -4,11 +4,7 @@
 # terms of the Mozilla Public License v2.0 which accompanies this distribution,
 # and is available at https://www.mozilla.org/en-US/MPL/2.0/
 
-import json
-import folium
 import geopandas as gpd
-import ipyleaflet as ipylft
-import ipywidgets as ipywgt
 import matplotlib.pyplot as plt
 import numpy
 import pandas as pd
@@ -124,6 +120,7 @@ class PlotUtil:
 
     @staticmethod
     def inventory_to_geodataframe(inventory_dataset):
+        # TODO: need to move this method to Dataset Class
         fname = inventory_dataset.get_file_path(type="shp")
         inventory_df = gpd.read_file(fname)
 
