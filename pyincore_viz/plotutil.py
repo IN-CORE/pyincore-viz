@@ -49,7 +49,8 @@ class PlotUtil:
 
         """
         # convert location and scale parameters to the normal mean and std
-        mean = numpy.log(numpy.square(location) / numpy.sqrt(scale + numpy.square(location)))
+        mean = numpy.log(numpy.square(location) /
+                         numpy.sqrt(scale + numpy.square(location)))
         std = numpy.sqrt(numpy.log((scale / numpy.square(location)) + 1))
         dist = lognorm(s=std, loc=0, scale=numpy.exp(mean))
         start = dist.ppf(0.001)  # cdf inverse
@@ -111,9 +112,11 @@ class PlotUtil:
 
         """
         for curve in fragility_set['fragilityCurves']:
-            x, y = PlotUtil.get_x_y(curve['curveType'], curve['median'], curve['beta'])
+            x, y = PlotUtil.get_x_y(
+                curve['curveType'], curve['median'], curve['beta'])
             plt.plot(x, y, label=curve['description'])
-        plt.xlabel(fragility_set['demandType'] + " (" + fragility_set['demandUnits'] + ")")
+        plt.xlabel(fragility_set['demandType'] +
+                   " (" + fragility_set['demandUnits'] + ")")
         plt.legend()
 
         return plt
@@ -134,7 +137,7 @@ class PlotUtil:
 
     @staticmethod
     def dmg_state2value(damage_result, dmg_ratio_tbl):
-        #TODO given damage ratio table, subtitute the damage state with actual mean damage factor
+        # TODO given damage ratio table, subtitute the damage state with actual mean damage factor
         pass
 
     @staticmethod
@@ -144,11 +147,12 @@ class PlotUtil:
         return inventory_df
 
     @staticmethod
-    def mean_damage_histogram(mean_damage_dataset, histogram_bins=20, figure_size = (10 , 5), axes_font_size = 12,
-                              title_font_size = 12):
+    def mean_damage_histogram(mean_damage_dataset, histogram_bins=20, figure_size=(10, 5), axes_font_size=12,
+                              title_font_size=12):
 
         mean_damage = mean_damage_dataset.get_dataframe_from_csv()
-        ax = mean_damage['meandamage'].hist(bins=histogram_bins, figsize=figure_size)
+        ax = mean_damage['meandamage'].hist(
+            bins=histogram_bins, figsize=figure_size)
         ax.set_title("Mean damage distribution", fontsize=title_font_size)
         ax.set_xlabel("mean damage value", fontsize=axes_font_size)
         ax.set_ylabel("counts", fontsize=axes_font_size)
