@@ -8,21 +8,20 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ## [Unreleased]
 
 ### Added
-- added jupyter notebook example under examples folder
-- added geo utility methods (e.g. mergeing bounding box)
+- added jupyter notebook example under examples folder [INCORE1-595](https://opensource.ncsa.illinois.edu/jira/browse/INCORE1-595)
+- added geo utility methods (e.g. mergeing bounding box) [INCORE1-595](https://opensource.ncsa.illinois.edu/jira/browse/INCORE1-595)
 
 ### Fixed
 - fixed geomap error in displaying point layer due to jupyterlab bug [INCORE1-563](https://opensource.ncsa.illinois.edu/jira/browse/INCORE1-563)
-- made consistent API regarding arguments of methods
+- made consistent API regarding arguments of methods [INCORE1-595](https://opensource.ncsa.illinois.edu/jira/browse/INCORE1-595)
 
 ### Removed
-- Unused code (methods) are removed (map_csv_from_dir, create_basemap_ipylft, load_all_data, create_map_widgets, create_geo_map, create_point_icon)
-- test_pyincore_viz.py, jupyter notebook files and sample data folder because of API changes and code changes
+- Unused code (methods) are removed (map_csv_from_dir, create_basemap_ipylft, load_all_data, create_map_widgets, create_geo_map, create_point_icon) [INCORE1-595](https://opensource.ncsa.illinois.edu/jira/browse/INCORE1-595)
+- test_pyincore_viz.py, jupyter notebook files and sample data folder because of API changes and code changes [INCORE1-611](https://opensource.ncsa.illinois.edu/jira/browse/INCORE1-611)
 
 ### Updated
 - updated jupyter notebook test file more generic so it can run without any modification [INCORE1-556](https://opensource.ncsa.illinois.edu/jira/browse/INCORE1-556)
-- updated dependent python modules in setup.py
-
+- updated dependent python modules in setup.py [INCORE1-595](https://opensource.ncsa.illinois.edu/jira/browse/INCORE1-595)
 
 ## [0.2.0] - 2020-02-28
 
