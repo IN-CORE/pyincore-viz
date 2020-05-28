@@ -27,7 +27,7 @@ setup(
     # TODO need to figure out what are the dependency requirements
     install_requires=[
         "branca==0.3.1",
-        "ipyleaflet==0.12.6",
+        "ipyleaflet==0.12.2",
         "ipywidgets==7.5.0",
         "pandas>=0.24.1",
         "geopandas>=0.6.1",
