@@ -83,8 +83,7 @@ class GeoUtil:
             dataset (Dataset): pyincore Dataset object without geospatial data
             column (str): column name to be plot
             category (boolean): turn on/off category option
-            basemap (boolean): turn on/off base map (e.g. openstreetmap)            
-
+            basemap (boolean): turn on/off base map (e.g. openstreetmap)
         """
         gdf = GeoUtil.join_datasets(geodataset, dataset)
         GeoUtil.plot_gdf_map(gdf, column, category, basemap)
@@ -97,8 +96,7 @@ class GeoUtil:
             tornado_id (str):  ID of tornado hazard
             client (Client): pyincore service Client Object
             category (boolean): turn on/off category option
-            basemap (boolean): turn on/off base map (e.g. openstreetmap)            
-
+            basemap (boolean): turn on/off base map (e.g. openstreetmap)
         """
         # it needs descartes pakcage for polygon plotting
         # getting tornado dataset should be part of Tornado Hazard code
@@ -175,8 +173,8 @@ class GeoUtil:
             graph = nx.Graph()
 
         graph.add_nodes_from(node_coords.keys())
-        l = [set(x) for x in geom.edges()]
-        edg = [tuple(k for k, v in node_coords.items() if v in sl) for sl in l]
+        list = [set(x) for x in geom.edges()]
+        edg = [tuple(k for k, v in node_coords.items() if v in sl) for sl in list]
 
         graph.add_edges_from(edg)
 
@@ -242,8 +240,8 @@ class GeoUtil:
         # TODO: ipylft doesn't have fit bound methods, we need to find a way to zoom level to show all data
         m = ipylft.Map(center=(cen_lon, cen_lat), zoom=zoom_level, basemap=ipylft.basemaps.Stamen.Toner, crs='EPSG3857',
                        scroll_wheel_zoom=True)
-        for l in geo_data_list:
-            m.add_layer(l)
+        for entry in geo_data_list:
+            m.add_layer(entry)
 
         m.add_control(ipylft.LayersControl())
         return m
@@ -280,8 +278,8 @@ class GeoUtil:
         # TODO: ipylft doesn't have fit bound methods, we need to find a way to zoom level to show all data
         m = ipylft.Map(center=(cen_lon, cen_lat), zoom=zoom_level,
                        basemap=ipylft.basemaps.Stamen.Toner, crs='EPSG3857', scroll_wheel_zoom=True)
-        for l in wms_layers:
-            m.add_layer(l)
+        for layer in wms_layers:
+            m.add_layer(layer)
 
         m.add_control(ipylft.LayersControl())
 
@@ -334,8 +332,8 @@ class GeoUtil:
         # TODO: ipylft doesn't have fit bound methods, we need to find a way to zoom level to show all data
         m = ipylft.Map(center=(cen_lon, cen_lat), zoom=zoom_level,
                        basemap=ipylft.basemaps.Stamen.Toner, crs='EPSG3857', scroll_wheel_zoom=True)
-        for l in wms_layers:
-            m.add_layer(l)
+        for layer in wms_layers:
+            m.add_layer(layer)
 
         for g in geo_data_list:
             m.add_layer(g)
