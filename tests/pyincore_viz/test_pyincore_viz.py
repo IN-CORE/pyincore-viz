@@ -11,7 +11,7 @@ client = IncoreClient(INCORE_API_PROD_URL)
 
 # testing datasets
 tornado_hazard_id = "5d07cbeab9219c065b080930"
-joplin_bldg_inv_id = "5d4c61a2b9219c0689a397c9"
+joplin_bldg_inv_id = "5dbc8478b9219c06dd242c0d"
 eq_hazard_id = "5b902cb273c3371e1236b36b"
 shelby_hopital_inv_id = "5a284f0bc7d30d13bc081a28"
 shelby_road_id = "5a284f2bc7d30d13bc081eb6"
@@ -22,7 +22,7 @@ eq_dataset_id = eq_metadata['rasterDataset']['datasetId']
 
 # visualize earthquake
 eq_dataset = Dataset.from_data_service(eq_dataset_id, DataService(client))
-# viz.plot_earthquake(eq_hazard_id, client)
+viz.plot_earthquake(eq_hazard_id, client)
 
 # get shelvy building inventory and road
 sh_bldg_inv = Dataset.from_data_service(shelby_hopital_inv_id, DataService(client))
