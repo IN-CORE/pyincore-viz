@@ -6,11 +6,11 @@
 import pycodestyle
 import os
 
-PYINCORE_VIZ_ROOT_FOLDER = os.path.dirname(os.path.dirname(__file__))
-
+from pyincore_viz.globals import PYINCORE_VIZ_ROOT_FOLDER
 
 paths = [
-    os.path.join(PYINCORE_VIZ_ROOT_FOLDER, 'pyincore_viz')
+    os.path.join(PYINCORE_VIZ_ROOT_FOLDER, 'pyincore_viz'),
+    os.path.join(PYINCORE_VIZ_ROOT_FOLDER, 'tests/pyincore_viz/'),
 ]
 
 
@@ -19,5 +19,3 @@ def test_conformance(paths=paths):
     style = pycodestyle.StyleGuide(quiet=False, max_line_length=120)
     result = style.check_files(paths)
     assert result.total_errors == 0
-
-test_conformance()

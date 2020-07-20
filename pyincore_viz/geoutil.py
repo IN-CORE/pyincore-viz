@@ -18,7 +18,6 @@ from pyincore.dataservice import DataService
 from pyincore.hazardservice import HazardService
 from pyincore_viz import globals
 
-
 class GeoUtil:
     """Utility methods for Geospatial Visualization"""
 
