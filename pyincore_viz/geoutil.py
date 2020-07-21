@@ -17,6 +17,8 @@ from pyincore import Dataset
 from pyincore.dataservice import DataService
 from pyincore.hazardservice import HazardService
 from pyincore_viz import globals
+from owslib.wms import WebMapService
+
 
 class GeoUtil:
     """Utility methods for Geospatial Visualization"""
@@ -234,7 +236,7 @@ class GeoUtil:
             bbox_all = GeoUtil.merge_bbox(bbox_all, bbox)
 
         cen_lat, cen_lon = (bbox_all[2] + bbox_all[0]) / \
-            2.0, (bbox_all[3] + bbox_all[1]) / 2.0
+                           2.0, (bbox_all[3] + bbox_all[1]) / 2.0
 
         # TODO: ipylft doesn't have fit bound methods, we need to find a way to zoom level to show all data
         m = ipylft.Map(center=(cen_lon, cen_lat), zoom=zoom_level, basemap=ipylft.basemaps.Stamen.Toner, crs='EPSG3857',
@@ -258,12 +260,18 @@ class GeoUtil:
             obj: A ipylfealet Map object
 
         """
-        # TODO: how to add a style for each WMS layers (pre-defined styules on WMS server)
+        # TODO: how to add a style for each WMS layers (pre-defined styles on WMS server)
         wms_layers = []
         # (min_lat, min_lon, max_lat, max_lon)
         bbox_all = [9999, 9999, -9999, -9999]
+        wms = WebMapService(wms_url + "?", version='1.1.1')
         for dataset in datasets:
-            wms_layer_name = 'incore:'+dataset.id
+            wms_layer_name = 'incore:' + dataset.id
+            # check availability of the wms layer
+            try:
+                bounds = wms[dataset.id].boundingBox
+            except KeyError:
+                print("Error: The layer " + str(dataset.id) + " does not exist in the wms server")
             wms_layer = ipylft.WMSLayer(url=wms_url, layers=wms_layer_name,
                                         format='image/png', transparent=True, name=dataset.metadata['title'])
             wms_layers.append(wms_layer)
@@ -272,7 +280,7 @@ class GeoUtil:
             bbox_all = GeoUtil.merge_bbox(bbox_all, bbox)
 
         cen_lat, cen_lon = (bbox_all[2] + bbox_all[0]) / \
-            2.0, (bbox_all[3] + bbox_all[1]) / 2.0
+                           2.0, (bbox_all[3] + bbox_all[1]) / 2.0
 
         # TODO: ipylft doesn't have fit bound methods, we need to find a way to zoom level to show all data
         m = ipylft.Map(center=(cen_lon, cen_lat), zoom=zoom_level,
@@ -317,16 +325,16 @@ class GeoUtil:
 
         wms_layers = []
         for dataset in wms_datasets:
-            wms_layer_name = 'incore:'+dataset.id
+            wms_layer_name = 'incore:' + dataset.id
             wms_layer = ipylft.WMSLayer(url=wms_url, layers=wms_layer_name, format='image/png',
-                                        transparent=True, name=dataset.metadata['title']+'-WMS')
+                                        transparent=True, name=dataset.metadata['title'] + '-WMS')
             wms_layers.append(wms_layer)
 
             bbox = dataset.metadata['boundingBox']
             bbox_all = GeoUtil.merge_bbox(bbox_all, bbox)
 
         cen_lat, cen_lon = (bbox_all[2] + bbox_all[0]) / \
-            2.0, (bbox_all[3] + bbox_all[1]) / 2.0
+                           2.0, (bbox_all[3] + bbox_all[1]) / 2.0
 
         # TODO: ipylft doesn't have fit bound methods, we need to find a way to zoom level to show all data
         m = ipylft.Map(center=(cen_lon, cen_lat), zoom=zoom_level,
