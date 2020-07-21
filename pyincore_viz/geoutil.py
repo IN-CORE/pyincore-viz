@@ -264,14 +264,9 @@ class GeoUtil:
         wms_layers = []
         # (min_lat, min_lon, max_lat, max_lon)
         bbox_all = [9999, 9999, -9999, -9999]
-        wms = WebMapService(wms_url + "?", version='1.1.1')
+
         for dataset in datasets:
             wms_layer_name = 'incore:' + dataset.id
-            # check availability of the wms layer
-            try:
-                bounds = wms[dataset.id].boundingBox
-            except KeyError:
-                print("Error: The layer " + str(dataset.id) + " does not exist in the wms server")
             wms_layer = ipylft.WMSLayer(url=wms_url, layers=wms_layer_name,
                                         format='image/png', transparent=True, name=dataset.metadata['title'])
             wms_layers.append(wms_layer)
