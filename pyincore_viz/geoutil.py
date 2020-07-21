@@ -234,8 +234,7 @@ class GeoUtil:
             bbox = gdf.total_bounds
             bbox_all = GeoUtil.merge_bbox(bbox_all, bbox)
 
-        cen_lat, cen_lon = (bbox_all[2] + bbox_all[0]) / \
-                           2.0, (bbox_all[3] + bbox_all[1]) / 2.0
+        cen_lat, cen_lon = (bbox_all[2] + bbox_all[0]) / 2.0, (bbox_all[3] + bbox_all[1]) / 2.0
 
         # TODO: ipylft doesn't have fit bound methods, we need to find a way to zoom level to show all data
         m = ipylft.Map(center=(cen_lon, cen_lat), zoom=zoom_level, basemap=ipylft.basemaps.Stamen.Toner, crs='EPSG3857',
@@ -273,8 +272,7 @@ class GeoUtil:
             bbox = dataset.metadata['boundingBox']
             bbox_all = GeoUtil.merge_bbox(bbox_all, bbox)
 
-        cen_lat, cen_lon = (bbox_all[2] + bbox_all[0]) / \
-                           2.0, (bbox_all[3] + bbox_all[1]) / 2.0
+        cen_lat, cen_lon = (bbox_all[2] + bbox_all[0]) / 2.0, (bbox_all[3] + bbox_all[1]) / 2.0
 
         # TODO: ipylft doesn't have fit bound methods, we need to find a way to zoom level to show all data
         m = ipylft.Map(center=(cen_lon, cen_lat), zoom=zoom_level,
@@ -327,8 +325,7 @@ class GeoUtil:
             bbox = dataset.metadata['boundingBox']
             bbox_all = GeoUtil.merge_bbox(bbox_all, bbox)
 
-        cen_lat, cen_lon = (bbox_all[2] + bbox_all[0]) / \
-                           2.0, (bbox_all[3] + bbox_all[1]) / 2.0
+        cen_lat, cen_lon = (bbox_all[2] + bbox_all[0]) / 2.0, (bbox_all[3] + bbox_all[1]) / 2.0
 
         # TODO: ipylft doesn't have fit bound methods, we need to find a way to zoom level to show all data
         m = ipylft.Map(center=(cen_lon, cen_lat), zoom=zoom_level,
