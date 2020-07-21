@@ -17,7 +17,6 @@ from pyincore import Dataset
 from pyincore.dataservice import DataService
 from pyincore.hazardservice import HazardService
 from pyincore_viz import globals
-from owslib.wms import WebMapService
 
 
 class GeoUtil:
