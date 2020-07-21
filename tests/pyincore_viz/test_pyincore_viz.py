@@ -5,13 +5,13 @@ from pyincore.hazardservice import HazardService
 from pyincore_viz.geoutil import GeoUtil as viz
 from pyincore import Dataset
 
-from pyincore_viz.globals import INCORE_API_DEV_URL, INCORE_API_PROD_URL
+from pyincore_viz.globals import INCORE_API_DEV_URL
 
-client = IncoreClient(INCORE_API_PROD_URL)
+client = IncoreClient(INCORE_API_DEV_URL)
 
 # testing datasets
-tornado_hazard_id = "5d07cbeab9219c065b080930"
-joplin_bldg_inv_id = "5dbc8478b9219c06dd242c0d"
+tornado_hazard_id = "5dfa32bbc0601200080893fb"
+joplin_bldg_inv_id = "5df7d0de425e0b00092d0082"
 eq_hazard_id = "5b902cb273c3371e1236b36b"
 shelby_hopital_inv_id = "5a284f0bc7d30d13bc081a28"
 shelby_road_id = "5a284f2bc7d30d13bc081eb6"
