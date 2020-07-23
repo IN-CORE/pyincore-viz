@@ -16,6 +16,4 @@ INCORE_GEOSERVER_DEV_WMS_URL = "https://incore-dev-kube.ncsa.illinois.edu/geoser
 PYINCORE_VIZ_ROOT_FOLDER = os.path.dirname(os.path.dirname(__file__))
 
 INCORE_API_PROD_URL = "https://incore.ncsa.illinois.edu"
-TEST_INCORE_API_PROD_URL = "http://incore.ncsa.illinois.edu:31888"
 INCORE_API_DEV_URL = "https://incore-dev-kube.ncsa.illinois.edu"
-TEST_INCORE_API_DEV_URL = "http://incore-dev-kube.ncsa.illinois.edu:31888"
