@@ -5,7 +5,7 @@ from pyincore.hazardservice import HazardService
 from pyincore_viz.geoutil import GeoUtil as viz
 from pyincore import Dataset
 
-from pyincore_viz.globals import INCORE_API_DEV_URL
+from pyincore.globals import INCORE_API_DEV_URL
 
 client = IncoreClient(INCORE_API_DEV_URL)
 
