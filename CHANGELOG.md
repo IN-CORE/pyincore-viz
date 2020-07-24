@@ -7,7 +7,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 ### Added
-- added PEP-8 format test to the library  [INCORE1-706](https://opensource.ncsa.illinois.edu/jira/browse/INCORE1-706)
+- added PEP-8 format test to the library.  [INCORE1-706](https://opensource.ncsa.illinois.edu/jira/browse/INCORE1-706)
+- added wms layer availability checking [INCORE1-609](https://opensource.ncsa.illinois.edu/jira/browse/INCORE1-609)
 
 ## [0.2.1] - 2020-05-27
 
