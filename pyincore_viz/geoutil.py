@@ -17,6 +17,7 @@ from pyincore import Dataset
 from pyincore.dataservice import DataService
 from pyincore.hazardservice import HazardService
 from pyincore_viz import globals
+from owslib.wms import WebMapService
 
 
 class GeoUtil:
@@ -246,13 +247,14 @@ class GeoUtil:
         return m
 
     @staticmethod
-    def get_wms_map(datasets: list, zoom_level, wms_url=globals.INCORE_GEOSERVER_WMS_URL):
+    def get_wms_map(datasets: list, zoom_level, wms_url=globals.INCORE_GEOSERVER_WMS_URL, layer_check=False):
         """Get a map with WMS layers from list of datasets
 
         Args:
             datasets (list): list of pyincore Dataset objects
             zoom_level (int): initial zoom level
             wmr_url (str): URL of WMS server
+            layer_check (bool): boolean for checking the layer availability in wms server
 
         Returns:
             obj: A ipylfealet Map object
@@ -262,9 +264,21 @@ class GeoUtil:
         wms_layers = []
         # (min_lat, min_lon, max_lat, max_lon)
         bbox_all = [9999, 9999, -9999, -9999]
-
+        # the reason for checking this layer_check on/off is that
+        # the process could take very long time based on the number of layers in geoserver.
+        # the process could be relatively faster if there are not many layers in the geoserver
+        # but the processing time could increase based upon the increase of the layers in the server
+        # by putting on/off for this layer checking, it could make the process faster.
+        if layer_check:
+            wms = WebMapService(wms_url + "?", version='1.1.1')
         for dataset in datasets:
             wms_layer_name = 'incore:' + dataset.id
+            # check availability of the wms layer
+            if layer_check:
+                try:
+                    bounds = wms[dataset.id].boundingBox
+                except KeyError:
+                    print("Error: The layer " + str(dataset.id) + " does not exist in the wms server")
             wms_layer = ipylft.WMSLayer(url=wms_url, layers=wms_layer_name,
                                         format='image/png', transparent=True, name=dataset.metadata['title'])
             wms_layers.append(wms_layer)
