@@ -278,17 +278,17 @@ class GeoUtil:
             # TODO in here, the question is the, should this error quit whole process
             # or just keep going and show the error message for only the layer with error
             # if it needs to throw an error and exit the process, use following code block
-            if layer_check:
-                wms[dataset.id].boundingBox
-            else:
-                raise KeyError(
-                    "Error: The layer " + str(dataset.id) + " does not exist in the wms server")
-            # if it needs to keep going with showing all the layers, use following code block
             # if layer_check:
-            #     try:
-            #         wms[dataset.id].boundingBox
-            #     except KeyError:
-            #         print("Error: The layer " + str(dataset.id) + " does not exist in the wms server")
+            #     wms[dataset.id].boundingBox
+            # else:
+            #     raise KeyError(
+            #         "Error: The layer " + str(dataset.id) + " does not exist in the wms server")
+            # if it needs to keep going with showing all the layers, use following code block
+            if layer_check:
+                try:
+                    wms[dataset.id].boundingBox
+                except KeyError:
+                    print("Error: The layer " + str(dataset.id) + " does not exist in the wms server")
             wms_layer = ipylft.WMSLayer(url=wms_url, layers=wms_layer_name,
                                         format='image/png', transparent=True, name=dataset.metadata['title'])
             wms_layers.append(wms_layer)
