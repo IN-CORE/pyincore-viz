@@ -1,3 +1,4 @@
+import os
 # Connect to IN-CORE Services
 from pyincore import IncoreClient
 from pyincore.dataservice import DataService
@@ -49,3 +50,9 @@ joplin_bldg_inv = Dataset.from_data_service(joplin_bldg_inv_id, DataService(clie
 
 # using wms layer for joplin building inv. gdf will crash the browser
 viz.get_gdf_wms_map([tornado_dataset], [joplin_bldg_inv], zoom_level=11)
+
+# csv directory map using seaside building inventory
+seaside_bldg_id = "5f2b1354f3e24203f9f60026"  # defining building dataset (GIS point layer)
+seaside_bldg_inv = Dataset.from_data_service(seaside_bldg_id, DataService(client))
+csv_dir = os.path.join("examples", "seaside_bldg_dmg_output_csv")
+csv_dir_map = viz.map_csv_from_dir(seaside_bldg_inv, column='failure_probability', file_path=csv_dir)
