@@ -178,6 +178,7 @@ class CsvMapUtil:
 
         print('Done loading layer.')
 
+    # TODO the following method for adding layer should be added in the future
     # def create_legend(self):
     #     legend = linear.YlOrRd_04.scale(0, self.vmax_val)
     #     CsvMapUtil.csvmap.colormap = legend
