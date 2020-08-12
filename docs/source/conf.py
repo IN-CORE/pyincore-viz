@@ -19,7 +19,6 @@
 #
 import os
 import sys
-import sphinx_rtd_theme
 
 sys.path.insert(0, os.path.abspath('.'))
 sys.path.insert(0, os.path.abspath('../..'))
@@ -48,6 +47,7 @@ release = '0.2.2'
 # ones.
 extensions = ['sphinx.ext.autodoc',
               'sphinx.ext.intersphinx',
+              'recommonmark',
               # 'sphinx.ext.viewcode',
               'sphinx_rtd_theme',
               'sphinx.ext.ifconfig',
@@ -60,8 +60,11 @@ templates_path = ['_templates']
 # The suffix(es) of source filenames.
 # You can specify multiple suffix as a list of string:
 #
-# source_suffix = '.rst'
-source_suffix = ['.rst', '.md']
+source_suffix = {
+    '.rst': 'restructuredtext',
+    '.txt': 'markdown',
+    '.md': 'markdown',
+}
 
 # The master toctree document.
 master_doc = 'index'
@@ -76,7 +79,10 @@ language = None
 # List of patterns, relative to source directory, that match files and
 # directories to ignore when looking for source files.
 # This pattern also affects html_static_path and html_extra_path.
-exclude_patterns = []
+exclude_patterns = ['_build', '**.ipynb_checkpoints']
+
+# Disable notebook execution, nbsphinx not to execute
+nbsphinx_execute = 'never'
 
 # The name of the Pygments (syntax highlighting) style to use.
 pygments_style = 'sphinx'
@@ -89,7 +95,7 @@ pygments_style = 'sphinx'
 # See also:
 # http://www.sphinx-doc.org/en/stable/ext/autodoc.html#confval-autodoc_mock_importshttps://github.com/sphinx-doc/sphinx/issues/4182
 
-autodoc_mock_imports = ['pytest', 'rasterstats']
+# autodoc_mock_imports = ['pytest', 'rasterstats']
 
 # This value selects what content will be inserted into the main body of an autoclass directive.
 # The possible values are:
@@ -150,7 +156,7 @@ html_static_path = ['_static']
 # -- Options for HTMLHelp output ---------------------------------------------
 
 # Output file base name for HTML help builder.
-htmlhelp_basename = 'pyincoredoc'
+htmlhelp_basename = 'pyincorevizdoc'
 
 
 # -- Options for LaTeX output ------------------------------------------------
