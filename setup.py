@@ -8,7 +8,7 @@ from setuptools import setup, find_packages
 
 setup(
     name='pyincore-viz',
-    version='0.2.1',
+    version='0.2.2',
     packages=find_packages(where=".", exclude=["*.tests", "*.tests.*", "tests.*", "tests"]),
     include_package_data=True,
     package_data={
@@ -27,8 +27,8 @@ setup(
     # TODO need to figure out what are the dependency requirements
     install_requires=[
         "branca==0.3.1",
-        "ipyleaflet==0.12.2",
-        "ipywidgets==7.5.0",
+        "ipyleaflet>=0.12.4,<0.13",
+        "ipywidgets>=7.5.0,<7.6",
         "pandas>=0.24.1",
         "geopandas>=0.6.1",
         "rasterio>=1.1.3",

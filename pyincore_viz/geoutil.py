@@ -6,6 +6,7 @@
 
 from pathlib import Path
 
+import sys
 import contextily as ctx
 import geopandas as gpd
 import ipyleaflet as ipylft
@@ -17,6 +18,7 @@ from pyincore import Dataset
 from pyincore.dataservice import DataService
 from pyincore.hazardservice import HazardService
 from pyincore_viz import globals
+from owslib.wms import WebMapService
 
 
 class GeoUtil:
@@ -83,8 +85,7 @@ class GeoUtil:
             dataset (Dataset): pyincore Dataset object without geospatial data
             column (str): column name to be plot
             category (boolean): turn on/off category option
-            basemap (boolean): turn on/off base map (e.g. openstreetmap)            
-
+            basemap (boolean): turn on/off base map (e.g. openstreetmap)
         """
         gdf = GeoUtil.join_datasets(geodataset, dataset)
         GeoUtil.plot_gdf_map(gdf, column, category, basemap)
@@ -97,8 +98,7 @@ class GeoUtil:
             tornado_id (str):  ID of tornado hazard
             client (Client): pyincore service Client Object
             category (boolean): turn on/off category option
-            basemap (boolean): turn on/off base map (e.g. openstreetmap)            
-
+            basemap (boolean): turn on/off base map (e.g. openstreetmap)
         """
         # it needs descartes pakcage for polygon plotting
         # getting tornado dataset should be part of Tornado Hazard code
@@ -175,8 +175,8 @@ class GeoUtil:
             graph = nx.Graph()
 
         graph.add_nodes_from(node_coords.keys())
-        l = [set(x) for x in geom.edges()]
-        edg = [tuple(k for k, v in node_coords.items() if v in sl) for sl in l]
+        list = [set(x) for x in geom.edges()]
+        edg = [tuple(k for k, v in node_coords.items() if v in sl) for sl in list]
 
         graph.add_edges_from(edg)
 
@@ -236,37 +236,59 @@ class GeoUtil:
             bbox = gdf.total_bounds
             bbox_all = GeoUtil.merge_bbox(bbox_all, bbox)
 
-        cen_lat, cen_lon = (bbox_all[2] + bbox_all[0]) / \
-            2.0, (bbox_all[3] + bbox_all[1]) / 2.0
+        cen_lat, cen_lon = (bbox_all[2] + bbox_all[0]) / 2.0, (bbox_all[3] + bbox_all[1]) / 2.0
 
         # TODO: ipylft doesn't have fit bound methods, we need to find a way to zoom level to show all data
         m = ipylft.Map(center=(cen_lon, cen_lat), zoom=zoom_level, basemap=ipylft.basemaps.Stamen.Toner, crs='EPSG3857',
                        scroll_wheel_zoom=True)
-        for l in geo_data_list:
-            m.add_layer(l)
+        for entry in geo_data_list:
+            m.add_layer(entry)
 
         m.add_control(ipylft.LayersControl())
         return m
 
     @staticmethod
-    def get_wms_map(datasets: list, zoom_level, wms_url=globals.INCORE_GEOSERVER_WMS_URL):
+    def get_wms_map(datasets: list, zoom_level, wms_url=globals.INCORE_GEOSERVER_WMS_URL, layer_check=True):
         """Get a map with WMS layers from list of datasets
 
         Args:
             datasets (list): list of pyincore Dataset objects
             zoom_level (int): initial zoom level
             wmr_url (str): URL of WMS server
+            layer_check (bool): boolean for checking the layer availability in wms server
 
         Returns:
             obj: A ipylfealet Map object
 
         """
-        # TODO: how to add a style for each WMS layers (pre-defined styules on WMS server)
+        # TODO: how to add a style for each WMS layers (pre-defined styles on WMS server)
         wms_layers = []
         # (min_lat, min_lon, max_lat, max_lon)
         bbox_all = [9999, 9999, -9999, -9999]
+        # the reason for checking this layer_check on/off is that
+        # the process could take very long time based on the number of layers in geoserver.
+        # the process could be relatively faster if there are not many layers in the geoserver
+        # but the processing time could increase based upon the increase of the layers in the server
+        # by putting on/off for this layer checking, it could make the process faster.
+        if layer_check:
+            wms = WebMapService(wms_url + "?", version='1.1.1')
         for dataset in datasets:
-            wms_layer_name = 'incore:'+dataset.id
+            wms_layer_name = 'incore:' + dataset.id
+            # check availability of the wms layer
+            # TODO in here, the question is the, should this error quit whole process
+            # or just keep going and show the error message for only the layer with error
+            # if it needs to throw an error and exit the process, use following code block
+            # if layer_check:
+            #     wms[dataset.id].boundingBox
+            # else:
+            #     raise KeyError(
+            #         "Error: The layer " + str(dataset.id) + " does not exist in the wms server")
+            # if it needs to keep going with showing all the layers, use following code block
+            if layer_check:
+                try:
+                    wms[dataset.id].boundingBox
+                except KeyError:
+                    print("Error: The layer " + str(dataset.id) + " does not exist in the wms server")
             wms_layer = ipylft.WMSLayer(url=wms_url, layers=wms_layer_name,
                                         format='image/png', transparent=True, name=dataset.metadata['title'])
             wms_layers.append(wms_layer)
@@ -274,14 +296,13 @@ class GeoUtil:
             bbox = dataset.metadata['boundingBox']
             bbox_all = GeoUtil.merge_bbox(bbox_all, bbox)
 
-        cen_lat, cen_lon = (bbox_all[2] + bbox_all[0]) / \
-            2.0, (bbox_all[3] + bbox_all[1]) / 2.0
+        cen_lat, cen_lon = (bbox_all[2] + bbox_all[0]) / 2.0, (bbox_all[3] + bbox_all[1]) / 2.0
 
         # TODO: ipylft doesn't have fit bound methods, we need to find a way to zoom level to show all data
         m = ipylft.Map(center=(cen_lon, cen_lat), zoom=zoom_level,
                        basemap=ipylft.basemaps.Stamen.Toner, crs='EPSG3857', scroll_wheel_zoom=True)
-        for l in wms_layers:
-            m.add_layer(l)
+        for layer in wms_layers:
+            m.add_layer(layer)
 
         m.add_control(ipylft.LayersControl())
 
@@ -320,22 +341,21 @@ class GeoUtil:
 
         wms_layers = []
         for dataset in wms_datasets:
-            wms_layer_name = 'incore:'+dataset.id
+            wms_layer_name = 'incore:' + dataset.id
             wms_layer = ipylft.WMSLayer(url=wms_url, layers=wms_layer_name, format='image/png',
-                                        transparent=True, name=dataset.metadata['title']+'-WMS')
+                                        transparent=True, name=dataset.metadata['title'] + '-WMS')
             wms_layers.append(wms_layer)
 
             bbox = dataset.metadata['boundingBox']
             bbox_all = GeoUtil.merge_bbox(bbox_all, bbox)
 
-        cen_lat, cen_lon = (bbox_all[2] + bbox_all[0]) / \
-            2.0, (bbox_all[3] + bbox_all[1]) / 2.0
+        cen_lat, cen_lon = (bbox_all[2] + bbox_all[0]) / 2.0, (bbox_all[3] + bbox_all[1]) / 2.0
 
         # TODO: ipylft doesn't have fit bound methods, we need to find a way to zoom level to show all data
         m = ipylft.Map(center=(cen_lon, cen_lat), zoom=zoom_level,
                        basemap=ipylft.basemaps.Stamen.Toner, crs='EPSG3857', scroll_wheel_zoom=True)
-        for l in wms_layers:
-            m.add_layer(l)
+        for layer in wms_layers:
+            m.add_layer(layer)
 
         for g in geo_data_list:
             m.add_layer(g)
