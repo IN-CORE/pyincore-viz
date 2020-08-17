@@ -81,9 +81,22 @@ class CsvMapUtil:
         for temp_outfile in temp_outfiles:
             file_root, file_extension = os.path.splitext(temp_outfile)
             if file_extension.lower() == '.csv':
-                outfiles.append(temp_outfile)
+                filename = os.path.join(path_to_data, temp_outfile)
+                data = pd.read_csv(filename, dtype=str)
+                try:
+                    data[temp_outfile] = data[column_name].astype(float)
+                    outfiles.append(temp_outfile)
+                except KeyError as err:
+                    print("Skipping " + filename +
+                          ", Given column name does not exist or the column is not number.")
+
         csv_index = 0
         data = None
+
+        if len(outfiles) == 0:
+            print("There is no csv files with give field with numeric value.")
+            exit(1)
+
         for i, file in enumerate(outfiles):
             filename = os.path.join(path_to_data, file)
             if csv_index == 0:
