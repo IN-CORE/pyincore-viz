@@ -14,7 +14,3 @@ INCORE_GEOSERVER_WMS_URL = "https://incore-geoserver.ncsa.illinois.edu/geoserver
 INCORE_GEOSERVER_DEV_WMS_URL = "https://incore-dev-kube.ncsa.illinois.edu/geoserver/incore/wms"
 
 PYINCORE_VIZ_ROOT_FOLDER = os.path.dirname(os.path.dirname(__file__))
-
-LOGGING_CONFIG = os.path.abspath(os.path.join(os.path.abspath(os.path.dirname(__file__)), 'logging.ini'))
-logging_config.fileConfig(LOGGING_CONFIG)
-LOGGER = logging.getLogger('pyincore-viz')
