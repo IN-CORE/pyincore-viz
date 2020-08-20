@@ -46,6 +46,7 @@ class CsvMapUtil:
 
         return CsvMapUtil.csvmap
 
+    @staticmethod
     def create_basemap_ipylft(geo_dataframe):
         """Creates map window with given inventory with multiple csv file using folder location
 
@@ -63,6 +64,7 @@ class CsvMapUtil:
 
         return m
 
+    @staticmethod
     def load_all_data(path_to_data, column_name):
         """Loading in all data in output path
 
@@ -118,6 +120,7 @@ class CsvMapUtil:
 
         return data, outfiles
 
+    @staticmethod
     def merge_inventory_data(data, data_df):
         """Merge two DataFrames as one
 
@@ -134,6 +137,7 @@ class CsvMapUtil:
 
         return data_df
 
+    @staticmethod
     def create_map_widgets(outfiles):
         """Create and add map widgets into csv map
 
@@ -158,6 +162,7 @@ class CsvMapUtil:
         # CsvMapUtil.csvmap.add_control(file_control2)      # use the line when it needs to have extra dropdown
         CsvMapUtil.csvmap.add_control(file_control1)
 
+    @staticmethod
     def on_button_clicked(b):
         """button click action for csv map
 
@@ -171,6 +176,7 @@ class CsvMapUtil:
         CsvMapUtil.create_choropleth_layer(key)
         print('\n')
 
+    @staticmethod
     def create_choropleth_layer(key):
         """add choropleth layer to csv map
 
