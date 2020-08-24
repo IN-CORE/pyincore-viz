@@ -23,7 +23,8 @@ import sys
 sys.path.insert(0, os.path.abspath('.'))
 sys.path.insert(0, os.path.abspath('../..'))
 sys.path.insert(0, os.path.abspath('../../pyincore_viz'))
-sys.path.insert(0, os.path.abspath('../../docs'))
+sys.path.insert(0, os.path.abspath('../../tests'))
+sys.path.insert(0, os.path.abspath('examples'))
 
 # -- Project information -----------------------------------------------------
 
@@ -47,7 +48,7 @@ release = '0.2.2'
 # ones.
 extensions = ['sphinx.ext.autodoc',
               'sphinx.ext.intersphinx',
-              'recommonmark',
+              'nbsphinx',
               # 'sphinx.ext.viewcode',
               'sphinx_rtd_theme',
               'sphinx.ext.ifconfig',
@@ -60,11 +61,7 @@ templates_path = ['_templates']
 # The suffix(es) of source filenames.
 # You can specify multiple suffix as a list of string:
 #
-source_suffix = {
-    '.rst': 'restructuredtext',
-    '.txt': 'markdown',
-    '.md': 'markdown',
-}
+source_suffix = ['.rst', '.md']
 
 # The master toctree document.
 master_doc = 'index'
@@ -95,7 +92,7 @@ pygments_style = 'sphinx'
 # See also:
 # http://www.sphinx-doc.org/en/stable/ext/autodoc.html#confval-autodoc_mock_importshttps://github.com/sphinx-doc/sphinx/issues/4182
 
-# autodoc_mock_imports = ['pytest', 'rasterstats']
+autodoc_mock_imports = ['pytest', 'rasterstats']
 
 # This value selects what content will be inserted into the main body of an autoclass directive.
 # The possible values are:
@@ -140,7 +137,7 @@ html_theme_options = {
 # Add any paths that contain custom static files (such as style sheets) here,
 # relative to this directory. They are copied after the builtin static files,
 # so a file named "default.css" will overwrite the builtin "default.css".
-html_static_path = ['_static']
+html_static_path = []
 
 # Custom sidebar templates, must be a dictionary that maps document names
 # to template names.

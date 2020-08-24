@@ -15,5 +15,6 @@ To **update** pyIncore_viz run the following command:
    :caption: Table of Contents
    :name: mastertoc
 
-   mod_top
+   modules
+   Examples <examples/viz_example>
    refs

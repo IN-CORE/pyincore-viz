@@ -54,11 +54,13 @@ folder (called `pyincore_viz` here) and activate it:
     ```
     conda install sphinx
     conda install sphinx_rtd_theme
+    conda install -c conda-forge nbsphinx
     ```
     or (global install for all users drop the --user flag)
     ```
     python3 -m pip install sphinx --user
     python3 -m pip install sphinx_rtd_theme --user
+    python3 -m pip install nbsphinx --user
     ```   
 
 4. From the terminal at the project folder (**pyincore/docs**) run: 
