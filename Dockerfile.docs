@@ -3,37 +3,41 @@
 # ----------------------------------------------------------------------
 FROM python:3.7-slim AS builder
 
-RUN apt-get -y update
+RUN apt-get -y update && apt-get install -y wget
 RUN apt install -y -qq python3-pip
 
 # ----------------------------------------------------------------------
-# Compiling pyincore
+# Getting and installing pyIncore
 # ----------------------------------------------------------------------
-# Install GDAL dependencies
-RUN apt-get install -y libgdal-dev
-# Update C env vars so compiler can find gdal
-ENV CPLUS_INCLUDE_PATH=/usr/include/gdal
-ENV C_INCLUDE_PATH=/usr/include/gdal
-# This will install latest version of GDAL
-RUN pip3 install GDAL==2.4.2
+# install miniconda
+RUN wget --quiet https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh -O ~/miniconda.sh && \
+    /bin/bash ~/miniconda.sh -b -p /opt/conda && \
+    rm ~/miniconda.sh && \
+    ln -s /opt/conda/etc/profile.d/conda.sh /etc/profile.d/conda.sh && \
+    echo ". /opt/conda/etc/profile.d/conda.sh" >> ~/.bashrc && \
+    echo "conda activate base" >> ~/.bashrc
+ENV PATH /opt/conda/bin:$PATH
+RUN conda update --all && conda --version
 
-# Install libspatialindex for Rtree, a ctypes Python wrapper of libspatialindex
-RUN apt-get install -y libspatialindex-dev
+# install the pyIncore package
+RUN conda config --add channels conda-forge
+RUN conda install -c in-core pyincore
 
-# create and install the pyincore package
+# ----------------------------------------------------------------------
+# install pyIncore viz
+# ----------------------------------------------------------------------
 COPY . /pyincore_viz_app
 WORKDIR /pyincore_viz_app/
 
-# RUN python3 setup.py install
-RUN python3 setup.py sdist bdist_wheel
-RUN pip3 install dist/pyincore-*.whl
+RUN python3 setup.py install
 
 # ----------------------------------------------------------------------
 # Compiling documentation
 # ----------------------------------------------------------------------
-RUN pip3 install -U sphinx && pip3 install -U sphinx_rtd_theme
+RUN conda install sphinx && conda install sphinx_rtd_theme
+RUN conda install -c conda-forge nbsphinx
 
-WORKDIR /pyincore_app/docs/
+WORKDIR /pyincore_viz_app/docs/
 # do not use default make-mode: --no-use-make-mode (-M)
 RUN sphinx-build -M html "source" "build"
 

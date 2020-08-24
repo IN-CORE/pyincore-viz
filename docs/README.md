@@ -9,7 +9,7 @@ repository.
 
 ### Building and running Sphinx in Docker container
 
-Install [Docker Desktop](https://www.docker.com/) for your OS and change directory to your local branch `pyincore_viz/docs` folder (one with Dockerfile).
+Install [Docker Desktop](https://www.docker.com/) for your OS and change directory to your local branch `pyincore_viz` folder (one with Dockerfile).
 
 1. Build container
     ```
