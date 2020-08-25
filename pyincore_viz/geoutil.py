@@ -6,6 +6,7 @@
 
 from pathlib import Path
 
+import os
 import contextily as ctx
 import geopandas as gpd
 import ipyleaflet as ipylft
@@ -22,6 +23,7 @@ from owslib.wms import WebMapService
 from pyincore_viz.csvmaputil import CsvMapUtil
 
 logger = globals.LOGGER
+
 
 class GeoUtil:
     """Utility methods for Geospatial Visualization"""

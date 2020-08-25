@@ -16,6 +16,7 @@ from pyincore import globals
 
 logger = globals.LOGGER
 
+
 class CsvMapUtil:
     """Utility methods for creating csv directory based map"""
     csvmap = None
@@ -92,7 +93,7 @@ class CsvMapUtil:
                     outfiles.append(temp_outfile)
                 except KeyError as err:
                     logger.debug("Skipping " + filename +
-                          ", Given column name does not exist or the column is not number.")
+                                 ", Given column name does not exist or the column is not number.")
 
         csv_index = 0
         data = None
