@@ -12,7 +12,9 @@ import pandas as pd
 
 from branca.colormap import linear
 from pyincore_viz.plotutil import PlotUtil
+from pyincore import globals
 
+logger = globals.LOGGER
 
 class CsvMapUtil:
     """Utility methods for creating csv directory based map"""
@@ -89,14 +91,14 @@ class CsvMapUtil:
                     data[temp_outfile] = data[column_name].astype(float)
                     outfiles.append(temp_outfile)
                 except KeyError as err:
-                    print("Skipping " + filename +
+                    logger.debug("Skipping " + filename +
                           ", Given column name does not exist or the column is not number.")
 
         csv_index = 0
         data = None
 
         if len(outfiles) == 0:
-            print("There is no csv files with give field with numeric value.")
+            logger.error("There is no csv files with give field with numeric value.")
             exit(1)
 
         for i, file in enumerate(outfiles):
@@ -107,8 +109,8 @@ class CsvMapUtil:
                 try:
                     data[file] = data[column_name].astype(float)
                 except KeyError as err:
-                    print(err, "Error!, Given colum name does not exist or the column is not number.")
-                    print("Failed to load the dataset csv file. Process aborted")
+                    logger.error(err, "Error!, Given colum name does not exist or the column is not number.")
+                    logger.error("Failed to load the dataset csv file. Process aborted")
                     exit(1)
                 data = data[['guid', file]]
             else:
@@ -171,10 +173,10 @@ class CsvMapUtil:
 
         """
         # def on_button_clicked(b, csv_dir_map_dropdown, inventory_df, inventory_json):
-        print('Loading: ', CsvMapUtil.csv_dir_map_dropdown.value)
+        logger.info('Loading: ', CsvMapUtil.csv_dir_map_dropdown.value)
         key = CsvMapUtil.csv_dir_map_dropdown.value
         CsvMapUtil.create_choropleth_layer(key)
-        print('\n')
+        logger.info('\n')
 
     @staticmethod
     def create_choropleth_layer(key):
@@ -195,7 +197,7 @@ class CsvMapUtil:
                                   name='CSV map')
         CsvMapUtil.csvmap.add_layer(layer)
 
-        print('Done loading layer.')
+        logger.info('Done loading layer.')
 
     # TODO the following method for adding layer should be added in the future
     # def create_legend(self):

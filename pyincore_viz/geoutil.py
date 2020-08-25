@@ -21,6 +21,7 @@ from pyincore_viz import globals
 from owslib.wms import WebMapService
 from pyincore_viz.csvmaputil import CsvMapUtil
 
+logger = globals.LOGGER
 
 class GeoUtil:
     """Utility methods for Geospatial Visualization"""
@@ -289,7 +290,7 @@ class GeoUtil:
                 try:
                     wms[dataset.id].boundingBox
                 except KeyError:
-                    print("Error: The layer " + str(dataset.id) + " does not exist in the wms server")
+                    logger.error("Error: The layer " + str(dataset.id) + " does not exist in the wms server")
             wms_layer = ipylft.WMSLayer(url=wms_url, layers=wms_layer_name,
                                         format='image/png', transparent=True, name=dataset.metadata['title'])
             wms_layers.append(wms_layer)
