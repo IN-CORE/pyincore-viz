@@ -173,10 +173,10 @@ class CsvMapUtil:
 
         """
         # def on_button_clicked(b, csv_dir_map_dropdown, inventory_df, inventory_json):
-        logger.info('Loading: ', CsvMapUtil.csv_dir_map_dropdown.value)
+        print('Loading: ', CsvMapUtil.csv_dir_map_dropdown.value)
         key = CsvMapUtil.csv_dir_map_dropdown.value
         CsvMapUtil.create_choropleth_layer(key)
-        logger.info('\n')
+        print('\n')
 
     @staticmethod
     def create_choropleth_layer(key):
@@ -197,7 +197,7 @@ class CsvMapUtil:
                                   name='CSV map')
         CsvMapUtil.csvmap.add_layer(layer)
 
-        logger.info('Done loading layer.')
+        print('Done loading layer.')
 
     # TODO the following method for adding layer should be added in the future
     # def create_legend(self):
