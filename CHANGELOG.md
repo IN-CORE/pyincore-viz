@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ## [Unreleased]
 ### Added
 - CSV file mapping tool using the csv files in given folder. [INCORE1-506](https://opensource.ncsa.illinois.edu/jira/browse/INCORE1-506)
+- Network dataset mapping method. [INCORE1-602](https://opensource.ncsa.illinois.edu/jira/browse/INCORE1-602) 
 
 ## [0.2.2] - 2020-07-31
 ### Added

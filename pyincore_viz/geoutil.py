@@ -6,6 +6,7 @@
 
 from pathlib import Path
 
+import os
 import contextily as ctx
 import geopandas as gpd
 import ipyleaflet as ipylft
@@ -381,3 +382,47 @@ class GeoUtil:
         csvmap = CsvMapUtil.generate_map_csv_from_dir(inventory_dataset, column, file_path)
 
         return csvmap
+
+    @staticmethod
+    def plot_network_dataset(dataset_id, client, zoom_level=10):
+        network_dataset = Dataset.from_data_service(dataset_id, DataService(client))
+        local_path = network_dataset.local_file_path
+
+        # get link file name path
+        link_file_name = network_dataset.metadata['networkDataset']['link']['fileName']
+        link_path = os.path.join(local_path, link_file_name)
+
+        # get node file name path
+        node_file_name = network_dataset.metadata['networkDataset']['node']['fileName']
+        node_path = os.path.join(local_path, node_file_name)
+
+        node_gdf = gpd.read_file(node_path)
+
+        link_gdf = gpd.read_file(link_path)
+
+        geo_data_list = []
+        # (min_lat, min_lon, max_lat, max_lon)
+        bbox_all = [9999, 9999, -9999, -9999]
+
+        # add node data to list
+        node_geo_data = ipylft.GeoData(geo_dataframe=node_gdf, name=node_file_name)
+        geo_data_list.append(node_geo_data)
+
+        # add link data to list
+        link_geo_data = ipylft.GeoData(geo_dataframe=link_gdf, name=link_file_name)
+        geo_data_list.append(link_geo_data)
+
+        bbox = link_gdf.total_bounds
+        bbox_all = GeoUtil.merge_bbox(bbox_all, bbox)
+
+        cen_lat, cen_lon = (bbox_all[2] + bbox_all[0]) / 2.0, (bbox_all[3] + bbox_all[1]) / 2.0
+
+        # TODO: ipylft doesn't have fit bound methods, we need to find a way to zoom level to show all data
+        m = ipylft.Map(center=(cen_lon, cen_lat), zoom=zoom_level, basemap=ipylft.basemaps.Stamen.Toner, crs='EPSG3857',
+                       scroll_wheel_zoom=True)
+        for entry in geo_data_list:
+            m.add_layer(entry)
+
+        m.add_control(ipylft.LayersControl())
+
+        return m
