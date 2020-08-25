@@ -290,7 +290,7 @@ class GeoUtil:
                 try:
                     wms[dataset.id].boundingBox
                 except KeyError:
-                    logger.error("Error: The layer " + str(dataset.id) + " does not exist in the wms server")
+                    print("Error: The layer " + str(dataset.id) + " does not exist in the wms server")
             wms_layer = ipylft.WMSLayer(url=wms_url, layers=wms_layer_name,
                                         format='image/png', transparent=True, name=dataset.metadata['title'])
             wms_layers.append(wms_layer)

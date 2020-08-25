@@ -98,7 +98,7 @@ class CsvMapUtil:
         data = None
 
         if len(outfiles) == 0:
-            logger.error("There is no csv files with give field with numeric value.")
+            print("There is no csv files with give field with numeric value.")
             exit(1)
 
         for i, file in enumerate(outfiles):
@@ -109,8 +109,8 @@ class CsvMapUtil:
                 try:
                     data[file] = data[column_name].astype(float)
                 except KeyError as err:
-                    logger.error(err, "Error!, Given colum name does not exist or the column is not number.")
-                    logger.error("Failed to load the dataset csv file. Process aborted")
+                    print(err, "Error!, Given colum name does not exist or the column is not number.")
+                    print("Failed to load the dataset csv file. Process aborted")
                     exit(1)
                 data = data[['guid', file]]
             else:
