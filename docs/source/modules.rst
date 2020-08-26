@@ -1,6 +1,11 @@
 pyincore_viz
 ^^^^^^^^^^^^
 
+csvmaputil
+==========
+..  autoclass:: csvmaputil.CsvMapUtil
+    :members:
+
 geoutil
 =======
 ..  autoclass:: geoutil.GeoUtil

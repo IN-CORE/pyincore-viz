@@ -24,7 +24,6 @@ sys.path.insert(0, os.path.abspath('.'))
 sys.path.insert(0, os.path.abspath('../..'))
 sys.path.insert(0, os.path.abspath('../../pyincore_viz'))
 sys.path.insert(0, os.path.abspath('../../tests'))
-sys.path.insert(0, os.path.abspath('examples'))
 
 # -- Project information -----------------------------------------------------
 
@@ -48,7 +47,7 @@ release = '0.2.2'
 # ones.
 extensions = ['sphinx.ext.autodoc',
               'sphinx.ext.intersphinx',
-              'nbsphinx',
+              # 'nbsphinx',
               # 'sphinx.ext.viewcode',
               'sphinx_rtd_theme',
               'sphinx.ext.ifconfig',
@@ -79,7 +78,7 @@ language = None
 exclude_patterns = ['_build', '**.ipynb_checkpoints']
 
 # Disable notebook execution, nbsphinx not to execute
-nbsphinx_execute = 'never'
+# nbsphinx_execute = 'never'
 
 # The name of the Pygments (syntax highlighting) style to use.
 pygments_style = 'sphinx'

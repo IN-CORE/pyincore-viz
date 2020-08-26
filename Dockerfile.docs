@@ -35,7 +35,6 @@ RUN python3 setup.py install
 # Compiling documentation
 # ----------------------------------------------------------------------
 RUN conda install sphinx && conda install sphinx_rtd_theme
-RUN conda install -c conda-forge nbsphinx
 
 WORKDIR /pyincore_viz_app/docs/
 # do not use default make-mode: --no-use-make-mode (-M)

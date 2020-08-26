@@ -6,7 +6,6 @@
 
 from pathlib import Path
 
-import sys
 import contextily as ctx
 import geopandas as gpd
 import ipyleaflet as ipylft
@@ -14,11 +13,13 @@ import matplotlib.pyplot as plt
 import networkx as nx
 import rasterio
 import rasterio.plot
+
 from pyincore import Dataset
 from pyincore.dataservice import DataService
 from pyincore.hazardservice import HazardService
 from pyincore_viz import globals
 from owslib.wms import WebMapService
+from pyincore_viz.csvmaputil import CsvMapUtil
 
 
 class GeoUtil:
@@ -363,3 +364,20 @@ class GeoUtil:
         m.add_control(ipylft.LayersControl())
 
         return m
+
+    @staticmethod
+    def map_csv_from_dir(inventory_dataset, column, file_path):
+        """Creates map window with given inventory with multiple csv files using folder location
+
+        Args:
+            inventory_dataset (Dataset):  pyincore inventory Dataset object
+            column (str): column name to use for the mapping visualization
+            file_path (str): file path that contains csv files
+
+        Returns:
+            csvmap (ipyleaflet.Map): ipyleaflet Map object
+
+        """
+        csvmap = CsvMapUtil.generate_map_csv_from_dir(inventory_dataset, column, file_path)
+
+        return csvmap
