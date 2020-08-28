@@ -23,6 +23,8 @@ from pyincore_viz import globals
 from owslib.wms import WebMapService
 from pyincore_viz.csvmaputil import CsvMapUtil
 
+logger = globals.LOGGER
+
 
 class GeoUtil:
     """Utility methods for Geospatial Visualization"""

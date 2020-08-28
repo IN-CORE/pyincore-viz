@@ -12,6 +12,9 @@ import pandas as pd
 
 from branca.colormap import linear
 from pyincore_viz.plotutil import PlotUtil
+from pyincore import globals
+
+logger = globals.LOGGER
 
 
 class CsvMapUtil:
@@ -89,8 +92,8 @@ class CsvMapUtil:
                     data[temp_outfile] = data[column_name].astype(float)
                     outfiles.append(temp_outfile)
                 except KeyError as err:
-                    print("Skipping " + filename +
-                          ", Given column name does not exist or the column is not number.")
+                    logger.debug("Skipping " + filename +
+                                 ", Given column name does not exist or the column is not number.")
 
         csv_index = 0
         data = None
