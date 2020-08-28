@@ -5,6 +5,7 @@ from pyincore.dataservice import DataService
 from pyincore.hazardservice import HazardService
 from pyincore_viz.geoutil import GeoUtil as viz
 from pyincore import Dataset
+from pyincore import NetworkDataset
 
 from pyincore.globals import INCORE_API_DEV_URL
 
@@ -39,7 +40,9 @@ viz.get_gdf_map([sh_bldg_inv, sh_road], zoom_level=10)
 viz.get_gdf_wms_map([sh_bldg_inv], [sh_road], zoom_level=10)
 
 # visualize network dataset
-viz.plot_network_dataset(centerville_epn_network_id, client, 12)
+dataset = Dataset.from_data_service(centerville_epn_network_id, DataService(client))
+network_dataset = NetworkDataset(dataset)
+viz.plot_network_dataset(network_dataset, 12)
 
 # visualize tornado
 viz.plot_tornado(tornado_hazard_id, client, basemap=False)

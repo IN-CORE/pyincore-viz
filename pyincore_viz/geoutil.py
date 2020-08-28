@@ -16,6 +16,7 @@ import rasterio
 import rasterio.plot
 
 from pyincore import Dataset
+from pyincore import NetworkDataset
 from pyincore.dataservice import DataService
 from pyincore.hazardservice import HazardService
 from pyincore_viz import globals
@@ -384,20 +385,28 @@ class GeoUtil:
         return csvmap
 
     @staticmethod
-    def plot_network_dataset(dataset_id, client, zoom_level=10):
-        network_dataset = Dataset.from_data_service(dataset_id, DataService(client))
-        local_path = network_dataset.local_file_path
+    # def plot_network_dataset(dataset_id, client, zoom_level=10):
+    def plot_network_dataset(network_dataset: NetworkDataset, zoom_level=10):
+        """Creates map window with Network Dataset visualized
 
-        # get link file name path
-        link_file_name = network_dataset.metadata['networkDataset']['link']['fileName']
-        link_path = os.path.join(local_path, link_file_name)
+        Args:
+            network_dataset (NetworkDataset):  pyincore Network Dataset object
+            zoom_level (int): zoom level indicator value for mapping
+
+        Returns:
+            m (ipyleaflet.Map): ipyleaflet Map object
+
+        """
+        # get node file name path
+        link_path = network_dataset.link.file_path
+        link_file_name = os.path.basename(link_path)
 
         # get node file name path
-        node_file_name = network_dataset.metadata['networkDataset']['node']['fileName']
-        node_path = os.path.join(local_path, node_file_name)
+        node_path = network_dataset.node.file_path
+        node_file_name = os.path.basename(node_path)
 
+        # read file using geopandas
         node_gdf = gpd.read_file(node_path)
-
         link_gdf = gpd.read_file(link_path)
 
         geo_data_list = []
