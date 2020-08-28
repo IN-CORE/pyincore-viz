@@ -387,7 +387,6 @@ class GeoUtil:
         return csvmap
 
     @staticmethod
-    # def plot_network_dataset(dataset_id, client, zoom_level=10):
     def plot_network_dataset(network_dataset: NetworkDataset, zoom_level=10):
         """Creates map window with Network Dataset visualized
 
