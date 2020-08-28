@@ -6,7 +6,6 @@
 
 from pathlib import Path
 
-import os
 import contextily as ctx
 import geopandas as gpd
 import ipyleaflet as ipylft
