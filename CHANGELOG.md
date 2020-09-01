@@ -9,6 +9,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Added
 - CSV file mapping tool using the csv files in given folder. [INCORE1-506](https://opensource.ncsa.illinois.edu/jira/browse/INCORE1-506)
 - documentation, links, docker script [INCORE1-654](https://opensource.ncsa.illinois.edu/jira/browse/INCORE1-654)
+- Network dataset mapping method. [INCORE1-602](https://opensource.ncsa.illinois.edu/jira/browse/INCORE1-602) 
+- Logger for log reporting. [INCORE1-748](https://opensource.ncsa.illinois.edu/jira/browse/INCORE1-748)
 
 ## [0.2.2] - 2020-07-31
 ### Added
