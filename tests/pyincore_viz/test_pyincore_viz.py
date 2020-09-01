@@ -1,14 +1,14 @@
 import os
-# Connect to IN-CORE Services
+
 from pyincore import IncoreClient
 from pyincore.dataservice import DataService
 from pyincore.hazardservice import HazardService
 from pyincore_viz.geoutil import GeoUtil as viz
 from pyincore import Dataset
 from pyincore import NetworkDataset
-
 from pyincore.globals import INCORE_API_DEV_URL
 
+# Connect to IN-CORE Services
 client = IncoreClient(INCORE_API_DEV_URL)
 
 # testing datasets

@@ -259,7 +259,7 @@ class GeoUtil:
         Args:
             datasets (list): list of pyincore Dataset objects
             zoom_level (int): initial zoom level
-            wmr_url (str): URL of WMS server
+            wms_url (str): URL of WMS server
             layer_check (bool): boolean for checking the layer availability in wms server
 
         Returns:
@@ -321,7 +321,7 @@ class GeoUtil:
             datasets (list): list of pyincore Dataset objects
             wms_datasets (list): list of pyincore Dataset objects for wms layers
             zoom_level (int): initial zoom level
-            wmr_url (str): URL of WMS server
+            wms_url (str): URL of WMS server
 
         Returns:
             obj: A ipylfealet Map object
