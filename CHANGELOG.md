@@ -5,9 +5,8 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
-## [Unreleased]
+## [0.2.3] - 2020-09-03
 ### Added
-- CSV file mapping tool using the csv files in given folder. [INCORE1-506](https://opensource.ncsa.illinois.edu/jira/browse/INCORE1-506)
 - documentation, links, docker script [INCORE1-654](https://opensource.ncsa.illinois.edu/jira/browse/INCORE1-654)
 - Network dataset mapping method. [INCORE1-602](https://opensource.ncsa.illinois.edu/jira/browse/INCORE1-602) 
 - Logger for log reporting. [INCORE1-748](https://opensource.ncsa.illinois.edu/jira/browse/INCORE1-748)
