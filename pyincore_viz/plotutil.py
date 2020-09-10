@@ -107,15 +107,14 @@ class PlotUtil:
         # Assumption from Ergo BuildingLowPeriodSolver
         cutoff_period = 0.87
 
-        x = numpy.linespace(0.001, 0.999, 200)
+        x = numpy.linspace(0.001, 5, 200)
         if period < cutoff_period:
             multiplier = cutoff_period - period
-            surface_eq = (math.log(x) - cutoff_period * a12_param + a11_param) \
-                         / (a13_param + a14_param * cutoff_period)
-            y = norm.cdf(surface_eq + multiplier * (math.log(x) - a21_param) / a22_param)
+            surface_eq = (numpy.log(x) - (cutoff_period * a12_param + a11_param)) / (a13_param + a14_param * cutoff_period)
+            y = norm.cdf(surface_eq + multiplier * (numpy.log(x) - a21_param) / a22_param)
         else:
             y = norm.cdf(
-                (math.log(x) - (a11_param + a12_param * period)) / (
+                (numpy.log(x) - (a11_param + a12_param * period)) / (
                         a13_param + a14_param * period))
 
         return x, y
@@ -151,6 +150,7 @@ class PlotUtil:
                 pass
             elif isinstance(curve, ParametricFragilityCurve):
                 pass
+
             elif isinstance(curve, PeriodBuildingFragilityCurve):
                 x, y = PlotUtil.get_period_building_x_y(curve.fs_param0, curve.fs_param1, curve.fs_param2,
                                                         curve.fs_param3, curve.fs_param4, curve.fs_param5)

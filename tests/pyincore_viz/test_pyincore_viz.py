@@ -77,7 +77,7 @@ def test_map_csv():
 
 
 def test_plot_fragility():
-    fragility_set = FragilityCurveSet(FragilityService(client).get_dfr3_set("5b47b2d7337d4a36187c61c9"))
+    fragility_set = FragilityCurveSet(FragilityService(client).get_dfr3_set("5b47b34e337d4a36290754a0"))
     plt = plot.get_fragility_plot(fragility_set)
     plt.savefig('test.png')
 
