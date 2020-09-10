@@ -4,11 +4,14 @@
 # terms of the Mozilla Public License v2.0 which accompanies this distribution,
 # and is available at https://www.mozilla.org/en-US/MPL/2.0/
 
+import math
+
 import geopandas as gpd
 import matplotlib.pyplot as plt
 import numpy
 import pandas as pd
-
+from pyincore import StandardFragilityCurve, PeriodStandardFragilityCurve, PeriodBuildingFragilityCurve, \
+    ConditionalStandardFragilityCurve, ParametricFragilityCurve, CustomExpressionFragilityCurve
 from scipy.stats import lognorm, norm
 
 
@@ -80,8 +83,8 @@ class PlotUtil:
         return x, y
 
     @staticmethod
-    def get_x_y(disttype: str, alpha: float, beta: float):
-        """Get arrays of x and y values.
+    def get_standard_x_y(disttype: str, alpha: float, beta: float):
+        """Get arrays of x and y values for standard fragility or period standard fragility
 
         Args:
             disttype (str):  A distribution type (log normal and normal).
@@ -100,6 +103,24 @@ class PlotUtil:
             return PlotUtil.sample_normal_cdf(alpha, beta, 200)
 
     @staticmethod
+    def get_period_building_x_y(a11_param, a12_param, a13_param, a14_param, a21_param, a22_param, period=0):
+        # Assumption from Ergo BuildingLowPeriodSolver
+        cutoff_period = 0.87
+
+        x = numpy.linespace(0.001, 0.999, 200)
+        if period < cutoff_period:
+            multiplier = cutoff_period - period
+            surface_eq = (math.log(x) - cutoff_period * a12_param + a11_param) \
+                         / (a13_param + a14_param * cutoff_period)
+            y = norm.cdf(surface_eq + multiplier * (math.log(x) - a21_param) / a22_param)
+        else:
+            y = norm.cdf(
+                (math.log(x) - (a11_param + a12_param * period)) / (
+                        a13_param + a14_param * period))
+
+        return x, y
+
+    @staticmethod
     def get_fragility_plot(fragility_set):
         """Get fragility plot.
 
@@ -111,12 +132,34 @@ class PlotUtil:
             collection: Plot and its style functions.
 
         """
-        for curve in fragility_set['fragilityCurves']:
-            x, y = PlotUtil.get_x_y(
-                curve['curveType'], curve['median'], curve['beta'])
-            plt.plot(x, y, label=curve['description'])
-        plt.xlabel(fragility_set['demandType'] +
-                   " (" + fragility_set['demandUnits'] + ")")
+        for curve in fragility_set.fragility_curves:
+            if isinstance(curve, CustomExpressionFragilityCurve):
+                pass
+
+            elif isinstance(curve, StandardFragilityCurve) or isinstance(curve, PeriodStandardFragilityCurve):
+                if curve.alpha_type == 'lambda':
+                    alpha = curve.alpha
+                elif curve.alpha_type == 'median':
+                    alpha = math.log(curve.alpha)
+                else:
+                    raise ValueError("The alpha type is not implemented")
+                x, y = PlotUtil.get_standard_x_y(
+                    curve.curve_type, alpha, curve.beta)
+
+
+            elif isinstance(curve, ConditionalStandardFragilityCurve):
+                pass
+            elif isinstance(curve, ParametricFragilityCurve):
+                pass
+            elif isinstance(curve, PeriodBuildingFragilityCurve):
+                x, y = PlotUtil.get_period_building_x_y(curve.fs_param0, curve.fs_param1, curve.fs_param2,
+                                                        curve.fs_param3, curve.fs_param4, curve.fs_param5)
+            else:
+                raise ValueError("This type of fragility curve is not implemented!")
+
+            plt.plot(x, y, label=curve.description)
+
+        plt.xlabel(fragility_set.demand_type + " (" + fragility_set.demand_units + ")")
         plt.legend()
 
         return plt

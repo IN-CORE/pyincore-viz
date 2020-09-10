@@ -77,6 +77,16 @@ def test_map_csv():
 
 
 def test_plot_fragility():
-    fragility_set = FragilityCurveSet(FragilityService.get_dfr3_set("5b47b2d7337d4a36187c61c9"))
+    fragility_set = FragilityCurveSet(FragilityService(client).get_dfr3_set("5b47b2d7337d4a36187c61c9"))
     plt = plot.get_fragility_plot(fragility_set)
-    plt.show()
+    plt.savefig('test.png')
+
+
+if __name__ == "__main__":
+    # comment out or remove comment to test specific feature below.
+    # test_visualize_earthquake()
+    # test_visualize_joplin_tornado_building()
+    # test_visualize_inventory()
+    # test_visualize_network()
+    # test_map_csv()
+    test_plot_fragility()
