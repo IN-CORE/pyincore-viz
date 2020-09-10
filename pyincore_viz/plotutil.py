@@ -110,7 +110,8 @@ class PlotUtil:
         x = numpy.linspace(0.001, 5, 200)
         if period < cutoff_period:
             multiplier = cutoff_period - period
-            surface_eq = (numpy.log(x) - (cutoff_period * a12_param + a11_param)) / (a13_param + a14_param * cutoff_period)
+            surface_eq = (numpy.log(x) - (cutoff_period * a12_param + a11_param)) / \
+                         (a13_param + a14_param * cutoff_period)
             y = norm.cdf(surface_eq + multiplier * (numpy.log(x) - a21_param) / a22_param)
         else:
             y = norm.cdf(
@@ -119,8 +120,39 @@ class PlotUtil:
 
         return x, y
 
+    # @staticmethod
+    # def get_custom_x_y(expression):
+    #     variables =
+    #     parser = Parser()
+    #     y = parser.parse(expression).evaluate(variables)
+
     @staticmethod
-    def get_fragility_plot(fragility_set):
+    def get_parametric_x_y(curve_type, parameters, **kwargs):
+        if curve_type.lower() == "logit":
+            y = numpy.linspace(0.001, 0.999, 200)
+            cumulate_term = 0  # X*theta'
+            A1 = 1 # coefficent for demand X
+
+            for parameter_set in parameters:
+                name = parameter_set["name"].lower()
+                coefficient = parameter_set["coefficient"]
+                default = parameter_set["interceptTermDefault"]
+                if name == "demand":
+                    A1 = 1 * coefficient
+                else:
+                    if name not in kwargs.keys():
+                        cumulate_term += default * coefficient
+                    else:
+                        cumulate_term += kwargs[name] * coefficient
+            x = numpy.exp((numpy.log(y / (1 - y)) - cumulate_term) / A1)
+
+        else:
+            raise ValueError("Other parametric functions than Logit has not been implemented yet!")
+
+        return x, y
+
+    @staticmethod
+    def get_fragility_plot(fragility_set, title=""):
         """Get fragility plot.
 
         Args:
@@ -145,11 +177,10 @@ class PlotUtil:
                 x, y = PlotUtil.get_standard_x_y(
                     curve.curve_type, alpha, curve.beta)
 
-
             elif isinstance(curve, ConditionalStandardFragilityCurve):
                 pass
             elif isinstance(curve, ParametricFragilityCurve):
-                pass
+                x, y = PlotUtil.get_parametric_x_y(curve.curve_type, curve.parameters)
 
             elif isinstance(curve, PeriodBuildingFragilityCurve):
                 x, y = PlotUtil.get_period_building_x_y(curve.fs_param0, curve.fs_param1, curve.fs_param2,
@@ -160,6 +191,7 @@ class PlotUtil:
             plt.plot(x, y, label=curve.description)
 
         plt.xlabel(fragility_set.demand_type + " (" + fragility_set.demand_units + ")")
+        plt.title(title)
         plt.legend()
 
         return plt
