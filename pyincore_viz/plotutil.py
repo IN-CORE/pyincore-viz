@@ -155,13 +155,12 @@ class PlotUtil:
 
         return x, y
 
-
     @staticmethod
     def get_parametric_x_y(curve_type, parameters, **kwargs):
         if curve_type.lower() == "logit":
             y = numpy.linspace(0.001, 0.999, 200)
             cumulate_term = 0  # X*theta'
-            A1 = 1 # coefficent for demand X
+            A1 = 1  # coefficent for demand X
 
             for parameter_set in parameters:
                 name = parameter_set["name"].lower()
@@ -195,7 +194,7 @@ class PlotUtil:
         """
         for curve in fragility_set.fragility_curves:
             if isinstance(curve, CustomExpressionFragilityCurve):
-                if curve.expression.find('x') >= 0 and curve.expression.find('y') <0:
+                if curve.expression.find('x') >= 0 and curve.expression.find('y') < 0:
                     x, y = PlotUtil.get_custom_x_y(curve.expression)
                 else:
                     raise ValueError("We are only able to plot 2d fragility curve with x as variable name for now. "
