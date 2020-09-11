@@ -101,10 +101,16 @@ def test_plot_fragility():
     # plt.savefig('parametric.png')
     # plt.clf()
 
-    # 5b47ba6f337d4a372105936f custom 2d
-    fragility_set = FragilityCurveSet(FragilityService(client).get_dfr3_set("5b47ba6f337d4a372105936f"))
-    plt = plot.get_fragility_plot(fragility_set, title="customExpression 2d fragility curve")
-    plt.savefig('customExpression.png')
+    # # 5b47ba6f337d4a372105936f custom 2d
+    # fragility_set = FragilityCurveSet(FragilityService(client).get_dfr3_set("5b47ba6f337d4a372105936f"))
+    # plt = plot.get_fragility_plot(fragility_set, title="customExpression 2d fragility curve")
+    # plt.savefig('customExpression.png')
+    # plt.clf()
+
+    # 5ed6be9a5b6166000155d0b9 custom 2d
+    fragility_set = FragilityCurveSet(FragilityService(client).get_dfr3_set("5ed6be9a5b6166000155d0b9"))
+    plt = plot.get_fragility_plot(fragility_set, title="conditional fragility curve")
+    plt.savefig('conditional.png')
     plt.clf()
 
 

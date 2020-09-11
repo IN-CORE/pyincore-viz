@@ -12,9 +12,9 @@ import numpy
 import pandas as pd
 from pyincore import StandardFragilityCurve, PeriodStandardFragilityCurve, PeriodBuildingFragilityCurve, \
     ConditionalStandardFragilityCurve, ParametricFragilityCurve, CustomExpressionFragilityCurve
+from pyincore.utils.expressioneval import Parser
 from scipy.stats import lognorm, norm
 
-from pyincore.utils.expressioneval import Parser
 
 class PlotUtil:
     """Plotting utility."""
@@ -104,11 +104,34 @@ class PlotUtil:
             return PlotUtil.sample_normal_cdf(alpha, beta, 200)
 
     @staticmethod
+    def get_conditional_x_y(rules: dict, alpha_type, alpha: list, beta: list):
+        x = numpy.linspace(0.001, 50, 200)
+        y = []
+        for i in x:
+            index = ConditionalStandardFragilityCurve._fragility_curve_rules_match(rules, i)
+            if index is not None:
+                alpha_i = float(alpha[index])
+                std_dev = 0
+                beta_i = math.sqrt(math.pow(beta[index], 2) + math.pow(std_dev, 2))
+
+                if alpha_type == 'median':
+                    sp = (math.log(i) - math.log(alpha_i)) / beta_i
+                    y.append(norm.cdf(sp))
+                elif alpha_type == "lambda":
+                    sp = (math.log(i) - alpha_i) / beta_i
+                    y.append(norm.cdf(sp))
+            else:
+                raise ValueError("No matching rule has been found in this conditonal standard fragility curve. "
+                                 "Please verify it's the right curve to use.")
+
+        return x, y
+
+    @staticmethod
     def get_period_building_x_y(a11_param, a12_param, a13_param, a14_param, a21_param, a22_param, period=0):
         # Assumption from Ergo BuildingLowPeriodSolver
         cutoff_period = 0.87
 
-        x = numpy.linspace(0.001, 5, 200)
+        x = numpy.linspace(0.001, 50, 200)
         if period < cutoff_period:
             multiplier = cutoff_period - period
             surface_eq = (numpy.log(x) - (cutoff_period * a12_param + a11_param)) / \
@@ -124,10 +147,9 @@ class PlotUtil:
     @staticmethod
     def get_custom_x_y(expression):
         parser = Parser()
-        x = []
+        x = numpy.linspace(0.001, 50, 200)
         y = []
-        for i in numpy.arange(0.001, 5.0, 0.025):
-            x.append(i)
+        for i in x:
             variables = {'x': i}
             y.append(parser.parse(expression).evaluate(variables))
 
@@ -190,7 +212,7 @@ class PlotUtil:
                     curve.curve_type, alpha, curve.beta)
 
             elif isinstance(curve, ConditionalStandardFragilityCurve):
-                pass
+                x, y = PlotUtil.get_conditional_x_y(curve.rules, curve.alpha_type, curve.alpha, curve.beta)
 
             elif isinstance(curve, ParametricFragilityCurve):
                 x, y = PlotUtil.get_parametric_x_y(curve.curve_type, curve.parameters)
