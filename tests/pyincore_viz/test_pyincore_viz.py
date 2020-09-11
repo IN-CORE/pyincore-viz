@@ -12,6 +12,8 @@ from pyincore.models.fragilitycurveset import FragilityCurveSet
 from pyincore_viz.geoutil import GeoUtil as viz
 from pyincore_viz.plotutil import PlotUtil as plot
 
+import matplotlib
+
 client = IncoreClient(INCORE_API_DEV_URL)
 
 
@@ -77,6 +79,10 @@ def test_map_csv():
 
 
 def test_plot_fragility():
+    # clean plots that are not closed/cleared
+    matplotlib.pyplot.clf()
+    matplotlib.pyplot.cla()
+
     # 5b47b2d7337d4a36187c61c9 period standard
     fragility_set = FragilityCurveSet(FragilityService(client).get_dfr3_set("5b47b2d7337d4a36187c61c9"))
     plt = plot.get_fragility_plot(fragility_set, title="period standard fragility curve")

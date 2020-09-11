@@ -131,7 +131,7 @@ class PlotUtil:
         # Assumption from Ergo BuildingLowPeriodSolver
         cutoff_period = 0.87
 
-        x = numpy.linspace(0.001, 50, 200)
+        x = numpy.linspace(0.001, 5, 200)
         if period < cutoff_period:
             multiplier = cutoff_period - period
             surface_eq = (numpy.log(x) - (cutoff_period * a12_param + a11_param)) / \
