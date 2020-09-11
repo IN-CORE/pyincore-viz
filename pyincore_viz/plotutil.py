@@ -14,6 +14,7 @@ from pyincore import StandardFragilityCurve, PeriodStandardFragilityCurve, Perio
     ConditionalStandardFragilityCurve, ParametricFragilityCurve, CustomExpressionFragilityCurve
 from scipy.stats import lognorm, norm
 
+from pyincore.utils.expressioneval import Parser
 
 class PlotUtil:
     """Plotting utility."""
@@ -120,11 +121,18 @@ class PlotUtil:
 
         return x, y
 
-    # @staticmethod
-    # def get_custom_x_y(expression):
-    #     variables =
-    #     parser = Parser()
-    #     y = parser.parse(expression).evaluate(variables)
+    @staticmethod
+    def get_custom_x_y(expression):
+        parser = Parser()
+        x = []
+        y = []
+        for i in numpy.arange(0.001, 5.0, 0.025):
+            x.append(i)
+            variables = {'x': i}
+            y.append(parser.parse(expression).evaluate(variables))
+
+        return x, y
+
 
     @staticmethod
     def get_parametric_x_y(curve_type, parameters, **kwargs):
@@ -165,7 +173,11 @@ class PlotUtil:
         """
         for curve in fragility_set.fragility_curves:
             if isinstance(curve, CustomExpressionFragilityCurve):
-                pass
+                if curve.expression.find('x') >= 0 and curve.expression.find('y') <0:
+                    x, y = PlotUtil.get_custom_x_y(curve.expression)
+                else:
+                    raise ValueError("We are only able to plot 2d fragility curve with x as variable name for now. "
+                                     "More implementation coming soon...")
 
             elif isinstance(curve, StandardFragilityCurve) or isinstance(curve, PeriodStandardFragilityCurve):
                 if curve.alpha_type == 'lambda':
@@ -179,6 +191,7 @@ class PlotUtil:
 
             elif isinstance(curve, ConditionalStandardFragilityCurve):
                 pass
+
             elif isinstance(curve, ParametricFragilityCurve):
                 x, y = PlotUtil.get_parametric_x_y(curve.curve_type, curve.parameters)
 

@@ -77,28 +77,34 @@ def test_map_csv():
 
 
 def test_plot_fragility():
-    # 5b47b2d7337d4a36187c61c9 period standard
-    fragility_set = FragilityCurveSet(FragilityService(client).get_dfr3_set("5b47b2d7337d4a36187c61c9"))
-    plt = plot.get_fragility_plot(fragility_set, title="period standard fragility curve")
-    plt.savefig('periodStandard.png')
-    plt.clf()
+    # # 5b47b2d7337d4a36187c61c9 period standard
+    # fragility_set = FragilityCurveSet(FragilityService(client).get_dfr3_set("5b47b2d7337d4a36187c61c9"))
+    # plt = plot.get_fragility_plot(fragility_set, title="period standard fragility curve")
+    # plt.savefig('periodStandard.png')
+    # plt.clf()
+    #
+    # # 5b4903c7337d4a48f7d88dcf standard
+    # fragility_set = FragilityCurveSet(FragilityService(client).get_dfr3_set("5b4903c7337d4a48f7d88dcf"))
+    # plt = plot.get_fragility_plot(fragility_set, title="standard fragility curve")
+    # plt.savefig('standard.png')
+    # plt.clf()
+    #
+    # # 5b47b34e337d4a36290754a0 period building
+    # fragility_set = FragilityCurveSet(FragilityService(client).get_dfr3_set("5b47b34e337d4a36290754a0"))
+    # plt = plot.get_fragility_plot(fragility_set, title="period building fragility curve")
+    # plt.savefig('periodBuilding.png')
+    # plt.clf()
+    #
+    # # 5ed6bfc35b6166000155d0d9 parametric
+    # fragility_set = FragilityCurveSet(FragilityService(client).get_dfr3_set("5ed6bfc35b6166000155d0d9"))
+    # plt = plot.get_fragility_plot(fragility_set, title="parametric fragility curve")
+    # plt.savefig('parametric.png')
+    # plt.clf()
 
-    # 5b4903c7337d4a48f7d88dcf standard
-    fragility_set = FragilityCurveSet(FragilityService(client).get_dfr3_set("5b4903c7337d4a48f7d88dcf"))
-    plt = plot.get_fragility_plot(fragility_set, title="standard fragility curve")
-    plt.savefig('standard.png')
-    plt.clf()
-
-    # 5b47b34e337d4a36290754a0 period building
-    fragility_set = FragilityCurveSet(FragilityService(client).get_dfr3_set("5b47b34e337d4a36290754a0"))
-    plt = plot.get_fragility_plot(fragility_set, title="period building fragility curve")
-    plt.savefig('periodBuilding.png')
-    plt.clf()
-
-    # 5ed6bfc35b6166000155d0d9 parametric
-    fragility_set = FragilityCurveSet(FragilityService(client).get_dfr3_set("5ed6bfc35b6166000155d0d9"))
-    plt = plot.get_fragility_plot(fragility_set, title="parametric fragility curve")
-    plt.savefig('parametric.png')
+    # 5b47ba6f337d4a372105936f custom 2d
+    fragility_set = FragilityCurveSet(FragilityService(client).get_dfr3_set("5b47ba6f337d4a372105936f"))
+    plt = plot.get_fragility_plot(fragility_set, title="customExpression 2d fragility curve")
+    plt.savefig('customExpression.png')
     plt.clf()
 
 
