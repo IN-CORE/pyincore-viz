@@ -6,22 +6,27 @@
 
 from pathlib import Path
 
-import os
 import contextily as ctx
 import geopandas as gpd
 import ipyleaflet as ipylft
+import ipywidgets as ipywgt
 import matplotlib.pyplot as plt
 import networkx as nx
 import rasterio
 import rasterio.plot
+import copy
+import json
 
-from pyincore import Dataset
-from pyincore import NetworkDataset
+import os
+
 from pyincore.dataservice import DataService
 from pyincore.hazardservice import HazardService
+from pyincore import Dataset
+from pyincore import NetworkDataset
 from pyincore_viz import globals
 from owslib.wms import WebMapService
-from pyincore_viz.csvmaputil import CsvMapUtil
+from pyincore_viz.plotutil import PlotUtil
+from branca.colormap import linear
 
 logger = globals.LOGGER
 
@@ -65,6 +70,9 @@ class GeoUtil:
         join_gdf = gdf.set_index("guid").join(df.set_index("guid"))
 
         return join_gdf
+
+    # @staticmethod
+    # def join_table_datasets(dataset1, dataset2):
 
     @staticmethod
     def plot_map(dataset, column, category=False, basemap=True):
@@ -370,23 +378,6 @@ class GeoUtil:
         return m
 
     @staticmethod
-    def map_csv_from_dir(inventory_dataset, column, file_path):
-        """Creates map window with given inventory with multiple csv files using folder location
-
-        Args:
-            inventory_dataset (Dataset):  pyincore inventory Dataset object
-            column (str): column name to use for the mapping visualization
-            file_path (str): file path that contains csv files
-
-        Returns:
-            csvmap (ipyleaflet.Map): ipyleaflet Map object
-
-        """
-        csvmap = CsvMapUtil.generate_map_csv_from_dir(inventory_dataset, column, file_path)
-
-        return csvmap
-
-    @staticmethod
     def plot_network_dataset(network_dataset: NetworkDataset, zoom_level=10):
         """Creates map window with Network Dataset visualized
 
@@ -436,3 +427,189 @@ class GeoUtil:
         m.add_control(ipylft.LayersControl())
 
         return m
+
+    @staticmethod
+    def plot_table_dataset(client, dataset_list=list, column=str):
+        """Creates map window with a list of table dataset and source dataset
+
+            Args:
+                client (Client): pyincore service Client Object
+                dataset_list (list): list of table dataset
+                column (str): column name to be plot
+
+            Returns:
+                GeoUtil.map (ipyleaflet.Map): ipyleaflet Map object
+
+            """
+        joined_df, dataset_id_list, dataset_title_list, source_dataset_id = \
+            GeoUtil.merge_table_dataset_with_field(dataset_list, column)
+
+        source_dataset = Dataset.from_data_service(source_dataset_id, DataService(client))
+        inventory_df = PlotUtil.inventory_to_geodataframe(source_dataset)
+        inventory_df = PlotUtil.remove_null_inventories(inventory_df, 'guid')
+
+        # create base map
+        map = GeoUtil.create_basemap_ipylft(inventory_df)
+
+        # merge inventory dataframe and joined table dataframe
+        inventory_df = inventory_df.merge(joined_df, on='guid')
+
+        # keep only necessary fields
+        keep_list = ['guid', 'geometry']
+        for dataset_id in dataset_id_list:
+            keep_list.append(dataset_id)
+        inventory_df = inventory_df[keep_list]
+        inventory_json = json.loads(inventory_df.to_json())
+
+        # set global for button click
+        GeoUtil.inventory_json = inventory_json
+        GeoUtil.map = map
+
+        GeoUtil.map = GeoUtil.create_map_widgets(dataset_id_list, GeoUtil.map, inventory_df)
+
+        return GeoUtil.map
+
+    @staticmethod
+    def merge_table_dataset_with_field(dataset_list: list, column=str):
+        """Creates pandas dataframe with all dataset in the list joined with guid and column
+
+                Args:
+                    dataset_list (list): list of table dataset
+                    column (str): column name to be plot
+
+                Returns:
+                    join_df (dataframe): pandas dataframe with all dataset joined together with guid
+                    dataset_id_list (list): list of dataset id
+                    dataset_title_list (list): list of dataset title
+                    common_source_dataset_id (str): common source dataset id from datasets
+
+                """
+        dataset_id_list = []
+        dataset_title_list = []
+        dataset_counter = 0
+        join_df = None
+        common_source_dataset_id = None
+
+        for dataset in dataset_list:
+            source_dataset_id = dataset.metadata["sourceDataset"]
+            if dataset_counter > 0:
+                if source_dataset_id != common_source_dataset_id:
+                    raise Exception("Error, there are multiple sourceDataset ids")
+            else:
+                common_source_dataset_id = copy.copy(source_dataset_id)
+
+            dataset_id = dataset.metadata["id"]
+            dataset_id_list.append(dataset_id)
+            dataset_title_list.append(dataset.metadata["title"])
+            temp_df = dataset.get_dataframe_from_csv()
+            temp_df = temp_df[['guid', column]]
+            if dataset_counter == 0:
+                join_df = copy.copy(temp_df)
+            try:
+                if dataset_counter == 0:
+                    join_df[dataset_id] = join_df[column].astype(float)
+                    join_df = join_df[['guid', dataset_id]]
+                else:
+                    temp_df[dataset_id] = temp_df[column].astype(float)
+                    temp_df = temp_df[['guid', dataset_id]]
+                    join_df = join_df.join(temp_df.set_index("guid"), on='guid')
+            except KeyError as err:
+                logger.debug("Skipping " + dataset_id +
+                             ", Given column name does not exist or the column is not number.")
+            dataset_counter += 1
+        return join_df, dataset_id_list, dataset_title_list, common_source_dataset_id
+
+    @staticmethod
+    def create_basemap_ipylft(geo_dataframe):
+        """Creates map window with given inventory with multiple table dataset file using folder location
+
+        Args:
+            geo_dataframe (DataFrame): Geopandas DataFrame object
+
+        Returns:
+            m(ipyleaflet.Map): ipyleaflet Map object
+
+        """
+        ext = geo_dataframe.total_bounds
+        cen_x, cen_y = (ext[1] + ext[3]) / 2, (ext[0] + ext[2]) / 2
+        map = ipylft.Map(center=(cen_x, cen_y), zoom=12, basemap=ipylft.basemaps.Stamen.Toner, scroll_wheel_zoom=True)
+
+        return map
+
+    @staticmethod
+    def create_map_widgets(title_list, map, inventory_df):
+        """Create and add map widgets into csv map
+
+        Args:
+            title_list (list): list of the file names in the folder
+
+        """
+        map_dropdown = ipywgt.Dropdown(description='Outputfile - 1', options=title_list, width=500)
+        file_control1 = ipylft.WidgetControl(widget=map_dropdown, position='bottomleft')
+
+        # use the following line when it needs to have another dropdown
+        # dropdown2 = ipywgt.Dropdown(description = 'Outputfile - 2', options = title_list2, width=500)
+        # file_control2 = ipylft.WidgetControl(widget=dropdown2, position='bottomleft')
+
+        button = ipywgt.Button(description='Generate Map', button_style='info')
+        button.on_click(GeoUtil.on_button_clicked)
+        map_control = ipylft.WidgetControl(widget=button, position='bottomleft')
+
+        map.add_control(ipylft.LayersControl(position='topright', style='info'))
+        map.add_control(ipylft.FullScreenControl(position='topright'))
+        map.add_control(map_control)
+        # map.add_control(file_control2)      # use the line when it needs to have extra dropdown
+        map.add_control(file_control1)
+
+        # set global for button click
+        GeoUtil.map_dropdown = map_dropdown
+        GeoUtil.inventory_df = inventory_df
+
+        return map
+
+    @staticmethod
+    def on_button_clicked(b):
+        """button click action for csv map
+
+        Args:
+            b (action): button click action for tablemap
+
+        """
+        # def on_button_clicked(b, csv_dir_map_dropdown, inventory_df, inventory_json):
+        print('Loading: ', GeoUtil.map_dropdown.value)
+        key = GeoUtil.map_dropdown.value
+        GeoUtil.create_choropleth_layer(key)
+        print('\n')
+
+    @staticmethod
+    def create_choropleth_layer(key):
+        """add choropleth layer to csv map
+
+        Args:
+            key (str): selected value from tablemap's layer selection drop down menu
+
+        """
+
+        # vmax_val = max(self.bldg_data_df[key])
+        vmax_val = 1
+        temp_id = list(range(len(GeoUtil.inventory_df['guid'])))
+        temp_id = [str(i) for i in temp_id]
+        choro_data = dict(zip(temp_id, GeoUtil.inventory_df[key]))
+        layer = ipylft.Choropleth(geo_data=GeoUtil.inventory_json, choro_data=choro_data,
+                                  colormap=linear.YlOrRd_04,
+                                  value_min=0, value_max=vmax_val, border_color='black', style={'fillOpacity': 0.8},
+                                  name='CSV map')
+        GeoUtil.map.add_layer(layer)
+
+        print('Done loading layer.')
+
+    # TODO the following method for adding layer should be added in the future
+    # def create_legend(self):
+    #     legend = linear.YlOrRd_04.scale(0, self.vmax_val)
+    #     TableDatasetMapUtil.tablemap.colormap = legend
+    #     out = ipywgt.Output(layout={'border': '1px solid black'})
+    #     with out:
+    #         display(legend)
+    #     widget_control = ipylft.WidgetControl(widget=out, position='topright')
+    #     TableDatasetMapUtil.tablemap.add_control(widget_control)
+    #     display(TableDatasetMapUtil.tablemap)
