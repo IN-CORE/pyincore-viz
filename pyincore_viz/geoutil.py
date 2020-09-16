@@ -538,7 +538,7 @@ class GeoUtil:
 
     @staticmethod
     def create_map_widgets(title_list, map, inventory_df):
-        """Create and add map widgets into csv map
+        """Create and add map widgets into map
 
         Args:
             title_list (list): list of the file names in the folder
@@ -569,13 +569,12 @@ class GeoUtil:
 
     @staticmethod
     def on_button_clicked(b):
-        """button click action for csv map
+        """button click action for map
 
         Args:
             b (action): button click action for tablemap
 
         """
-        # def on_button_clicked(b, csv_dir_map_dropdown, inventory_df, inventory_json):
         print('Loading: ', GeoUtil.map_dropdown.value)
         key = GeoUtil.map_dropdown.value
         GeoUtil.create_choropleth_layer(key)
@@ -583,7 +582,7 @@ class GeoUtil:
 
     @staticmethod
     def create_choropleth_layer(key):
-        """add choropleth layer to csv map
+        """add choropleth layer to map
 
         Args:
             key (str): selected value from tablemap's layer selection drop down menu
@@ -598,7 +597,7 @@ class GeoUtil:
         layer = ipylft.Choropleth(geo_data=GeoUtil.inventory_json, choro_data=choro_data,
                                   colormap=linear.YlOrRd_04,
                                   value_min=0, value_max=vmax_val, border_color='black', style={'fillOpacity': 0.8},
-                                  name='CSV map')
+                                  name='dataset map')
         GeoUtil.map.add_layer(layer)
 
         print('Done loading layer.')
