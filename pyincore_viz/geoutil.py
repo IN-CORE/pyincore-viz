@@ -71,9 +71,6 @@ class GeoUtil:
 
         return join_gdf
 
-    # @staticmethod
-    # def join_table_datasets(dataset1, dataset2):
-
     @staticmethod
     def plot_map(dataset, column, category=False, basemap=True):
         """Plot a map of geospatial dataset
