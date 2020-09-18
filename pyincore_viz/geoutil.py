@@ -429,20 +429,25 @@ class GeoUtil:
         return m
 
     @staticmethod
-    def plot_table_dataset(client, dataset_list=list, column=str):
+    def plot_table_dataset(client, dataset_list=list, column=str, source_dataset_id=None):
         """Creates map window with a list of table dataset and source dataset
 
             Args:
                 client (Client): pyincore service Client Object
                 dataset_list (list): list of table dataset
                 column (str): column name to be plot
+                source_dataset_id (str): source dataset id, the dafault is None
 
             Returns:
                 GeoUtil.map (ipyleaflet.Map): ipyleaflet Map object
 
             """
-        joined_df, dataset_id_list, dataset_title_list, source_dataset_id = \
-            GeoUtil.merge_table_dataset_with_field(dataset_list, column)
+        if source_dataset_id is None:
+            joined_df, dataset_id_list, source_dataset_id = \
+                GeoUtil.merge_table_dataset_with_field(dataset_list, column)
+        else:
+            joined_df, dataset_id_list, source_dataset_id = \
+                GeoUtil.merge_table_dataset_with_field(dataset_list, column, source_dataset_id)
 
         source_dataset = Dataset.from_data_service(source_dataset_id, DataService(client))
         inventory_df = PlotUtil.inventory_to_geodataframe(source_dataset)
@@ -470,12 +475,13 @@ class GeoUtil:
         return GeoUtil.map
 
     @staticmethod
-    def merge_table_dataset_with_field(dataset_list: list, column=str):
+    def merge_table_dataset_with_field(dataset_list: list, column=str, in_source_dataset_id=None):
         """Creates pandas dataframe with all dataset in the list joined with guid and column
 
                 Args:
                     dataset_list (list): list of table dataset
                     column (str): column name to be plot
+                    source_dataset (str): source dataset id, default is None
 
                 Returns:
                     join_df (dataframe): pandas dataframe with all dataset joined together with guid
@@ -485,22 +491,21 @@ class GeoUtil:
 
                 """
         dataset_id_list = []
-        dataset_title_list = []
         dataset_counter = 0
         join_df = None
         common_source_dataset_id = None
 
         for dataset in dataset_list:
-            source_dataset_id = dataset.metadata["sourceDataset"]
-            if dataset_counter > 0:
-                if source_dataset_id != common_source_dataset_id:
-                    raise Exception("Error, there are multiple sourceDataset ids")
-            else:
-                common_source_dataset_id = copy.copy(source_dataset_id)
+            if in_source_dataset_id is  None:
+                source_dataset_id = dataset.metadata["sourceDataset"]
+                if dataset_counter > 0:
+                    if source_dataset_id != common_source_dataset_id:
+                        raise Exception("Error, there are multiple sourceDataset ids")
+                else:
+                    common_source_dataset_id = copy.copy(source_dataset_id)
 
             dataset_id = dataset.metadata["id"]
             dataset_id_list.append(dataset_id)
-            dataset_title_list.append(dataset.metadata["title"])
             temp_df = dataset.get_dataframe_from_csv()
             temp_df = temp_df[['guid', column]]
             if dataset_counter == 0:
@@ -517,7 +522,11 @@ class GeoUtil:
                 logger.debug("Skipping " + dataset_id +
                              ", Given column name does not exist or the column is not number.")
             dataset_counter += 1
-        return join_df, dataset_id_list, dataset_title_list, common_source_dataset_id
+
+        if in_source_dataset_id is not None:
+            common_source_dataset_id = in_source_dataset_id
+
+        return join_df, dataset_id_list, common_source_dataset_id
 
     @staticmethod
     def create_basemap_ipylft(geo_dataframe):
@@ -612,3 +621,41 @@ class GeoUtil:
     #     widget_control = ipylft.WidgetControl(widget=out, position='topright')
     #     TableDatasetMapUtil.tablemap.add_control(widget_control)
     #     display(TableDatasetMapUtil.tablemap)
+
+if __name__ == "__main__":
+    import os
+
+    from pyincore import IncoreClient
+    from pyincore.dataservice import DataService
+    from pyincore.hazardservice import HazardService
+    from pyincore import Dataset
+    from pyincore import NetworkDataset
+
+    # Connect to IN-CORE Services
+    client = IncoreClient("https://incore-dev-kube.ncsa.illinois.edu")
+    dataset_id_list = ["5a296b53c7d30d4af5378cd5",
+                       "5a296e1fc7d30d4af53798ae",
+                       "5a2975d5c7d30d4af537a9fd",
+                       "5a29782fc7d30d4af537ace5"]
+
+    # visualize network dataset
+    dataset_list = []
+    for dataset_id in dataset_id_list:
+        dataset = Dataset.from_data_service(dataset_id, DataService(client))
+        dataset_list.append(dataset)
+    GeoUtil.plot_table_dataset(client, dataset_list, "meandamage")
+
+    # import os
+    #
+    # from pyincore import IncoreClient
+    # from pyincore.dataservice import DataService
+    # from pyincore.hazardservice import HazardService
+    # from pyincore import Dataset
+    # from pyincore import NetworkDataset
+    # # csv directory map using seaside building inventory
+    # client = IncoreClient("https://incore-dev-kube.ncsa.illinois.edu")
+    #
+    # seaside_bldg_id = "5f2b1354f3e24203f9f60026"  # defining building dataset (GIS point layer)
+    # seaside_bldg_inv = Dataset.from_data_service(seaside_bldg_id, DataService(client))
+    # csv_dir = os.path.join("examples", "seaside_bldg_dmg_output_csv")
+    # csv_dir_map = GeoUtil.map_csv_from_dir(seaside_bldg_inv, column='failure_probability', file_path=csv_dir)
