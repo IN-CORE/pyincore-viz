@@ -181,7 +181,7 @@ class PlotUtil:
         return x, y
 
     @staticmethod
-    def get_fragility_plot(fragility_set, title=""):
+    def get_fragility_plot(fragility_set, title=None):
         """Get fragility plot.
 
         Args:
@@ -225,6 +225,9 @@ class PlotUtil:
             plt.plot(x, y, label=curve.description)
 
         plt.xlabel(fragility_set.demand_type + " (" + fragility_set.demand_units + ")")
+        if title is None:
+            title = fragility_set.description
+
         plt.title(title)
         plt.legend()
 
