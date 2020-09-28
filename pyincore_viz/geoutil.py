@@ -14,14 +14,16 @@ import matplotlib.pyplot as plt
 import networkx as nx
 import rasterio
 import rasterio.plot
+import gdal
 
+from gdalconst import GA_ReadOnly
 from pyincore import Dataset
 from pyincore import NetworkDataset
 from pyincore.dataservice import DataService
 from pyincore.hazardservice import HazardService
 from pyincore_viz import globals
 from owslib.wms import WebMapService
-from pyincore_viz.csvmaputil import CsvMapUtil
+from ipyleaflet import ImageOverlay
 
 logger = globals.LOGGER
 
@@ -370,23 +372,6 @@ class GeoUtil:
         return m
 
     @staticmethod
-    def map_csv_from_dir(inventory_dataset, column, file_path):
-        """Creates map window with given inventory with multiple csv files using folder location
-
-        Args:
-            inventory_dataset (Dataset):  pyincore inventory Dataset object
-            column (str): column name to use for the mapping visualization
-            file_path (str): file path that contains csv files
-
-        Returns:
-            csvmap (ipyleaflet.Map): ipyleaflet Map object
-
-        """
-        csvmap = CsvMapUtil.generate_map_csv_from_dir(inventory_dataset, column, file_path)
-
-        return csvmap
-
-    @staticmethod
     def plot_network_dataset(network_dataset: NetworkDataset, zoom_level=10):
         """Creates map window with Network Dataset visualized
 
@@ -436,3 +421,45 @@ class GeoUtil:
         m.add_control(ipylft.LayersControl())
 
         return m
+
+    @staticmethod
+    def plot_raster_from_path(input_path, zoom_level=10):
+        """Creates map window with local raster dataset visualized
+
+            Args:
+                input_path (str):  input raster dataset (GeoTiff) file path
+                zoom_level (int): zoom level indicator value for mapping
+
+            Returns:
+                map (ipyleaflet.Map): ipyleaflet Map object
+
+        """
+
+        boundary = GeoUtil.get_raster_boundary(input_path)
+        cen_lat, cen_lon = (boundary[2] + boundary[0]) / 2.0, (boundary[3] + boundary[1]) / 2.0
+        map = ipylft.Map(center=(cen_lon, cen_lat), zoom=zoom_level,
+                       basemap=ipylft.basemaps.Stamen.Toner, crs='EPSG3857', scroll_wheel_zoom=True)
+        image = ImageOverlay(url=input_path, bounds=((boundary[0], boundary[1]), (boundary[2], boundary[3])))
+        map.add_layer(image)
+
+        return map
+
+    def get_raster_boundary(input_path):
+        """Creates boundary list from raster dataset file
+
+            Args:
+                input_path (str):  input raster dataset (GeoTiff) file path
+
+            Returns:
+                boundary (list): list of boundary values
+
+        """
+        data = gdal.Open(input_path, GA_ReadOnly)
+        geoTransform = data.GetGeoTransform()
+        minx = geoTransform[0]
+        maxy = geoTransform[3]
+        maxx = minx + geoTransform[1] * data.RasterXSize
+        miny = maxy + geoTransform[5] * data.RasterYSize
+        boundary = [minx, miny, maxx, maxy]
+
+        return boundary
