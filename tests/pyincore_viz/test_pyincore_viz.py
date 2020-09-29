@@ -71,13 +71,6 @@ def test_visualize_network():
     viz.plot_network_dataset(network_dataset, 12)
 
 
-def test_map_csv():
-    seaside_bldg_id = "5f2b1354f3e24203f9f60026"  # defining building dataset (GIS point layer)
-    seaside_bldg_inv = Dataset.from_data_service(seaside_bldg_id, DataService(client))
-    csv_dir = os.path.join("examples", "seaside_bldg_dmg_output_csv")
-    csv_dir_map = viz.map_csv_from_dir(seaside_bldg_inv, column='failure_probability', file_path=csv_dir)
-
-
 def test_plot_fragility():
     # clean plots that are not closed/cleared
     matplotlib.pyplot.clf()
@@ -120,11 +113,24 @@ def test_plot_fragility():
     plt.clf()
 
 
+def test_plot_table_dataset():
+    # table dataset id list
+    dataset_id_list = ['5a296b53c7d30d4af5378cd5', '5a296e1fc7d30d4af53798ae']
+    # table dataset list
+    dataset_list = []
+    for dataset_id in dataset_id_list:
+        dataset_list.append(Dataset.from_data_service(dataset_id, DataService(client)))
+
+    # table dataset plot map
+    map = viz.plot_table_dataset(client, dataset_list, 'meandamage')
+    map
+
+
 if __name__ == "__main__":
     # comment out or remove comment to test specific feature below.
     test_visualize_earthquake()
     test_visualize_joplin_tornado_building()
     test_visualize_inventory()
     test_visualize_network()
-    test_map_csv()
     test_plot_fragility()
+    test_plot_table_dataset()
