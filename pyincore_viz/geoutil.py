@@ -438,7 +438,7 @@ class GeoUtil:
         boundary = GeoUtil.get_raster_boundary(input_path)
         cen_lat, cen_lon = (boundary[2] + boundary[0]) / 2.0, (boundary[3] + boundary[1]) / 2.0
         map = ipylft.Map(center=(cen_lon, cen_lat), zoom=zoom_level,
-                       basemap=ipylft.basemaps.Stamen.Toner, crs='EPSG3857', scroll_wheel_zoom=True)
+                         basemap=ipylft.basemaps.Stamen.Toner, crs='EPSG3857', scroll_wheel_zoom=True)
         image = ImageOverlay(url=input_path, bounds=((boundary[0], boundary[1]), (boundary[2], boundary[3])))
         map.add_layer(image)
 
