@@ -5,6 +5,10 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## [Unreleased]
+### Added
+- create method to plot fragilities [INCORE1-777](https://opensource.ncsa.illinois.edu/jira/browse/INCORE1-777)
+
 ## [0.2.3] - 2020-09-03
 ### Added
 - documentation, links, docker script [INCORE1-654](https://opensource.ncsa.illinois.edu/jira/browse/INCORE1-654)
