@@ -423,8 +423,8 @@ class GeoUtil:
         return m
 
     @staticmethod
-    def plot_raster_from_path(input_path, zoom_level=10):
-        """Creates map window with local raster dataset visualized
+    def plot_raster_from_url_or_path(input_path, zoom_level=10):
+        """Creates map window with geo-referenced raster file from local or url visualized
 
             Args:
                 input_path (str):  input raster dataset (GeoTiff) file path
