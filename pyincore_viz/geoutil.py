@@ -426,25 +426,29 @@ class GeoUtil:
         return m
 
     @staticmethod
-    def plot_table_dataset(client, dataset_list=list, column=str, source_dataset_id=None):
+    def plot_table_dataset(client, dataset_list=list, column=str, in_source_dataset_id=None):
         """Creates map window with a list of table dataset and source dataset
 
             Args:
                 client (Client): pyincore service Client Object
                 dataset_list (list): list of table dataset
                 column (str): column name to be plot
-                source_dataset_id (str): source dataset id, the dafault is None
+                in_source_dataset_id (str): source dataset id, the dafault is None
 
             Returns:
                 GeoUtil.map (ipyleaflet.Map): ipyleaflet Map object
 
             """
-        if source_dataset_id is None:
+        source_dataset_id = None
+        if in_source_dataset_id is None:
             joined_df, dataset_id_list, source_dataset_id = \
                 GeoUtil.merge_table_dataset_with_field(dataset_list, column)
         else:
             joined_df, dataset_id_list, source_dataset_id = \
-                GeoUtil.merge_table_dataset_with_field(dataset_list, column, source_dataset_id)
+                GeoUtil.merge_table_dataset_with_field(dataset_list, column, in_source_dataset_id)
+
+        if source_dataset_id is None:
+            raise Exception("There is no sourceDataset id.")
 
         source_dataset = Dataset.from_data_service(source_dataset_id, DataService(client))
         inventory_df = PlotUtil.inventory_to_geodataframe(source_dataset)
@@ -459,6 +463,7 @@ class GeoUtil:
         # keep only necessary fields
         keep_list = ['guid', 'geometry']
         for dataset_id in dataset_id_list:
+            # dataset_id will be used as a column name to visualize the values in the field
             keep_list.append(dataset_id)
         inventory_df = inventory_df[keep_list]
         inventory_json = json.loads(inventory_df.to_json())
