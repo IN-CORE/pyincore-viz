@@ -444,6 +444,7 @@ class GeoUtil:
 
         return map
 
+    @staticmethod
     def get_raster_boundary(input_path):
         """Creates boundary list from raster dataset file
 
