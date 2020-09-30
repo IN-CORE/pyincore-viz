@@ -14,7 +14,7 @@ from pyincore_viz.plotutil import PlotUtil as plot
 
 import matplotlib
 
-client = IncoreClient(INCORE_API_DEV_URL)
+client = IncoreClient(INCORE_API_DEV_URL, token_file_name=".incrtesttoken")
 
 
 def test_visualize_earthquake():
@@ -71,13 +71,6 @@ def test_visualize_network():
     viz.plot_network_dataset(network_dataset, 12)
 
 
-def test_map_csv():
-    seaside_bldg_id = "5f2b1354f3e24203f9f60026"  # defining building dataset (GIS point layer)
-    seaside_bldg_inv = Dataset.from_data_service(seaside_bldg_id, DataService(client))
-    csv_dir = os.path.join("examples", "seaside_bldg_dmg_output_csv")
-    csv_dir_map = viz.map_csv_from_dir(seaside_bldg_inv, column='failure_probability', file_path=csv_dir)
-
-
 def test_plot_fragility():
     # clean plots that are not closed/cleared
     matplotlib.pyplot.clf()
@@ -126,5 +119,4 @@ if __name__ == "__main__":
     test_visualize_joplin_tornado_building()
     test_visualize_inventory()
     test_visualize_network()
-    test_map_csv()
     test_plot_fragility()
