@@ -1,5 +1,3 @@
-import os
-
 from pyincore import Dataset
 from pyincore import IncoreClient
 from pyincore import NetworkDataset
