@@ -621,6 +621,7 @@ class GeoUtil:
 
         return boundary
 
+    @staticmethod
     def on_button_clicked(b):
         """button click action for map
 
