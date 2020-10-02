@@ -447,6 +447,8 @@ class GeoUtil:
         image = ImageOverlay(url=input_path, bounds=((boundary[0], boundary[1]), (boundary[2], boundary[3])))
         map.add_layer(image)
 
+        return map
+
     @staticmethod
     def plot_table_dataset(client, dataset_list=list, column=str, in_source_dataset_id=None):
         """Creates map window with a list of table dataset and source dataset
