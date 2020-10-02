@@ -428,7 +428,7 @@ class GeoUtil:
         return m
 
     @staticmethod
-    def plot_raster_from_url_or_path(input_path, zoom_level=10):
+    def plot_raster_from_path(input_path, zoom_level=10):
         """Creates map window with geo-referenced raster file from local or url visualized
 
             Args:
@@ -439,12 +439,12 @@ class GeoUtil:
                 map (ipyleaflet.Map): ipyleaflet Map object
 
         """
-
         boundary = GeoUtil.get_raster_boundary(input_path)
+        data_image = GeoUtil.create_data_img_from_geotiff(input_path)
         cen_lat, cen_lon = (boundary[2] + boundary[0]) / 2.0, (boundary[3] + boundary[1]) / 2.0
         map = ipylft.Map(center=(cen_lon, cen_lat), zoom=zoom_level,
                          basemap=ipylft.basemaps.Stamen.Toner, crs='EPSG3857', scroll_wheel_zoom=True)
-        image = ImageOverlay(url=input_path, bounds=((boundary[0], boundary[1]), (boundary[2], boundary[3])))
+        image = ImageOverlay(image=data_image, bounds=((boundary[1], boundary[0]), (boundary[3], boundary[2])))
         map.add_layer(image)
 
         return map
@@ -622,6 +622,19 @@ class GeoUtil:
         boundary = [minx, miny, maxx, maxy]
 
         return boundary
+
+    @staticmethod
+    def create_data_img_from_geotiff(input_path):
+        data = gdal.Open(input_path, GA_ReadOnly)
+        cols = data.RasterXSize
+        rows = data.RasterYSize
+        bands = data.RasterCount
+        band = data.GetRasterBand(1)
+        dataset = band.ReadAsArray(0, 0, cols, rows)
+        data_image = dataset
+        data_image[data_image[:, :] == -340282346638528859811704183484516925440.000] = 0
+
+        return data_image
 
     @staticmethod
     def on_button_clicked(b):

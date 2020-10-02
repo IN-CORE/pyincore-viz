@@ -114,7 +114,8 @@ def test_plot_fragility():
 
 def test_visualize_raster_file():
     img_path = os.path.join('examples', '2009_30m_cdls_small_wgs84.tif')
-    map = viz.plot_raster_from_url_or_path(img_path)
+    map = viz.plot_raster_from_path(img_path)
+    map
 
 
 def test_plot_table_dataset():
