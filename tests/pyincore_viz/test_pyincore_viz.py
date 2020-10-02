@@ -1,5 +1,3 @@
-import os
-
 from pyincore import Dataset
 from pyincore import IncoreClient
 from pyincore import NetworkDataset
@@ -13,6 +11,7 @@ from pyincore_viz.geoutil import GeoUtil as viz
 from pyincore_viz.plotutil import PlotUtil as plot
 
 import matplotlib
+import os
 
 client = IncoreClient(INCORE_API_DEV_URL)
 
@@ -116,6 +115,18 @@ def test_plot_fragility():
 def test_visualize_raster_file():
     img_path = os.path.join('examples', '2009_30m_cdls_small_wgs84.tif')
     map = viz.plot_raster_from_url_or_path(img_path)
+
+
+def test_plot_table_dataset():
+    # table dataset id list
+    dataset_id_list = ['5a296b53c7d30d4af5378cd5', '5a296e1fc7d30d4af53798ae']
+    # table dataset list
+    dataset_list = []
+    for dataset_id in dataset_id_list:
+        dataset_list.append(Dataset.from_data_service(dataset_id, DataService(client)))
+
+    # table dataset plot map
+    map = viz.plot_table_dataset(client, dataset_list, 'meandamage')
     map
 
 
@@ -127,3 +138,4 @@ if __name__ == "__main__":
     test_visualize_network()
     test_plot_fragility()
     test_visualize_raster_file()
+    test_plot_table_dataset()
