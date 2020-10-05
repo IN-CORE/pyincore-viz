@@ -18,6 +18,7 @@ import gdal
 import copy
 import json
 import os
+import folium
 
 from gdalconst import GA_ReadOnly
 from pyincore.dataservice import DataService
@@ -428,28 +429,6 @@ class GeoUtil:
         return m
 
     @staticmethod
-    def plot_raster_from_path(input_path, zoom_level=10):
-        """Creates map window with geo-referenced raster file from local or url visualized
-
-            Args:
-                input_path (str):  input raster dataset (GeoTiff) file path
-                zoom_level (int): zoom level indicator value for mapping
-
-            Returns:
-                map (ipyleaflet.Map): ipyleaflet Map object
-
-        """
-        boundary = GeoUtil.get_raster_boundary(input_path)
-        data_image = GeoUtil.create_data_img_from_geotiff(input_path)
-        cen_lat, cen_lon = (boundary[2] + boundary[0]) / 2.0, (boundary[3] + boundary[1]) / 2.0
-        map = ipylft.Map(center=(cen_lon, cen_lat), zoom=zoom_level,
-                         basemap=ipylft.basemaps.Stamen.Toner, crs='EPSG3857', scroll_wheel_zoom=True)
-        image = ImageOverlay(image=data_image, bounds=((boundary[1], boundary[0]), (boundary[3], boundary[2])))
-        map.add_layer(image)
-
-        return map
-
-    @staticmethod
     def plot_table_dataset(client, dataset_list=list, column=str, in_source_dataset_id=None):
         """Creates map window with a list of table dataset and source dataset
 
@@ -599,6 +578,62 @@ class GeoUtil:
         # set global for button click
         GeoUtil.map_dropdown = map_dropdown
         GeoUtil.inventory_df = inventory_df
+
+        return map
+
+    # TODO this method is currently not working because ipyleaflet doesn't support TIF.
+    #  This should be switched from the plot_raster_from_path method below
+    #  when ipyleaflet support TIF because folium might not support the library anymore
+    @staticmethod
+    def plot_raster_from_path_ipyleaflet(input_path, zoom_level=10):
+        """Creates map window with geo-referenced raster file from local or url visualized
+
+            Args:
+                input_path (str):  input raster dataset (GeoTiff) file path
+                zoom_level (int): zoom level indicator value for mapping
+
+            Returns:
+                map (ipyleaflet.Map): ipyleaflet Map object
+
+        """
+        boundary = GeoUtil.get_raster_boundary(input_path)
+        data_image = GeoUtil.create_data_img_from_geotiff(input_path)
+        cen_lat, cen_lon = (boundary[2] + boundary[0]) / 2.0, (boundary[3] + boundary[1]) / 2.0
+        map = ipylft.Map(center=(cen_lon, cen_lat), zoom=zoom_level,
+                         basemap=ipylft.basemaps.Stamen.Toner, crs='EPSG3857', scroll_wheel_zoom=True)
+        image = folium.raster_layers.ImageOverlay(
+            image=data_image,
+            bounds=((boundary[1], boundary[0]), (boundary[3], boundary[2]))
+        )
+        map.add_layer(image)
+
+        return map
+
+    @staticmethod
+    # TODO this method should be removed when ipyleaflet supports TIF format.
+    #  Then pyincore-viz should use the method 'plot_raster_from_path_ipyleaflet' located above
+    #  because ipyleaflet would probably be more stable than folium due to the library support
+    def plot_raster_from_path(input_path, zoom_level=10):
+        """Creates map window with geo-referenced raster file from local or url visualized
+
+            Args:
+                input_path (str):  input raster dataset (GeoTiff) file path
+                zoom_level (int): zoom level indicator value for mapping
+
+            Returns:
+                map (folium.Map): folium Map object
+
+        """
+        boundary = GeoUtil.get_raster_boundary(input_path)
+        data_image = GeoUtil.create_data_img_from_geotiff(input_path)
+        cen_lat, cen_lon = (boundary[2] + boundary[0]) / 2.0, (boundary[3] + boundary[1]) / 2.0
+        # Visualization in folium
+        map = folium.Map(location=[cen_lon, cen_lat], zoom_start=zoom_level)
+        folium.raster_layers.ImageOverlay(
+            image=data_image,
+            bounds=[[boundary[1], boundary[0]], [boundary[3], boundary[2]]],
+            colormap=lambda x: (0, 0, 0, x),  # R,G,B,alpha
+        ).add_to(map)
 
         return map
 
