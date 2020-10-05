@@ -601,8 +601,8 @@ class GeoUtil:
         cen_lat, cen_lon = (boundary[2] + boundary[0]) / 2.0, (boundary[3] + boundary[1]) / 2.0
         map = ipylft.Map(center=(cen_lon, cen_lat), zoom=zoom_level,
                          basemap=ipylft.basemaps.Stamen.Toner, crs='EPSG3857', scroll_wheel_zoom=True)
-        image = folium.raster_layers.ImageOverlay(
-            image=data_image,
+        image = ImageOverlay(
+            url=input_path,
             bounds=((boundary[1], boundary[0]), (boundary[3], boundary[2]))
         )
         map.add_layer(image)
