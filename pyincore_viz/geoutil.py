@@ -9,24 +9,22 @@ from pathlib import Path
 import contextily as ctx
 import geopandas as gpd
 import ipyleaflet as ipylft
-import ipywidgets as ipywgt
 import matplotlib.pyplot as plt
 import networkx as nx
 import rasterio
 import rasterio.plot
-import copy
-import json
-
 import os
+import copy
 
+from owslib.wms import WebMapService
 from pyincore.dataservice import DataService
 from pyincore.hazardservice import HazardService
 from pyincore import Dataset
 from pyincore import NetworkDataset
 from pyincore_viz import globals
-from owslib.wms import WebMapService
 from pyincore_viz.plotutil import PlotUtil
-from branca.colormap import linear
+from pyincore_viz.tabledatasetlistmap import TableDatasetListMap as table_list_map
+
 
 logger = globals.LOGGER
 
@@ -454,9 +452,6 @@ class GeoUtil:
         inventory_df = PlotUtil.inventory_to_geodataframe(source_dataset)
         inventory_df = PlotUtil.remove_null_inventories(inventory_df, 'guid')
 
-        # create base map
-        map = GeoUtil.create_basemap_ipylft(inventory_df)
-
         # merge inventory dataframe and joined table dataframe
         inventory_df = inventory_df.merge(joined_df, on='guid')
 
@@ -466,15 +461,12 @@ class GeoUtil:
             # dataset_id will be used as a column name to visualize the values in the field
             keep_list.append(dataset_id)
         inventory_df = inventory_df[keep_list]
-        inventory_json = json.loads(inventory_df.to_json())
 
-        # set global for button click
-        GeoUtil.inventory_json = inventory_json
-        GeoUtil.map = map
+        # create base map
+        map = table_list_map()
+        map.create_basemap_ipylft(inventory_df, dataset_id_list)
 
-        GeoUtil.map = GeoUtil.create_map_widgets(dataset_id_list, GeoUtil.map, inventory_df)
-
-        return GeoUtil.map
+        return map.map
 
     @staticmethod
     def merge_table_dataset_with_field(dataset_list: list, column=str, in_source_dataset_id=None):
@@ -529,97 +521,3 @@ class GeoUtil:
             common_source_dataset_id = in_source_dataset_id
 
         return join_df, dataset_id_list, common_source_dataset_id
-
-    @staticmethod
-    def create_basemap_ipylft(geo_dataframe):
-        """Creates map window with given inventory with multiple table dataset file using folder location
-
-        Args:
-            geo_dataframe (DataFrame): Geopandas DataFrame object
-
-        Returns:
-            m(ipyleaflet.Map): ipyleaflet Map object
-
-        """
-        ext = geo_dataframe.total_bounds
-        cen_x, cen_y = (ext[1] + ext[3]) / 2, (ext[0] + ext[2]) / 2
-        map = ipylft.Map(center=(cen_x, cen_y), zoom=12, basemap=ipylft.basemaps.Stamen.Toner, scroll_wheel_zoom=True)
-
-        return map
-
-    @staticmethod
-    def create_map_widgets(title_list, map, inventory_df):
-        """Create and add map widgets into map
-
-        Args:
-            title_list (list): list of the file names in the folder
-
-        """
-        map_dropdown = ipywgt.Dropdown(description='Outputfile - 1', options=title_list, width=500)
-        file_control1 = ipylft.WidgetControl(widget=map_dropdown, position='bottomleft')
-
-        # use the following line when it needs to have another dropdown
-        # dropdown2 = ipywgt.Dropdown(description = 'Outputfile - 2', options = title_list2, width=500)
-        # file_control2 = ipylft.WidgetControl(widget=dropdown2, position='bottomleft')
-
-        button = ipywgt.Button(description='Generate Map', button_style='info')
-        button.on_click(GeoUtil.on_button_clicked)
-        map_control = ipylft.WidgetControl(widget=button, position='bottomleft')
-
-        map.add_control(ipylft.LayersControl(position='topright', style='info'))
-        map.add_control(ipylft.FullScreenControl(position='topright'))
-        map.add_control(map_control)
-        # map.add_control(file_control2)      # use the line when it needs to have extra dropdown
-        map.add_control(file_control1)
-
-        # set global for button click
-        GeoUtil.map_dropdown = map_dropdown
-        GeoUtil.inventory_df = inventory_df
-
-        return map
-
-    @staticmethod
-    def on_button_clicked(b):
-        """button click action for map
-
-        Args:
-            b (action): button click action for tablemap
-
-        """
-        print('Loading: ', GeoUtil.map_dropdown.value)
-        key = GeoUtil.map_dropdown.value
-        GeoUtil.create_choropleth_layer(key)
-        print('\n')
-
-    @staticmethod
-    def create_choropleth_layer(key):
-        """add choropleth layer to map
-
-        Args:
-            key (str): selected value from tablemap's layer selection drop down menu
-
-        """
-
-        # vmax_val = max(self.bldg_data_df[key])
-        vmax_val = 1
-        temp_id = list(range(len(GeoUtil.inventory_df['guid'])))
-        temp_id = [str(i) for i in temp_id]
-        choro_data = dict(zip(temp_id, GeoUtil.inventory_df[key]))
-        layer = ipylft.Choropleth(geo_data=GeoUtil.inventory_json, choro_data=choro_data,
-                                  colormap=linear.YlOrRd_04,
-                                  value_min=0, value_max=vmax_val, border_color='black', style={'fillOpacity': 0.8},
-                                  name='dataset map')
-        GeoUtil.map.add_layer(layer)
-
-        print('Done loading layer.')
-
-    # TODO the following method for adding layer should be added in the future
-    # def create_legend(self):
-    #     legend = linear.YlOrRd_04.scale(0, self.vmax_val)
-    #     TableDatasetMapUtil.tablemap.colormap = legend
-    #     out = ipywgt.Output(layout={'border': '1px solid black'})
-    #     with out:
-    #         display(legend)
-    #     widget_control = ipylft.WidgetControl(widget=out, position='topright')
-    #     TableDatasetMapUtil.tablemap.add_control(widget_control)
-    #     display(TableDatasetMapUtil.tablemap)

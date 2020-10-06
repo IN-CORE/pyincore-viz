@@ -11,3 +11,8 @@ plotutil
 ..  autoclass:: plotutil.PlotUtil
     :members:
 
+tabledatasetlistmap
+===================
+..  autoclass:: tabledatasetlistmap.TableDatasetListMap
+    :members:
+
