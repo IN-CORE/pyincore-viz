@@ -665,9 +665,7 @@ class GeoUtil:
         rows = data.RasterYSize
         bands = data.RasterCount
         band = data.GetRasterBand(1)
-        dataset = band.ReadAsArray(0, 0, cols, rows)
-        data_image = dataset
-        data_image[data_image[:, :] == -340282346638528859811704183484516925440.000] = 0
+        data_image = band.ReadAsArray(0, 0, cols, rows)
 
         return data_image
 
