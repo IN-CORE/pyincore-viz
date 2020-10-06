@@ -115,10 +115,7 @@ def test_plot_fragility():
 def test_visualize_raster_file():
     galvaston_wave_height_id = '5f11e503feef2d758c4df6db'
     dataset = Dataset.from_data_service(galvaston_wave_height_id, DataService(client))
-    local_path = dataset.local_file_path
-    file_name = dataset.file_descriptors[0]["filename"]
-    img_path = os.path.join(local_path, file_name)
-    map = viz.plot_raster_from_path(img_path)
+    map = viz.plot_raster_from_path(dataset.get_file_path('tif'))
 
 
 def test_plot_table_dataset():
@@ -135,10 +132,10 @@ def test_plot_table_dataset():
 
 if __name__ == "__main__":
     # comment out or remove comment to test specific feature below.
-    # test_visualize_earthquake()
-    # test_visualize_joplin_tornado_building()
-    # test_visualize_inventory()
-    # test_visualize_network()
-    # test_plot_fragility()
+    test_visualize_earthquake()
+    test_visualize_joplin_tornado_building()
+    test_visualize_inventory()
+    test_visualize_network()
+    test_plot_fragility()
     test_visualize_raster_file()
-    # test_plot_table_dataset()
+    test_plot_table_dataset()
