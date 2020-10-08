@@ -15,7 +15,6 @@ from pyincore.models.fragilitycurveset import FragilityCurveSet
 from pyincore_viz.geoutil import GeoUtil as viz
 from pyincore_viz.plotutil import PlotUtil as plot
 
-client = None
 
 @pytest.fixture
 def client(monkeypatch):
