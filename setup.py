@@ -41,6 +41,7 @@ setup(
         "matplotlib>=2.1.0",
         "plotly>=3.6.0",
         "pytest>=3.9.0",
+        "pyjwt>=1.7.1",
         "pyincore>=0.6.2"
     ],
     python_requires=">=3.5",
