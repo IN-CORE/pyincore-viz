@@ -1,5 +1,3 @@
-import os
-
 from pyincore import Dataset
 from pyincore import IncoreClient
 from pyincore import NetworkDataset
@@ -26,6 +24,8 @@ def test_visualize_earthquake():
     eq_dataset = Dataset.from_data_service(eq_dataset_id, DataService(client))
     viz.plot_earthquake(eq_hazard_id, client)
 
+    return True
+
 
 def test_visualize_joplin_tornado_building():
     # testing datasets
@@ -45,6 +45,8 @@ def test_visualize_joplin_tornado_building():
     # using wms layer for joplin building inv. gdf will crash the browser
     viz.get_gdf_wms_map([tornado_dataset], [joplin_bldg_inv], zoom_level=11)
 
+    return True
+
 
 def test_visualize_inventory():
     shelby_hopital_inv_id = "5a284f0bc7d30d13bc081a28"
@@ -62,6 +64,8 @@ def test_visualize_inventory():
     viz.get_gdf_map([sh_bldg_inv, sh_road], zoom_level=10)
     viz.get_gdf_wms_map([sh_bldg_inv], [sh_road], zoom_level=10)
 
+    return True
+
 
 def test_visualize_network():
     centerville_epn_network_id = "5d25fb355648c40482a80e1c"
@@ -69,6 +73,8 @@ def test_visualize_network():
     dataset = Dataset.from_data_service(centerville_epn_network_id, DataService(client))
     network_dataset = NetworkDataset(dataset)
     viz.plot_network_dataset(network_dataset, 12)
+
+    return True
 
 
 def test_plot_fragility():
@@ -112,11 +118,22 @@ def test_plot_fragility():
     plt.savefig('conditional.png')
     plt.clf()
 
+    return True
+
 
 if __name__ == "__main__":
     # comment out or remove comment to test specific feature below.
-    test_visualize_earthquake()
-    test_visualize_joplin_tornado_building()
-    test_visualize_inventory()
-    test_visualize_network()
-    test_plot_fragility()
+    result = test_visualize_earthquake()
+    assert result is True
+
+    result = test_visualize_joplin_tornado_building()
+    assert result is True
+
+    result = test_visualize_inventory()
+    assert result is True
+
+    result = test_visualize_network()
+    assert result is True
+
+    result = test_plot_fragility()
+    assert result is True

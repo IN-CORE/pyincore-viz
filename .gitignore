@@ -61,3 +61,10 @@ original/
 *.qix
 *.shp
 *.shx
+
+# related to test file
+*test.py
+*test.ipynb
+
+# token
+*.incrtoken
