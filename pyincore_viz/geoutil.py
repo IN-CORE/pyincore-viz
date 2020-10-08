@@ -16,7 +16,6 @@ import rasterio
 import rasterio.plot
 import copy
 import json
-
 import os
 
 from pyincore.dataservice import DataService
@@ -27,6 +26,7 @@ from pyincore_viz import globals
 from owslib.wms import WebMapService
 from pyincore_viz.plotutil import PlotUtil
 from branca.colormap import linear
+from ipyleaflet import projections
 
 logger = globals.LOGGER
 
@@ -249,8 +249,8 @@ class GeoUtil:
         cen_lat, cen_lon = (bbox_all[2] + bbox_all[0]) / 2.0, (bbox_all[3] + bbox_all[1]) / 2.0
 
         # TODO: ipylft doesn't have fit bound methods, we need to find a way to zoom level to show all data
-        m = ipylft.Map(center=(cen_lon, cen_lat), zoom=zoom_level, basemap=ipylft.basemaps.Stamen.Toner, crs='EPSG3857',
-                       scroll_wheel_zoom=True)
+        m = ipylft.Map(center=(cen_lon, cen_lat), zoom=zoom_level, basemap=ipylft.basemaps.Stamen.Toner,
+                       crs=projections.EPSG3857, scroll_wheel_zoom=True)
         for entry in geo_data_list:
             m.add_layer(entry)
 
@@ -310,7 +310,7 @@ class GeoUtil:
 
         # TODO: ipylft doesn't have fit bound methods, we need to find a way to zoom level to show all data
         m = ipylft.Map(center=(cen_lon, cen_lat), zoom=zoom_level,
-                       basemap=ipylft.basemaps.Stamen.Toner, crs='EPSG3857', scroll_wheel_zoom=True)
+                       basemap=ipylft.basemaps.Stamen.Toner, crs=projections.EPSG3857, scroll_wheel_zoom=True)
         for layer in wms_layers:
             m.add_layer(layer)
 
@@ -363,7 +363,7 @@ class GeoUtil:
 
         # TODO: ipylft doesn't have fit bound methods, we need to find a way to zoom level to show all data
         m = ipylft.Map(center=(cen_lon, cen_lat), zoom=zoom_level,
-                       basemap=ipylft.basemaps.Stamen.Toner, crs='EPSG3857', scroll_wheel_zoom=True)
+                       basemap=ipylft.basemaps.Stamen.Toner, crs=projections.EPSG3857, scroll_wheel_zoom=True)
         for layer in wms_layers:
             m.add_layer(layer)
 
@@ -416,8 +416,8 @@ class GeoUtil:
         cen_lat, cen_lon = (bbox_all[2] + bbox_all[0]) / 2.0, (bbox_all[3] + bbox_all[1]) / 2.0
 
         # TODO: ipylft doesn't have fit bound methods, we need to find a way to zoom level to show all data
-        m = ipylft.Map(center=(cen_lon, cen_lat), zoom=zoom_level, basemap=ipylft.basemaps.Stamen.Toner, crs='EPSG3857',
-                       scroll_wheel_zoom=True)
+        m = ipylft.Map(center=(cen_lon, cen_lat), zoom=zoom_level, basemap=ipylft.basemaps.Stamen.Toner,
+                       crs=projections.EPSG3857, scroll_wheel_zoom=True)
         for entry in geo_data_list:
             m.add_layer(entry)
 
