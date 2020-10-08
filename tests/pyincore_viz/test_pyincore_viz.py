@@ -65,11 +65,11 @@ def test_visualize_joplin_tornado_building(client):
 
 
 def test_visualize_inventory(client):
-    shelby_hopital_inv_id = "5a284f0bc7d30d13bc081a28"
+    shelby_hospital_inv_id = "5a284f0bc7d30d13bc081a28"
     shelby_road_id = "5a284f2bc7d30d13bc081eb6"
 
     # get shelvy building inventory and road
-    sh_bldg_inv = Dataset.from_data_service(shelby_hopital_inv_id, DataService(client))
+    sh_bldg_inv = Dataset.from_data_service(shelby_hospital_inv_id, DataService(client))
     sh_road = Dataset.from_data_service(shelby_road_id, DataService(client))
 
     # visualize building inventory
@@ -135,3 +135,16 @@ def test_plot_fragility(client):
     plt.clf()
 
     assert True
+
+
+def test_plot_table_dataset(client):
+    # table dataset id list
+    dataset_id_list = ['5a296b53c7d30d4af5378cd5', '5a296e1fc7d30d4af53798ae']
+    # table dataset list
+    dataset_list = []
+    for dataset_id in dataset_id_list:
+        dataset_list.append(Dataset.from_data_service(dataset_id, DataService(client)))
+
+    # table dataset plot map
+    map = viz.plot_table_dataset(client, dataset_list, 'meandamage')
+    map
