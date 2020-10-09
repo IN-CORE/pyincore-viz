@@ -18,7 +18,8 @@ import gdal
 import copy
 import json
 import os
-import folium
+import PIL
+import numpy as np
 
 from gdalconst import GA_ReadOnly
 from pyincore.dataservice import DataService
@@ -30,6 +31,9 @@ from owslib.wms import WebMapService
 from ipyleaflet import ImageOverlay
 from pyincore_viz.plotutil import PlotUtil
 from branca.colormap import linear
+from base64 import b64encode
+from io import StringIO, BytesIO
+
 
 logger = globals.LOGGER
 
@@ -590,19 +594,20 @@ class GeoUtil:
                 zoom_level (int): zoom level indicator value for mapping
 
             Returns:
-                map (folium.Map): folium Map object
+                map (ipyleaflet.Map): ipyleaflet Map object
 
         """
         boundary = GeoUtil.get_raster_boundary(input_path)
-        data_image = GeoUtil.create_data_img_from_geotiff(input_path)
+        image_url = GeoUtil.create_data_img_url_from_geotiff_for_ipyleaflet(input_path)
+
         cen_lat, cen_lon = (boundary[2] + boundary[0]) / 2.0, (boundary[3] + boundary[1]) / 2.0
-        # Visualization in folium
-        map = folium.Map(location=[cen_lon, cen_lat], zoom_start=zoom_level)
-        folium.raster_layers.ImageOverlay(
-            image=data_image,
-            bounds=[[boundary[1], boundary[0]], [boundary[3], boundary[2]]],
-            colormap=lambda x: (0, 0, 0, x),  # R,G,B,alpha
-        ).add_to(map)
+        map = ipylft.Map(center=(cen_lon, cen_lat), zoom=zoom_level,
+                         basemap=ipylft.basemaps.Stamen.Toner, crs='EPSG3857', scroll_wheel_zoom=True)
+        image = ImageOverlay(
+            url=image_url,
+            bounds=((boundary[1], boundary[0]), (boundary[3], boundary[2]))
+        )
+        map.add_layer(image)
 
         return map
 
@@ -628,15 +633,38 @@ class GeoUtil:
         return boundary
 
     @staticmethod
-    def create_data_img_from_geotiff(input_path):
+    def create_data_img_url_from_geotiff_for_ipyleaflet(input_path):
+        """Creates boundary list from raster dataset file
+
+            Args:
+                input_path (str):  input raster dataset (GeoTiff) file path
+
+            Returns:
+                image_url (string): data for the png data converted from GeoTiff
+
+        """
         data = gdal.Open(input_path, GA_ReadOnly)
         cols = data.RasterXSize
         rows = data.RasterYSize
         bands = data.RasterCount
         band = data.GetRasterBand(1)
-        data_image = band.ReadAsArray(0, 0, cols, rows)
+        tiff_array = band.ReadAsArray(0, 0, cols, rows)
+        tiff_norm = tiff_array - np.amin(tiff_array)
+        tiff_norm = tiff_norm / np.amax(tiff_norm)
+        tiff_norm = np.where(np.isfinite(tiff_array), tiff_norm, 0)
+        tiff_im = PIL.Image.fromarray(np.uint8(plt.cm.jet(tiff_norm) * 255))  # specify colormap
+        tiff_mask = np.where(np.isfinite(tiff_array), 255, 0)
+        mask = PIL.Image.fromarray(np.uint8(tiff_mask), mode='L')
+        output_img = PIL.Image.new('RGBA', tiff_norm.shape[::-1], color=None)
+        output_img.paste(tiff_im, mask=mask)
+        # convert image to png
+        f = BytesIO()
+        output_img.save(f, 'png')
+        data = b64encode(f.getvalue())
+        data = data.decode('ascii')
+        image_url = 'data:image/png;base64,' + data
 
-        return data_image
+        return image_url
 
     @staticmethod
     def on_button_clicked(b):

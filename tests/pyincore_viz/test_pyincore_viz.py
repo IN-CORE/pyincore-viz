@@ -11,7 +11,7 @@ from pyincore_viz.geoutil import GeoUtil as viz
 from pyincore_viz.plotutil import PlotUtil as plot
 
 import matplotlib
-import os
+
 
 client = IncoreClient(INCORE_API_DEV_URL)
 
@@ -130,6 +130,12 @@ def test_plot_table_dataset():
     map = viz.plot_table_dataset(client, dataset_list, 'meandamage')
 
 
+def test_visualize_raster_file_ipyleaflet():
+    galvaston_wave_height_id = '5f11e503feef2d758c4df6db'
+    dataset = Dataset.from_data_service(galvaston_wave_height_id, DataService(client))
+    map = viz.plot_raster_from_path(dataset.get_file_path('tif'))
+
+
 if __name__ == "__main__":
     # comment out or remove comment to test specific feature below.
     test_visualize_earthquake()
@@ -139,3 +145,4 @@ if __name__ == "__main__":
     test_plot_fragility()
     test_visualize_raster_file()
     test_plot_table_dataset()
+    test_visualize_raster_file_ipyleaflet()
