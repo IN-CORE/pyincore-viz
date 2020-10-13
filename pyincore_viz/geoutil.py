@@ -20,6 +20,7 @@ import json
 import os
 import PIL
 import numpy as np
+import random
 
 from gdalconst import GA_ReadOnly
 from pyincore.dataservice import DataService
@@ -106,6 +107,58 @@ class GeoUtil:
         """
         gdf = GeoUtil.join_datasets(geodataset, dataset)
         GeoUtil.plot_gdf_map(gdf, column, category, basemap)
+
+    @staticmethod
+    def plot_maps_dataset_list(dataset_list, column='guid', category=False, basemap=True, zoom_level=10):
+        layer_list = []
+        bbox_all = [9999, 9999, -9999, -9999]
+
+        for dataset in dataset_list:
+            # check if dataset is shapefile or raster
+            try:
+                if dataset.metadata['format'].lower() == 'shapefile':
+                    gdf = gpd.read_file(dataset.local_file_path)
+                    # create random color
+                    color = "#" + ''.join([random.choice('0123456789ABCDEF') for j in range(6)])
+                    shp_data = ipylft.GeoData(geo_dataframe=gdf,
+                                              style={'color': 'black', 'fillColor': color,
+                                                     'opacity': 0.05, 'weight': 1.9, 'dashArray': '2',
+                                                     'fillOpacity': 0.6},
+                                              hover_style={'fillColor': 'red', 'fillOpacity': 0.2},
+                                              name=dataset.metadata['title'])
+                    bbox = gdf.total_bounds
+                    bbox_all = GeoUtil.merge_bbox(bbox_all, bbox)
+
+                    layer_list.append(shp_data)
+                elif dataset.metadata['format'].lower() == 'raster' \
+                        or dataset.metadata['format'].lower() == 'geotif' \
+                        or dataset.metadata['format'].lower() == 'geotif':
+                    input_path = dataset.get_file_path('tif')
+                    bbox = GeoUtil.get_raster_boundary(input_path)
+                    bbox_all = GeoUtil.merge_bbox(bbox_all, bbox)
+                    image_url = GeoUtil.create_data_img_url_from_geotiff_for_ipyleaflet(input_path)
+                    image = ImageOverlay(
+                        url=image_url,
+                        bounds=((bbox[1], bbox[0]), (bbox[3], bbox[2]))
+                    )
+                    layer_list.append(image)
+                else:
+                    print(dataset.metadata['title'] + "'s  data format" + dataset.metadata['format'] +
+                          " is not supported.")
+            except Exception:
+                print("There is a problem in dataset format for ' + dataset.metadata['title']  + '.")
+
+        cen_lat, cen_lon = (bbox_all[2] + bbox_all[0]) / 2.0, (bbox_all[3] + bbox_all[1]) / 2.0
+
+        # TODO: ipylft doesn't have fit bound methods
+        map = ipylft.Map(center=(cen_lon, cen_lat), zoom=zoom_level, basemap=ipylft.basemaps.Stamen.Toner,
+                         crs='EPSG3857', scroll_wheel_zoom=True)
+        for layer in layer_list:
+            map.add_layer(layer)
+
+        map.add_control(ipylft.LayersControl())
+
+        return map
 
     @staticmethod
     def plot_tornado(tornado_id, client, category=False, basemap=True):

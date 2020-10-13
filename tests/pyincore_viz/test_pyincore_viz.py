@@ -130,10 +130,23 @@ def test_plot_table_dataset():
     map = viz.plot_table_dataset(client, dataset_list, 'meandamage')
 
 
-def test_visualize_raster_file_ipyleaflet():
+def test_visualize_raster_file():
     galvaston_wave_height_id = '5f11e503feef2d758c4df6db'
     dataset = Dataset.from_data_service(galvaston_wave_height_id, DataService(client))
     map = viz.plot_raster_from_path(dataset.get_file_path('tif'))
+
+
+def test_plot_map_dataset_list():
+    galveston_roadway_id = '5f0dd5ecb922f96f4e962caf'
+    galvaston_wave_height_id = '5f11e503feef2d758c4df6db'
+    dataset_id_list = [galveston_roadway_id, galvaston_wave_height_id]
+
+    dataset_list = []
+    for dataset_id in dataset_id_list:
+        dataset_list.append(Dataset.from_data_service(dataset_id, DataService(client)))
+
+    # table dataset plot map
+    map = viz.plot_maps_dataset_list(dataset_list)
 
 
 if __name__ == "__main__":
@@ -145,4 +158,5 @@ if __name__ == "__main__":
     test_plot_fragility()
     test_visualize_raster_file()
     test_plot_table_dataset()
-    test_visualize_raster_file_ipyleaflet()
+    test_visualize_raster_file()
+    test_plot_map_dataset_list()
