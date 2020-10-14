@@ -1,3 +1,8 @@
+import pytest
+import matplotlib
+import os
+import jwt
+
 from pyincore import Dataset
 from pyincore import IncoreClient
 from pyincore import NetworkDataset
@@ -10,12 +15,23 @@ from pyincore.models.fragilitycurveset import FragilityCurveSet
 from pyincore_viz.geoutil import GeoUtil as viz
 from pyincore_viz.plotutil import PlotUtil as plot
 
-import matplotlib
 
-client = IncoreClient(INCORE_API_DEV_URL)
+@pytest.fixture
+def client(monkeypatch):
+    try:
+        with open(os.path.join(os.path.dirname(__file__), ".incorepw"), 'r') as f:
+            cred = f.read().splitlines()
+    except EnvironmentError:
+        assert False
+    credentials = jwt.decode(cred[0], cred[1])
+    monkeypatch.setattr("builtins.input", lambda x: credentials["username"])
+    monkeypatch.setattr("getpass.getpass", lambda y: credentials["password"])
+    client = IncoreClient(service_url=INCORE_API_DEV_URL, token_file_name=".incrtesttoken")
+
+    return client
 
 
-def test_visualize_earthquake():
+def test_visualize_earthquake(client):
     eq_hazard_id = "5b902cb273c3371e1236b36b"
 
     eq_metadata = HazardService(client).get_earthquake_hazard_metadata(eq_hazard_id)
@@ -24,8 +40,10 @@ def test_visualize_earthquake():
     eq_dataset = Dataset.from_data_service(eq_dataset_id, DataService(client))
     viz.plot_earthquake(eq_hazard_id, client)
 
+    assert True
 
-def test_visualize_joplin_tornado_building():
+
+def test_visualize_joplin_tornado_building(client):
     # testing datasets
     tornado_hazard_id = "5dfa32bbc0601200080893fb"
     joplin_bldg_inv_id = "5df7d0de425e0b00092d0082"
@@ -43,13 +61,15 @@ def test_visualize_joplin_tornado_building():
     # using wms layer for joplin building inv. gdf will crash the browser
     viz.get_gdf_wms_map([tornado_dataset], [joplin_bldg_inv], zoom_level=11)
 
+    assert True
 
-def test_visualize_inventory():
-    shelby_hopital_inv_id = "5a284f0bc7d30d13bc081a28"
+
+def test_visualize_inventory(client):
+    shelby_hospital_inv_id = "5a284f0bc7d30d13bc081a28"
     shelby_road_id = "5a284f2bc7d30d13bc081eb6"
 
     # get shelvy building inventory and road
-    sh_bldg_inv = Dataset.from_data_service(shelby_hopital_inv_id, DataService(client))
+    sh_bldg_inv = Dataset.from_data_service(shelby_hospital_inv_id, DataService(client))
     sh_road = Dataset.from_data_service(shelby_road_id, DataService(client))
 
     # visualize building inventory
@@ -60,16 +80,20 @@ def test_visualize_inventory():
     viz.get_gdf_map([sh_bldg_inv, sh_road], zoom_level=10)
     viz.get_gdf_wms_map([sh_bldg_inv], [sh_road], zoom_level=10)
 
+    assert True
 
-def test_visualize_network():
+
+def test_visualize_network(client):
     centerville_epn_network_id = "5d25fb355648c40482a80e1c"
 
     dataset = Dataset.from_data_service(centerville_epn_network_id, DataService(client))
     network_dataset = NetworkDataset(dataset)
     viz.plot_network_dataset(network_dataset, 12)
 
+    assert True
 
-def test_plot_fragility():
+
+def test_plot_fragility(client):
     # clean plots that are not closed/cleared
     matplotlib.pyplot.clf()
     matplotlib.pyplot.cla()
@@ -110,8 +134,10 @@ def test_plot_fragility():
     plt.savefig('conditional.png')
     plt.clf()
 
+    assert True
 
-def test_plot_table_dataset():
+
+def test_plot_table_dataset(client):
     # table dataset id list
     dataset_id_list = ['5a296b53c7d30d4af5378cd5', '5a296e1fc7d30d4af53798ae']
     # table dataset list
@@ -122,13 +148,3 @@ def test_plot_table_dataset():
     # table dataset plot map
     map = viz.plot_table_dataset(client, dataset_list, 'meandamage')
     map
-
-
-if __name__ == "__main__":
-    # comment out or remove comment to test specific feature below.
-    test_visualize_earthquake()
-    test_visualize_joplin_tornado_building()
-    test_visualize_inventory()
-    test_visualize_network()
-    test_plot_fragility()
-    test_plot_table_dataset()
