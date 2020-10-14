@@ -9,12 +9,12 @@ from pathlib import Path
 import contextily as ctx
 import geopandas as gpd
 import ipyleaflet as ipylft
+from ipyleaflet import projections
 import matplotlib.pyplot as plt
 import networkx as nx
 import rasterio
 import rasterio.plot
 import copy
-import json
 import os
 
 from owslib.wms import WebMapService
@@ -24,8 +24,6 @@ from pyincore import Dataset
 from pyincore import NetworkDataset
 from pyincore_viz import globals
 from pyincore_viz.plotutil import PlotUtil
-from branca.colormap import linear
-from ipyleaflet import projections
 from pyincore_viz.tabledatasetlistmap import TableDatasetListMap as table_list_map
 
 
