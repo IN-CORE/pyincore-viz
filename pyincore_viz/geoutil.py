@@ -109,58 +109,6 @@ class GeoUtil:
         GeoUtil.plot_gdf_map(gdf, column, category, basemap)
 
     @staticmethod
-    def plot_maps_dataset_list(dataset_list, column='guid', category=False, basemap=True, zoom_level=10):
-        layer_list = []
-        bbox_all = [9999, 9999, -9999, -9999]
-
-        for dataset in dataset_list:
-            # check if dataset is shapefile or raster
-            try:
-                if dataset.metadata['format'].lower() == 'shapefile':
-                    gdf = gpd.read_file(dataset.local_file_path)
-                    # create random color
-                    color = "#" + ''.join([random.choice('0123456789ABCDEF') for j in range(6)])
-                    shp_data = ipylft.GeoData(geo_dataframe=gdf,
-                                              style={'color': 'black', 'fillColor': color,
-                                                     'opacity': 0.05, 'weight': 1.9, 'dashArray': '2',
-                                                     'fillOpacity': 0.6},
-                                              hover_style={'fillColor': 'red', 'fillOpacity': 0.2},
-                                              name=dataset.metadata['title'])
-                    bbox = gdf.total_bounds
-                    bbox_all = GeoUtil.merge_bbox(bbox_all, bbox)
-
-                    layer_list.append(shp_data)
-                elif dataset.metadata['format'].lower() == 'raster' \
-                        or dataset.metadata['format'].lower() == 'geotif' \
-                        or dataset.metadata['format'].lower() == 'geotif':
-                    input_path = dataset.get_file_path('tif')
-                    bbox = GeoUtil.get_raster_boundary(input_path)
-                    bbox_all = GeoUtil.merge_bbox(bbox_all, bbox)
-                    image_url = GeoUtil.create_data_img_url_from_geotiff_for_ipyleaflet(input_path)
-                    image = ImageOverlay(
-                        url=image_url,
-                        bounds=((bbox[1], bbox[0]), (bbox[3], bbox[2]))
-                    )
-                    layer_list.append(image)
-                else:
-                    print(dataset.metadata['title'] + "'s  data format" + dataset.metadata['format'] +
-                          " is not supported.")
-            except Exception:
-                print("There is a problem in dataset format for ' + dataset.metadata['title']  + '.")
-
-        cen_lat, cen_lon = (bbox_all[2] + bbox_all[0]) / 2.0, (bbox_all[3] + bbox_all[1]) / 2.0
-
-        # TODO: ipylft doesn't have fit bound methods
-        map = ipylft.Map(center=(cen_lon, cen_lat), zoom=zoom_level, basemap=ipylft.basemaps.Stamen.Toner,
-                         crs='EPSG3857', scroll_wheel_zoom=True)
-        for layer in layer_list:
-            map.add_layer(layer)
-
-        map.add_control(ipylft.LayersControl())
-
-        return map
-
-    @staticmethod
     def plot_tornado(tornado_id, client, category=False, basemap=True):
         """Plot a tornado path
 
@@ -486,7 +434,47 @@ class GeoUtil:
         return m
 
     @staticmethod
-    def plot_table_dataset(client, dataset_list=list, column=str, in_source_dataset_id=None):
+    def plot_table_dataset(dataset, client, column=str, category=False, basemap=True):
+        """ Creates map window with table dataset
+
+            Args:
+                dataset (Dataset): pyincore dataset obeject
+                client (Client): pyincore service Client Object
+                column (str): column name to be plot
+                category (boolean): turn on/off category option
+                basemap (boolean): turn on/off base map (e.g. openstreetmap)
+        """
+        joined_gdf = GeoUtil.join_table_dataset_with_source_dataset(dataset, client)
+
+        if joined_gdf is not None:
+            GeoUtil.plot_gdf_map(joined_gdf, column, category, basemap)
+
+    @staticmethod
+    def join_table_dataset_with_source_dataset(dataset, client):
+        is_source_dataset = False
+        source_dataset = None
+
+        # check if the given dataset is table dastaset
+        if dataset.metadata['format'] != 'table' and dataset.metadata['format'] != 'csv':
+            print("The given dataset is not a table dataset")
+            return None
+
+        # check if source dataset exists
+        try:
+            source_dataset = dataset.metadata['sourceDataset']
+            is_source_dataset = True
+        except Exception:
+            print("There is no source dataset for the give table dataset")
+
+        if is_source_dataset:
+            # merge dataset and source dataset
+            geodataset = Dataset.from_data_service(source_dataset, DataService(client))
+            joined_gdf = GeoUtil.join_datasets(geodataset, dataset)
+
+        return joined_gdf
+
+    @staticmethod
+    def plot_table_dataset_list_from_single_source(client, dataset_list=list, column=str, in_source_dataset_id=None):
         """Creates map window with a list of table dataset and source dataset
 
             Args:
@@ -764,3 +752,85 @@ class GeoUtil:
     #     widget_control = ipylft.WidgetControl(widget=out, position='topright')
     #     TableDatasetMapUtil.tablemap.add_control(widget_control)
     #     display(TableDatasetMapUtil.tablemap)
+
+    @staticmethod
+    def plot_maps_dataset_list(dataset_list, client, column='guid', category=False, basemap=True, zoom_level=10):
+        """Create map window using dataset list. Should be okay whether it is shapefile or geotiff
+
+            Args:
+                dataset_list (list):  A list of dataset to be mapped.
+                column (str): column name to be plot
+                client (Client): pyincore service Client Object
+                category (boolean): turn on/off category option
+                basemap (boolean): turn on/off base map (e.g. openstreetmap)
+                zoom_level (int): initial zoom level of the map
+
+            Returns:
+                map(ipyleaflet.Map): ipyleaflet map obejct
+
+        """
+        layer_list = []
+        bbox_all = [9999, 9999, -9999, -9999]
+
+        for dataset in dataset_list:
+            # check if dataset is shapefile or raster
+            try:
+                if dataset.metadata['format'].lower() == 'shapefile':
+                    gdf = gpd.read_file(dataset.local_file_path)
+                    geodata = GeoUtil.create_geodata_from_geodataframe(gdf, dataset.metadata['title'])
+                    bbox = gdf.total_bounds
+                    bbox_all = GeoUtil.merge_bbox(bbox_all, bbox)
+
+                    layer_list.append(geodata)
+                elif dataset.metadata['format'].lower() == 'table' or dataset.metadata['format'] == 'csv':
+                    # check source dataset
+                    gdf = GeoUtil.join_table_dataset_with_source_dataset(dataset, client)
+                    if gdf is None:
+                        print(dataset.metadata['title'] + "'s  data format" + dataset.metadata['format'] +
+                              " is not supported.")
+                    else:
+                        geodata = GeoUtil.create_geodata_from_geodataframe(gdf, dataset.metadata['title'])
+                        bbox = gdf.total_bounds
+                        bbox_all = GeoUtil.merge_bbox(bbox_all, bbox)
+
+                        layer_list.append(geodata)
+                elif dataset.metadata['format'].lower() == 'raster' \
+                        or dataset.metadata['format'].lower() == 'geotif' \
+                        or dataset.metadata['format'].lower() == 'geotif':
+                    input_path = dataset.get_file_path('tif')
+                    bbox = GeoUtil.get_raster_boundary(input_path)
+                    bbox_all = GeoUtil.merge_bbox(bbox_all, bbox)
+                    image_url = GeoUtil.create_data_img_url_from_geotiff_for_ipyleaflet(input_path)
+                    image = ImageOverlay(
+                        url=image_url,
+                        bounds=((bbox[1], bbox[0]), (bbox[3], bbox[2]))
+                    )
+                    layer_list.append(image)
+                else:
+                    print(dataset.metadata['title'] + "'s  data format" + dataset.metadata['format'] +
+                          " is not supported.")
+            except Exception:
+                print("There is a problem in dataset format for ' + dataset.metadata['title']  + '.")
+
+        cen_lat, cen_lon = (bbox_all[2] + bbox_all[0]) / 2.0, (bbox_all[3] + bbox_all[1]) / 2.0
+
+        # TODO: ipylft doesn't have fit bound methods
+        map = ipylft.Map(center=(cen_lon, cen_lat), zoom=zoom_level, basemap=ipylft.basemaps.Stamen.Toner,
+                         crs='EPSG3857', scroll_wheel_zoom=True)
+        for layer in layer_list:
+            map.add_layer(layer)
+
+        map.add_control(ipylft.LayersControl())
+
+        return map
+
+    @staticmethod
+    def create_geodata_from_geodataframe(gdf, name):
+        # create random color
+        color = "#" + ''.join([random.choice('0123456789ABCDEF') for j in range(6)])
+        geodata = ipylft.GeoData(geo_dataframe=gdf,
+                                 style={'color': 'black', 'fillColor': color, 'opacity': 0.05,
+                                        'weight': 1.9, 'dashArray': '2', 'fillOpacity': 0.6},
+                                 hover_style={'fillColor': 'red', 'fillOpacity': 0.2}, name=name)
+
+        return geodata

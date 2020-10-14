@@ -139,14 +139,21 @@ def test_visualize_raster_file():
 def test_plot_map_dataset_list():
     galveston_roadway_id = '5f0dd5ecb922f96f4e962caf'
     galvaston_wave_height_id = '5f11e503feef2d758c4df6db'
-    dataset_id_list = [galveston_roadway_id, galvaston_wave_height_id]
+    shelvy_building_damage_id = '5a296b53c7d30d4af5378cd5'
+    dataset_id_list = [galveston_roadway_id, galvaston_wave_height_id, shelvy_building_damage_id]
 
     dataset_list = []
     for dataset_id in dataset_id_list:
         dataset_list.append(Dataset.from_data_service(dataset_id, DataService(client)))
 
     # table dataset plot map
-    map = viz.plot_maps_dataset_list(dataset_list)
+    map = viz.plot_maps_dataset_list(dataset_list, client)
+
+
+def test_plot_map_table_dataset():
+    building_damage_id = '5a296b53c7d30d4af5378cd5'
+    dataset = Dataset.from_data_service(building_damage_id, DataService(client))
+    map = viz.plot_table_dataset(dataset, client, 'meandamage')
 
 
 if __name__ == "__main__":
@@ -160,3 +167,4 @@ if __name__ == "__main__":
     test_plot_table_dataset()
     test_visualize_raster_file()
     test_plot_map_dataset_list()
+    test_plot_map_table_dataset()
