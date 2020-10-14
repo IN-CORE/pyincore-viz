@@ -16,12 +16,12 @@ import rasterio
 import rasterio.plot
 import gdal
 import copy
-import json
 import os
 import PIL
 import numpy as np
 import random
 
+from ipyleaflet import projections
 from gdalconst import GA_ReadOnly
 from pyincore.dataservice import DataService
 from pyincore.hazardservice import HazardService
@@ -30,10 +30,11 @@ from pyincore import NetworkDataset
 from pyincore_viz import globals
 from owslib.wms import WebMapService
 from ipyleaflet import ImageOverlay
-from pyincore_viz.plotutil import PlotUtil
 from branca.colormap import linear
 from base64 import b64encode
-from io import StringIO, BytesIO
+from io import BytesIO
+from pyincore_viz.plotutil import PlotUtil
+from pyincore_viz.tabledatasetlistmap import TableDatasetListMap as table_list_map
 
 
 logger = globals.LOGGER
@@ -257,8 +258,8 @@ class GeoUtil:
         cen_lat, cen_lon = (bbox_all[2] + bbox_all[0]) / 2.0, (bbox_all[3] + bbox_all[1]) / 2.0
 
         # TODO: ipylft doesn't have fit bound methods, we need to find a way to zoom level to show all data
-        m = ipylft.Map(center=(cen_lon, cen_lat), zoom=zoom_level, basemap=ipylft.basemaps.Stamen.Toner, crs='EPSG3857',
-                       scroll_wheel_zoom=True)
+        m = ipylft.Map(center=(cen_lon, cen_lat), zoom=zoom_level, basemap=ipylft.basemaps.Stamen.Toner,
+                       crs=projections.EPSG3857, scroll_wheel_zoom=True)
         for entry in geo_data_list:
             m.add_layer(entry)
 
@@ -318,7 +319,7 @@ class GeoUtil:
 
         # TODO: ipylft doesn't have fit bound methods, we need to find a way to zoom level to show all data
         m = ipylft.Map(center=(cen_lon, cen_lat), zoom=zoom_level,
-                       basemap=ipylft.basemaps.Stamen.Toner, crs='EPSG3857', scroll_wheel_zoom=True)
+                       basemap=ipylft.basemaps.Stamen.Toner, crs=projections.EPSG3857, scroll_wheel_zoom=True)
         for layer in wms_layers:
             m.add_layer(layer)
 
@@ -371,7 +372,7 @@ class GeoUtil:
 
         # TODO: ipylft doesn't have fit bound methods, we need to find a way to zoom level to show all data
         m = ipylft.Map(center=(cen_lon, cen_lat), zoom=zoom_level,
-                       basemap=ipylft.basemaps.Stamen.Toner, crs='EPSG3857', scroll_wheel_zoom=True)
+                       basemap=ipylft.basemaps.Stamen.Toner, crs=projections.EPSG3857, scroll_wheel_zoom=True)
         for layer in wms_layers:
             m.add_layer(layer)
 
@@ -424,8 +425,8 @@ class GeoUtil:
         cen_lat, cen_lon = (bbox_all[2] + bbox_all[0]) / 2.0, (bbox_all[3] + bbox_all[1]) / 2.0
 
         # TODO: ipylft doesn't have fit bound methods, we need to find a way to zoom level to show all data
-        m = ipylft.Map(center=(cen_lon, cen_lat), zoom=zoom_level, basemap=ipylft.basemaps.Stamen.Toner, crs='EPSG3857',
-                       scroll_wheel_zoom=True)
+        m = ipylft.Map(center=(cen_lon, cen_lat), zoom=zoom_level, basemap=ipylft.basemaps.Stamen.Toner,
+                       crs=projections.EPSG3857, scroll_wheel_zoom=True)
         for entry in geo_data_list:
             m.add_layer(entry)
 
@@ -451,6 +452,16 @@ class GeoUtil:
 
     @staticmethod
     def join_table_dataset_with_source_dataset(dataset, client):
+        """Creates geopandas dataframe by joining table dataset and its source dataset
+
+            Args:
+                dataset (Dataset): pyincore dataset object
+                client (Client): pyincore service client object
+
+            Returns:
+                joined_dbf (geodataframe): geopandas geodataframe object
+
+        """
         is_source_dataset = False
         source_dataset = None
 
@@ -502,9 +513,6 @@ class GeoUtil:
         inventory_df = PlotUtil.inventory_to_geodataframe(source_dataset)
         inventory_df = PlotUtil.remove_null_inventories(inventory_df, 'guid')
 
-        # create base map
-        map = GeoUtil.create_basemap_ipylft(inventory_df)
-
         # merge inventory dataframe and joined table dataframe
         inventory_df = inventory_df.merge(joined_df, on='guid')
 
@@ -514,15 +522,12 @@ class GeoUtil:
             # dataset_id will be used as a column name to visualize the values in the field
             keep_list.append(dataset_id)
         inventory_df = inventory_df[keep_list]
-        inventory_json = json.loads(inventory_df.to_json())
 
-        # set global for button click
-        GeoUtil.inventory_json = inventory_json
-        GeoUtil.map = map
+        # create base map
+        map = table_list_map()
+        map.create_basemap_ipylft(inventory_df, dataset_id_list)
 
-        GeoUtil.map = GeoUtil.create_map_widgets(dataset_id_list, GeoUtil.map, inventory_df)
-
-        return GeoUtil.map
+        return map.map
 
     @staticmethod
     def merge_table_dataset_with_field(dataset_list: list, column=str, in_source_dataset_id=None):
@@ -643,7 +648,7 @@ class GeoUtil:
 
         cen_lat, cen_lon = (boundary[2] + boundary[0]) / 2.0, (boundary[3] + boundary[1]) / 2.0
         map = ipylft.Map(center=(cen_lon, cen_lat), zoom=zoom_level,
-                         basemap=ipylft.basemaps.Stamen.Toner, crs='EPSG3857', scroll_wheel_zoom=True)
+                         basemap=ipylft.basemaps.Stamen.Toner, crs=projections.EPSG3857, scroll_wheel_zoom=True)
         image = ImageOverlay(
             url=image_url,
             bounds=((boundary[1], boundary[0]), (boundary[3], boundary[2]))
@@ -816,7 +821,7 @@ class GeoUtil:
 
         # TODO: ipylft doesn't have fit bound methods
         map = ipylft.Map(center=(cen_lon, cen_lat), zoom=zoom_level, basemap=ipylft.basemaps.Stamen.Toner,
-                         crs='EPSG3857', scroll_wheel_zoom=True)
+                         crs=projections.EPSG3857, scroll_wheel_zoom=True)
         for layer in layer_list:
             map.add_layer(layer)
 
@@ -826,6 +831,16 @@ class GeoUtil:
 
     @staticmethod
     def create_geodata_from_geodataframe(gdf, name):
+        """Create map window using dataset list. Should be okay whether it is shapefile or geotiff
+
+            Args:
+                gdf (GeoDataFrame):  geopandas geodataframe object
+                name (str): name of the gdf
+
+            Returns:
+                geodata (ipyleaflet.GeoData): ipyleaflet GeoData obejct
+
+        """
         # create random color
         color = "#" + ''.join([random.choice('0123456789ABCDEF') for j in range(6)])
         geodata = ipylft.GeoData(geo_dataframe=gdf,

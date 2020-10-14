@@ -27,7 +27,7 @@ setup(
     # TODO need to figure out what are the dependency requirements
     install_requires=[
         "branca==0.3.1",
-        "ipyleaflet>=0.12.4,<0.13",
+        "ipyleaflet==0.13.2",
         "ipywidgets>=7.5.0,<7.6",
         "pandas>=0.24.1",
         "geopandas>=0.6.1",
@@ -42,7 +42,8 @@ setup(
         "plotly>=3.6.0",
         "pytest>=3.9.0",
         "pyincore>=0.6.2",
-        "folium>=0.11.0"
+        "pyjwt>=1.7.1",
+        "pyincore>=0.6.2"
     ],
     python_requires=">=3.5",
     classifiers=[
