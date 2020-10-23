@@ -481,6 +481,8 @@ class GeoUtil:
             # merge dataset and source dataset
             geodataset = Dataset.from_data_service(source_dataset, DataService(client))
             joined_gdf = GeoUtil.join_datasets(geodataset, dataset)
+        else:
+            return None
 
         return joined_gdf
 
