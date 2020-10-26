@@ -9,7 +9,6 @@ from pathlib import Path
 import contextily as ctx
 import geopandas as gpd
 import ipyleaflet as ipylft
-import ipywidgets as ipywgt
 import matplotlib.pyplot as plt
 import networkx as nx
 import rasterio
@@ -21,7 +20,6 @@ import PIL
 import numpy as np
 import random
 
-from ipyleaflet import projections
 from gdalconst import GA_ReadOnly
 from pyincore.dataservice import DataService
 from pyincore.hazardservice import HazardService
@@ -30,7 +28,6 @@ from pyincore import NetworkDataset
 from pyincore_viz import globals
 from owslib.wms import WebMapService
 from ipyleaflet import ImageOverlay
-from branca.colormap import linear
 from base64 import b64encode
 from io import BytesIO
 from pyincore_viz.plotutil import PlotUtil
@@ -257,9 +254,7 @@ class GeoUtil:
 
         cen_lat, cen_lon = (bbox_all[2] + bbox_all[0]) / 2.0, (bbox_all[3] + bbox_all[1]) / 2.0
 
-        # TODO: ipylft doesn't have fit bound methods, we need to find a way to zoom level to show all data
-        m = ipylft.Map(center=(cen_lon, cen_lat), zoom=zoom_level, basemap=ipylft.basemaps.Stamen.Toner,
-                       crs=projections.EPSG3857, scroll_wheel_zoom=True)
+        m = GeoUtil.get_ipyleaflet_map(cen_lon, cen_lat, zoom_level)
         for entry in geo_data_list:
             m.add_layer(entry)
 
@@ -317,9 +312,7 @@ class GeoUtil:
 
         cen_lat, cen_lon = (bbox_all[2] + bbox_all[0]) / 2.0, (bbox_all[3] + bbox_all[1]) / 2.0
 
-        # TODO: ipylft doesn't have fit bound methods, we need to find a way to zoom level to show all data
-        m = ipylft.Map(center=(cen_lon, cen_lat), zoom=zoom_level,
-                       basemap=ipylft.basemaps.Stamen.Toner, crs=projections.EPSG3857, scroll_wheel_zoom=True)
+        m = GeoUtil.get_ipyleaflet_map(cen_lon, cen_lat, zoom_level)
         for layer in wms_layers:
             m.add_layer(layer)
 
@@ -370,9 +363,7 @@ class GeoUtil:
 
         cen_lat, cen_lon = (bbox_all[2] + bbox_all[0]) / 2.0, (bbox_all[3] + bbox_all[1]) / 2.0
 
-        # TODO: ipylft doesn't have fit bound methods, we need to find a way to zoom level to show all data
-        m = ipylft.Map(center=(cen_lon, cen_lat), zoom=zoom_level,
-                       basemap=ipylft.basemaps.Stamen.Toner, crs=projections.EPSG3857, scroll_wheel_zoom=True)
+        m = GeoUtil.get_ipyleaflet_map(cen_lon, cen_lat, zoom_level)
         for layer in wms_layers:
             m.add_layer(layer)
 
@@ -424,9 +415,7 @@ class GeoUtil:
 
         cen_lat, cen_lon = (bbox_all[2] + bbox_all[0]) / 2.0, (bbox_all[3] + bbox_all[1]) / 2.0
 
-        # TODO: ipylft doesn't have fit bound methods, we need to find a way to zoom level to show all data
-        m = ipylft.Map(center=(cen_lon, cen_lat), zoom=zoom_level, basemap=ipylft.basemaps.Stamen.Toner,
-                       crs=projections.EPSG3857, scroll_wheel_zoom=True)
+        m = GeoUtil.get_ipyleaflet_map(cen_lon, cen_lat, zoom_level)
         for entry in geo_data_list:
             m.add_layer(entry)
 
@@ -601,13 +590,20 @@ class GeoUtil:
         image_url = GeoUtil.create_data_img_url_from_geotiff_for_ipyleaflet(input_path)
 
         cen_lat, cen_lon = (boundary[2] + boundary[0]) / 2.0, (boundary[3] + boundary[1]) / 2.0
-        map = ipylft.Map(center=(cen_lon, cen_lat), zoom=zoom_level,
-                         basemap=ipylft.basemaps.Stamen.Toner, crs=projections.EPSG3857, scroll_wheel_zoom=True)
+        map = GeoUtil.get_ipyleaflet_map(cen_lon, cen_lat, zoom_level)
         image = ImageOverlay(
             url=image_url,
             bounds=((boundary[1], boundary[0]), (boundary[3], boundary[2]))
         )
         map.add_layer(image)
+
+        return map
+
+    @staticmethod
+    def get_ipyleaflet_map(cen_lon, cen_lat, zoom_level):
+        # TODO: ipylft doesn't have fit bound methods, we need to find a way to zoom level to show all data
+        map = ipylft.Map(center=(cen_lon, cen_lat), zoom=zoom_level,
+                         basemap=ipylft.basemaps.Stamen.Toner, crs='EPSG3857', scroll_wheel_zoom=True)
 
         return map
 
@@ -727,9 +723,7 @@ class GeoUtil:
 
         cen_lat, cen_lon = (bbox_all[2] + bbox_all[0]) / 2.0, (bbox_all[3] + bbox_all[1]) / 2.0
 
-        # TODO: ipylft doesn't have fit bound methods
-        map = ipylft.Map(center=(cen_lon, cen_lat), zoom=zoom_level, basemap=ipylft.basemaps.Stamen.Toner,
-                         crs=projections.EPSG3857, scroll_wheel_zoom=True)
+        map = GeoUtil.get_ipyleaflet_map(cen_lon, cen_lat, zoom_level)
         for layer in layer_list:
             map.add_layer(layer)
 
