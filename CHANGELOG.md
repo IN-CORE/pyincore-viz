@@ -5,9 +5,22 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
-## [Unreleased]
+## [0.2.4] - 2020-10-28
 ### Added
-- create method to plot fragilities [INCORE1-777](https://opensource.ncsa.illinois.edu/jira/browse/INCORE1-777)
+- Method to plot fragilities [INCORE1-777](https://opensource.ncsa.illinois.edu/jira/browse/INCORE1-777)
+- Plot map for table datasets. [INCORE1-821](https://opensource.ncsa.illinois.edu/jira/browse/INCORE1-821)
+- Plot map for local raster dataset. [INCORE1-599](https://opensource.ncsa.illinois.edu/jira/browse/INCORE1-599)
+- Plot map for vector, raster, and table dataset together. [INCORE1-598](https://opensource.ncsa.illinois.edu/jira/browse/INCORE1-598)
+- Created a method to view fragility. [INCORE1-777](https://opensource.ncsa.illinois.edu/jira/browse/INCORE1-777)
+- Created a plot map for list of csv dataset in ipyleaflet. [INCORE1-764](https://opensource.ncsa.illinois.edu/jira/browse/INCORE1-764)
+
+### Changed
+- Test file has been changed to use individual method for testing.  [INCORE1-768](https://opensource.ncsa.illinois.edu/jira/browse/INCORE1-768)
+- Test file changed to use id token. [INCORE1-801](https://opensource.ncsa.illinois.edu/jira/browse/INCORE1-801)
+- Pyincore-viz uses pytest. [INCORE1-768](https://opensource.ncsa.illinois.edu/jira/browse/INCORE1-768)
+
+###Fixed
+-  cleaning layer when map layer selection changed. [INCORE1-808](https://opensource.ncsa.illinois.edu/jira/browse/INCORE1-808)
 
 ## [0.2.3] - 2020-09-03
 ### Added
