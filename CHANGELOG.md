@@ -19,7 +19,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Test file changed to use id token. [INCORE1-801](https://opensource.ncsa.illinois.edu/jira/browse/INCORE1-801)
 - Pyincore-viz uses pytest. [INCORE1-768](https://opensource.ncsa.illinois.edu/jira/browse/INCORE1-768)
 
-###Fixed
+### Fixed
 -  cleaning layer when map layer selection changed. [INCORE1-808](https://opensource.ncsa.illinois.edu/jira/browse/INCORE1-808)
 
 ## [0.2.3] - 2020-09-03
