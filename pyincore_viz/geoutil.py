@@ -32,7 +32,7 @@ from base64 import b64encode
 from io import BytesIO
 from pyincore_viz.plotutil import PlotUtil
 from pyincore_viz.tabledatasetlistmap import TableDatasetListMap as table_list_map
-
+from ipyleaflet import projections
 
 logger = globals.LOGGER
 
@@ -602,8 +602,8 @@ class GeoUtil:
     @staticmethod
     def get_ipyleaflet_map(cen_lon, cen_lat, zoom_level):
         # TODO: ipylft doesn't have fit bound methods, we need to find a way to zoom level to show all data
-        map = ipylft.Map(center=(cen_lon, cen_lat), zoom=zoom_level,
-                         basemap=ipylft.basemaps.Stamen.Toner, crs='EPSG3857', scroll_wheel_zoom=True)
+        map = ipylft.Map(center=(cen_lon, cen_lat), zoom=zoom_level, basemap=ipylft.basemaps.Stamen.Toner,
+                       crs=projections.EPSG3857, scroll_wheel_zoom=True)
 
         return map
 
