@@ -27,7 +27,7 @@ sys.path.insert(0, os.path.abspath('../../tests'))
 
 # -- Project information -----------------------------------------------------
 
-project = 'pyIncore_viz'
+project = 'pyIncore-viz'
 author = 'Yong Wook Kim'
 
 # The short X.Y version
@@ -179,7 +179,7 @@ latex_elements = {
 # (source start file, target name, title,
 #  author, documentclass [howto, manual, or own class]).
 latex_documents = [
-    (master_doc, 'pyincore_viz.tex', 'pyincore_viz Documentation',
+    (master_doc, 'pyIncore-viz.tex', 'pyIncore-viz Documentation',
      'ISDA NCSA', 'manual'),
 ]
 
@@ -189,7 +189,7 @@ latex_documents = [
 # One entry per manual page. List of tuples
 # (source start file, name, description, authors, manual section).
 man_pages = [
-    (master_doc, 'pyincore_viz', 'pyincore_viz Documentation',
+    (master_doc, 'pyIncore-viz', 'pyIncore-viz Documentation',
      [author], 1)
 ]
 
@@ -203,8 +203,8 @@ man_pages = [
 # (source start file, target name, title, author,
 #  dir menu entry, description, category)
 texinfo_documents = [
-    (master_doc, 'pyincore_viz', 'pyincore_viz Documentation',
-     author, 'pyincore_viz', 'One line description of project.',
+    (master_doc, 'pyIncore-viz', 'pyIncore-viz Documentation',
+     author, 'pyIncore-viz', 'One line description of project.',
      'Miscellaneous'),
 ]
 

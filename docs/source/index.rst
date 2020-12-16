@@ -1,14 +1,14 @@
-pyIncore_viz modules
+pyIncore-viz modules
 ====================
 
-**pyIncore_viz**  is a Python visualization package for **pyIncore** module. It allows users
+**pyIncore-viz**  is a Python visualization package for **pyIncore** module. It allows users
 to create image and graphic outputs of various hazard IN-CORE analyses.
 
-To **update** pyIncore_viz run the following command:
+To **update** pyIncore-viz run the following command:
 
 .. code-block:: bash
 
-    conda update -c in-core pyincore_viz
+    conda update -c in-core pyIncore-viz
 
 .. toctree::
    :maxdepth: 2
