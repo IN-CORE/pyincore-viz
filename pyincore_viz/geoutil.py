@@ -600,14 +600,6 @@ class GeoUtil:
         return map
 
     @staticmethod
-    def get_ipyleaflet_map(cen_lon, cen_lat, zoom_level):
-        # TODO: ipylft doesn't have fit bound methods, we need to find a way to zoom level to show all data
-        map = ipylft.Map(center=(cen_lon, cen_lat), zoom=zoom_level, basemap=ipylft.basemaps.Stamen.Toner,
-                       crs=projections.EPSG3857, scroll_wheel_zoom=True)
-
-        return map
-
-    @staticmethod
     def get_raster_boundary(input_path):
         """Creates boundary list from raster dataset file
 
@@ -753,8 +745,19 @@ class GeoUtil:
         return geodata
 
     @staticmethod
+    def convert_bound_to_ipylft_format(bbox):
+        """Convert conventional geodata's bounding box to ipyleaflet bounding box format
+
+            Args:
+                bbox (list): [min_lat, min_lon, max_lat, max_lon]
+
+            Returns:
+                bbox (list): [[south, east], [north, west]]
+
+        """
+    @staticmethod
     def calc_center_from_bbox(bbox):
-        """Create map window using dataset list. Should be okay whether it is shapefile or geotiff
+        """Calulate center point location from given bounding box
 
             Args:
                 bbox (list): [min_lat, min_lon, max_lat, max_lon]
@@ -768,9 +771,27 @@ class GeoUtil:
 
         return cen_lat, cen_lon
 
+    @staticmethod
+    def get_ipyleaflet_map(cen_lon, cen_lat, zoom_level):
+        """Creates ipyleaflet map object and fit the map using the center point location and zoom level
+
+            Args:
+                cen_lon (float): longitude of map's center location
+                cen_lat (float): latitude of map's center location
+                zoom_level (int): initial zoom level of the map
+
+            Returns:
+                map (ipyleaflet.Map): ipyleaflet Map object
+
+        """
+        map = ipylft.Map(center=(cen_lon, cen_lat), zoom=zoom_level, basemap=ipylft.basemaps.Stamen.Toner,
+                         crs=projections.EPSG3857, scroll_wheel_zoom=True)
+
+        return map
+
 
     @staticmethod
-    def get_ipyleaflet_map(bounds=None):
+    def get_ipyleaflet_map(bbox=None):
         """Creates ipyleaflet map object and fit the map using the bounding box information
 
             Args:
@@ -782,6 +803,10 @@ class GeoUtil:
         """
         map = ipylft.Map(basemap=ipylft.basemaps.Stamen.Toner,
                          crs=projections.EPSG3857, scroll_wheel_zoom=True)
-        map.fit_bounds(bounds)
+
+        if bbox:
+            # the boundary information should be converted to ipyleaflet code boundary
+            ipylft_bound = GeoUtil.convert_bound_to_ipylft_format(bbox)
+            map.fit_bounds(bbox)
 
         return map
