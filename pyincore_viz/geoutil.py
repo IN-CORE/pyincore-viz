@@ -252,7 +252,7 @@ class GeoUtil:
             bbox = gdf.total_bounds
             bbox_all = GeoUtil.merge_bbox(bbox_all, bbox)
 
-        cen_lat, cen_lon = (bbox_all[2] + bbox_all[0]) / 2.0, (bbox_all[3] + bbox_all[1]) / 2.0
+        cen_lat, cen_lon = GeoUtil.calc_center_from_bbox(bbox)
 
         m = GeoUtil.get_ipyleaflet_map(cen_lon, cen_lat, zoom_level)
         for entry in geo_data_list:
@@ -310,7 +310,7 @@ class GeoUtil:
             bbox = dataset.metadata['boundingBox']
             bbox_all = GeoUtil.merge_bbox(bbox_all, bbox)
 
-        cen_lat, cen_lon = (bbox_all[2] + bbox_all[0]) / 2.0, (bbox_all[3] + bbox_all[1]) / 2.0
+        cen_lat, cen_lon = GeoUtil.calc_center_from_bbox(bbox)
 
         m = GeoUtil.get_ipyleaflet_map(cen_lon, cen_lat, zoom_level)
         for layer in wms_layers:
@@ -361,7 +361,7 @@ class GeoUtil:
             bbox = dataset.metadata['boundingBox']
             bbox_all = GeoUtil.merge_bbox(bbox_all, bbox)
 
-        cen_lat, cen_lon = (bbox_all[2] + bbox_all[0]) / 2.0, (bbox_all[3] + bbox_all[1]) / 2.0
+        cen_lat, cen_lon = GeoUtil.calc_center_from_bbox(bbox)
 
         m = GeoUtil.get_ipyleaflet_map(cen_lon, cen_lat, zoom_level)
         for layer in wms_layers:
@@ -413,7 +413,7 @@ class GeoUtil:
         bbox = link_gdf.total_bounds
         bbox_all = GeoUtil.merge_bbox(bbox_all, bbox)
 
-        cen_lat, cen_lon = (bbox_all[2] + bbox_all[0]) / 2.0, (bbox_all[3] + bbox_all[1]) / 2.0
+        cen_lat, cen_lon = GeoUtil.calc_center_from_bbox(bbox)
 
         m = GeoUtil.get_ipyleaflet_map(cen_lon, cen_lat, zoom_level)
         for entry in geo_data_list:
@@ -586,14 +586,14 @@ class GeoUtil:
                 map (ipyleaflet.Map): ipyleaflet Map object
 
         """
-        boundary = GeoUtil.get_raster_boundary(input_path)
+        bbox = GeoUtil.get_raster_boundary(input_path)
         image_url = GeoUtil.create_data_img_url_from_geotiff_for_ipyleaflet(input_path)
 
-        cen_lat, cen_lon = (boundary[2] + boundary[0]) / 2.0, (boundary[3] + boundary[1]) / 2.0
+        cen_lat, cen_lon = GeoUtil.calc_center_from_bbox(bbox)
         map = GeoUtil.get_ipyleaflet_map(cen_lon, cen_lat, zoom_level)
         image = ImageOverlay(
             url=image_url,
-            bounds=((boundary[1], boundary[0]), (boundary[3], boundary[2]))
+            bounds=((bbox[1], bbox[0]), (bbox[3], bbox[2]))
         )
         map.add_layer(image)
 
@@ -721,7 +721,7 @@ class GeoUtil:
             except Exception:
                 print("There is a problem in dataset format for ' + dataset.metadata['title']  + '.")
 
-        cen_lat, cen_lon = (bbox_all[2] + bbox_all[0]) / 2.0, (bbox_all[3] + bbox_all[1]) / 2.0
+        cen_lat, cen_lon = GeoUtil.calc_center_from_bbox(bbox)
 
         map = GeoUtil.get_ipyleaflet_map(cen_lon, cen_lat, zoom_level)
         for layer in layer_list:
@@ -751,3 +751,37 @@ class GeoUtil:
                                  hover_style={'fillColor': 'red', 'fillOpacity': 0.2}, name=name)
 
         return geodata
+
+    @staticmethod
+    def calc_center_from_bbox(bbox):
+        """Create map window using dataset list. Should be okay whether it is shapefile or geotiff
+
+            Args:
+                bbox (list): [min_lat, min_lon, max_lat, max_lon]
+
+            Returns:
+                cen_lat (float): latitude of center location in the bounding box
+                cent_lon (float) longitude of center location in the bounding box
+
+        """
+        cen_lat, cen_lon = (bbox[2] + bbox[0]) / 2.0, (bbox[3] + bbox[1]) / 2.0
+
+        return cen_lat, cen_lon
+
+
+    @staticmethod
+    def get_ipyleaflet_map(bounds=None):
+        """Creates ipyleaflet map object and fit the map using the bounding box information
+
+            Args:
+                bounds (list): list of boundary values
+
+            Returns:
+                map (ipyleaflet.Map): ipyleaflet Map object
+
+        """
+        map = ipylft.Map(basemap=ipylft.basemaps.Stamen.Toner,
+                         crs=projections.EPSG3857, scroll_wheel_zoom=True)
+        map.fit_bounds(bounds)
+
+        return map
