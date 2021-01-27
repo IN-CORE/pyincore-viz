@@ -53,13 +53,13 @@ def test_visualize_joplin_tornado_building(client):
     tornado_dataset_id = HazardService(client).get_tornado_hazard_metadata(tornado_hazard_id)['datasetId']
     tornado_dataset = Dataset.from_data_service(tornado_dataset_id, DataService(client))
 
-    viz.get_gdf_map([tornado_dataset], zoom_level=11)
+    viz.get_gdf_map([tornado_dataset])
 
     # get joplin building inventory
     joplin_bldg_inv = Dataset.from_data_service(joplin_bldg_inv_id, DataService(client))
 
     # using wms layer for joplin building inv. gdf will crash the browser
-    viz.get_gdf_wms_map([tornado_dataset], [joplin_bldg_inv], zoom_level=11)
+    viz.get_gdf_wms_map([tornado_dataset], [joplin_bldg_inv])
 
     assert True
 
@@ -76,9 +76,9 @@ def test_visualize_inventory(client):
     viz.plot_map(sh_bldg_inv, column="struct_typ", category=False, basemap=True)
 
     # visualize building inventory from geoserver
-    viz.get_wms_map([sh_bldg_inv, sh_road], zoom_level=10)
-    viz.get_gdf_map([sh_bldg_inv, sh_road], zoom_level=10)
-    viz.get_gdf_wms_map([sh_bldg_inv], [sh_road], zoom_level=10)
+    viz.get_wms_map([sh_bldg_inv, sh_road])
+    viz.get_gdf_map([sh_bldg_inv, sh_road])
+    viz.get_gdf_wms_map([sh_bldg_inv], [sh_road])
 
     assert True
 
@@ -88,7 +88,7 @@ def test_visualize_network(client):
 
     dataset = Dataset.from_data_service(centerville_epn_network_id, DataService(client))
     network_dataset = NetworkDataset(dataset)
-    viz.plot_network_dataset(network_dataset, 12)
+    viz.plot_network_dataset(network_dataset)
 
     assert True
 

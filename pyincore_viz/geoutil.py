@@ -224,12 +224,11 @@ class GeoUtil:
         return bbox
 
     @staticmethod
-    def get_gdf_map(datasets: list, zoom_level):
+    def get_gdf_map(datasets: list):
         """Get ipyleaflet map with list of datasets with geopandas .
 
         Args:
             datasets (list): a list of pyincore Dataset objects
-            zoom_level (int): initial zoom level
 
         Returns:
             ipyleaflet.Map: ipyleaflet Map object
@@ -252,9 +251,8 @@ class GeoUtil:
             bbox = gdf.total_bounds
             bbox_all = GeoUtil.merge_bbox(bbox_all, bbox)
 
-        cen_lat, cen_lon = GeoUtil.calc_center_from_bbox(bbox)
+        m = GeoUtil.get_ipyleaflet_map(bbox_all)
 
-        m = GeoUtil.get_ipyleaflet_map(cen_lon, cen_lat, zoom_level)
         for entry in geo_data_list:
             m.add_layer(entry)
 
@@ -262,12 +260,11 @@ class GeoUtil:
         return m
 
     @staticmethod
-    def get_wms_map(datasets: list, zoom_level, wms_url=globals.INCORE_GEOSERVER_WMS_URL, layer_check=True):
+    def get_wms_map(datasets: list, wms_url=globals.INCORE_GEOSERVER_WMS_URL, layer_check=True):
         """Get a map with WMS layers from list of datasets
 
         Args:
             datasets (list): list of pyincore Dataset objects
-            zoom_level (int): initial zoom level
             wms_url (str): URL of WMS server
             layer_check (bool): boolean for checking the layer availability in wms server
 
@@ -310,9 +307,8 @@ class GeoUtil:
             bbox = dataset.metadata['boundingBox']
             bbox_all = GeoUtil.merge_bbox(bbox_all, bbox)
 
-        cen_lat, cen_lon = GeoUtil.calc_center_from_bbox(bbox)
+        m = GeoUtil.get_ipyleaflet_map(bbox_all)
 
-        m = GeoUtil.get_ipyleaflet_map(cen_lon, cen_lat, zoom_level)
         for layer in wms_layers:
             m.add_layer(layer)
 
@@ -321,13 +317,12 @@ class GeoUtil:
         return m
 
     @staticmethod
-    def get_gdf_wms_map(datasets, wms_datasets, zoom_level, wms_url=globals.INCORE_GEOSERVER_WMS_URL):
+    def get_gdf_wms_map(datasets, wms_datasets, wms_url=globals.INCORE_GEOSERVER_WMS_URL):
         """Get a map with WMS layers from list of datasets for geopandas and list of datasets for WMS
 
         Args:
             datasets (list): list of pyincore Dataset objects
             wms_datasets (list): list of pyincore Dataset objects for wms layers
-            zoom_level (int): initial zoom level
             wms_url (str): URL of WMS server
 
         Returns:
@@ -361,9 +356,8 @@ class GeoUtil:
             bbox = dataset.metadata['boundingBox']
             bbox_all = GeoUtil.merge_bbox(bbox_all, bbox)
 
-        cen_lat, cen_lon = GeoUtil.calc_center_from_bbox(bbox)
+        m = GeoUtil.get_ipyleaflet_map(bbox_all)
 
-        m = GeoUtil.get_ipyleaflet_map(cen_lon, cen_lat, zoom_level)
         for layer in wms_layers:
             m.add_layer(layer)
 
@@ -375,12 +369,11 @@ class GeoUtil:
         return m
 
     @staticmethod
-    def plot_network_dataset(network_dataset: NetworkDataset, zoom_level=10):
+    def plot_network_dataset(network_dataset: NetworkDataset):
         """Creates map window with Network Dataset visualized
 
         Args:
             network_dataset (NetworkDataset):  pyincore Network Dataset object
-            zoom_level (int): zoom level indicator value for mapping
 
         Returns:
             m (ipyleaflet.Map): ipyleaflet Map object
@@ -413,9 +406,8 @@ class GeoUtil:
         bbox = link_gdf.total_bounds
         bbox_all = GeoUtil.merge_bbox(bbox_all, bbox)
 
-        cen_lat, cen_lon = GeoUtil.calc_center_from_bbox(bbox)
+        m = GeoUtil.get_ipyleaflet_map(bbox_all)
 
-        m = GeoUtil.get_ipyleaflet_map(cen_lon, cen_lat, zoom_level)
         for entry in geo_data_list:
             m.add_layer(entry)
 
@@ -575,12 +567,11 @@ class GeoUtil:
         return join_df, dataset_id_list, common_source_dataset_id
 
     @staticmethod
-    def plot_raster_from_path(input_path, zoom_level=10):
+    def plot_raster_from_path(input_path):
         """Creates map window with geo-referenced raster file from local or url visualized
 
             Args:
                 input_path (str):  input raster dataset (GeoTiff) file path
-                zoom_level (int): zoom level indicator value for mapping
 
             Returns:
                 map (ipyleaflet.Map): ipyleaflet Map object
@@ -589,8 +580,8 @@ class GeoUtil:
         bbox = GeoUtil.get_raster_boundary(input_path)
         image_url = GeoUtil.create_data_img_url_from_geotiff_for_ipyleaflet(input_path)
 
-        cen_lat, cen_lon = GeoUtil.calc_center_from_bbox(bbox)
-        map = GeoUtil.get_ipyleaflet_map(cen_lon, cen_lat, zoom_level)
+        map = GeoUtil.get_ipyleaflet_map(bbox)
+
         image = ImageOverlay(
             url=image_url,
             bounds=((bbox[1], bbox[0]), (bbox[3], bbox[2]))
@@ -655,7 +646,7 @@ class GeoUtil:
         return image_url
 
     @staticmethod
-    def plot_maps_dataset_list(dataset_list, client, column='guid', category=False, basemap=True, zoom_level=10):
+    def plot_maps_dataset_list(dataset_list, client, column='guid', category=False, basemap=True):
         """Create map window using dataset list. Should be okay whether it is shapefile or geotiff
 
             Args:
@@ -664,7 +655,6 @@ class GeoUtil:
                 client (Client): pyincore service Client Object
                 category (boolean): turn on/off category option
                 basemap (boolean): turn on/off base map (e.g. openstreetmap)
-                zoom_level (int): initial zoom level of the map
 
             Returns:
                 map(ipyleaflet.Map): ipyleaflet map obejct
@@ -713,9 +703,8 @@ class GeoUtil:
             except Exception:
                 print("There is a problem in dataset format for ' + dataset.metadata['title']  + '.")
 
-        cen_lat, cen_lon = GeoUtil.calc_center_from_bbox(bbox)
+        map = GeoUtil.get_ipyleaflet_map(bbox_all)
 
-        map = GeoUtil.get_ipyleaflet_map(cen_lon, cen_lat, zoom_level)
         for layer in layer_list:
             map.add_layer(layer)
 
@@ -755,10 +744,10 @@ class GeoUtil:
                 bounds (list): [[south, east], [north, west]]
 
         """
-        south = bbox[0]
-        east = bbox[3]
-        north = bbox[2]
-        west = bbox[1]
+        south = bbox[1]
+        east = bbox[0]
+        north = bbox[3]
+        west = bbox[2]
 
         bounds = [[south, east], [north, west]]
 
@@ -797,7 +786,6 @@ class GeoUtil:
                          crs=projections.EPSG3857, scroll_wheel_zoom=True)
 
         return map
-
 
     @staticmethod
     def get_ipyleaflet_map(bbox=None):
