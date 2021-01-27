@@ -752,9 +752,18 @@ class GeoUtil:
                 bbox (list): [min_lat, min_lon, max_lat, max_lon]
 
             Returns:
-                bbox (list): [[south, east], [north, west]]
+                bounds (list): [[south, east], [north, west]]
 
         """
+        south = bbox[0]
+        east = bbox[3]
+        north = bbox[2]
+        west = bbox[1]
+
+        bounds = [[south, east], [north, west]]
+
+        return bounds
+
     @staticmethod
     def calc_center_from_bbox(bbox):
         """Calulate center point location from given bounding box
@@ -806,7 +815,7 @@ class GeoUtil:
 
         if bbox:
             # the boundary information should be converted to ipyleaflet code boundary
-            ipylft_bound = GeoUtil.convert_bound_to_ipylft_format(bbox)
-            map.fit_bounds(bbox)
+            bounds = GeoUtil.convert_bound_to_ipylft_format(bbox)
+            map.fit_bounds(bounds)
 
         return map
