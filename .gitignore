@@ -69,3 +69,6 @@ original/
 # token
 *.incrtoken
 *.incorepw
+
+# examples
+*examples
