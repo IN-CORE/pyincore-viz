@@ -770,7 +770,7 @@ class GeoUtil:
         return cen_lat, cen_lon
 
     @staticmethod
-    def get_ipyleaflet_map(cen_lon, cen_lat, zoom_level):
+    def get_ipyleaflet_map_with_center_location(cen_lon, cen_lat, zoom_level):
         """Creates ipyleaflet map object and fit the map using the center point location and zoom level
 
             Args:
