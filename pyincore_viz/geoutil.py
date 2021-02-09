@@ -792,7 +792,7 @@ class GeoUtil:
         """Creates ipyleaflet map object and fit the map using the bounding box information
 
             Args:
-                bounds (list): list of boundary values
+                bbox (list): list of boundary values
 
             Returns:
                 map (ipyleaflet.Map): ipyleaflet Map object
