@@ -8,7 +8,7 @@ import os
 import logging
 from logging import config as logging_config
 
-PACKAGE_VERSION = "0.2.5"
+PACKAGE_VERSION = "0.3.0"
 
 INCORE_GEOSERVER_WMS_URL = "https://incore-geoserver.ncsa.illinois.edu/geoserver/incore/wms"
 INCORE_GEOSERVER_DEV_WMS_URL = "https://incore-dev-kube.ncsa.illinois.edu/geoserver/incore/wms"
