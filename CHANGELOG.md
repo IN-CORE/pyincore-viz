@@ -9,6 +9,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Added
 - Fit ipyleaflet map boundaries using bounding box [INCORE1-597](https://opensource.ncsa.illinois.edu/jira/browse/INCORE1-597)
 
+### Fixed
+- Update demand_types and demand_units when plotting fragility curves [INCORE1-998](https://opensource.ncsa.illinois.edu/jira/browse/INCORE1-998)
+
 ## [0.2.5] - 2020-12-10
 ### Changed
 - updated ipyleaflet to 0.13 [INCORE1-866](https://opensource.ncsa.illinois.edu/jira/browse/INCORE1-866)

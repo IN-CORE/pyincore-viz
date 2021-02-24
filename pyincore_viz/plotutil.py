@@ -224,7 +224,7 @@ class PlotUtil:
 
             plt.plot(x, y, label=curve.description)
 
-        plt.xlabel(fragility_set.demand_type + " (" + fragility_set.demand_units + ")")
+        plt.xlabel((",").join(fragility_set.demand_types) + " (" + (",").join(fragility_set.demand_units) + ")")
         if title is None:
             title = fragility_set.description
 
