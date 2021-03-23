@@ -5,6 +5,10 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## [unreleased]
+### Fixed
+- pytest for network dataset [INCORE1-866](https://opensource.ncsa.illinois.edu/jira/browse/INCORE1-866)
+
 ## [0.3.0] - 2020-02-15
 ### Added
 - Fit ipyleaflet map boundaries using bounding box [INCORE1-597](https://opensource.ncsa.illinois.edu/jira/browse/INCORE1-597)
