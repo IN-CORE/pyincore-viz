@@ -27,7 +27,6 @@ from pyincore import Dataset
 from pyincore import NetworkDataset
 from pyincore_viz import globals
 from owslib.wms import WebMapService
-from ipyleaflet import ImageOverlay
 from base64 import b64encode
 from io import BytesIO
 from pyincore_viz.plotutil import PlotUtil
@@ -582,7 +581,7 @@ class GeoUtil:
 
         map = GeoUtil.get_ipyleaflet_map(bbox)
 
-        image = ImageOverlay(
+        image = ipylft.ImageOverlay(
             url=image_url,
             bounds=((bbox[1], bbox[0]), (bbox[3], bbox[2]))
         )
@@ -692,7 +691,7 @@ class GeoUtil:
                     bbox = GeoUtil.get_raster_boundary(input_path)
                     bbox_all = GeoUtil.merge_bbox(bbox_all, bbox)
                     image_url = GeoUtil.create_data_img_url_from_geotiff_for_ipyleaflet(input_path)
-                    image = ImageOverlay(
+                    image = ipylft.ImageOverlay(
                         url=image_url,
                         bounds=((bbox[1], bbox[0]), (bbox[3], bbox[2]))
                     )
@@ -806,4 +805,49 @@ class GeoUtil:
             bounds = GeoUtil.convert_bound_to_ipylft_format(bbox)
             map.fit_bounds(bounds)
 
+        return map
+
+    @staticmethod
+    def plot_heatmap(datasets:list):
+        # TODO: how to add a style for each dataset
+        # TODO: performance issue. If there are a lot of data, the browser will crash
+        geo_data_list = []
+        # (min_lat, min_lon, max_lat, max_lon)
+        bbox_all = [9999, 9999, -9999, -9999]
+
+        for dataset in datasets:
+            # maybe this part should be moved to Dataset Class
+            gdf = gpd.read_file(dataset.local_file_path)
+            geo_data = ipylft.GeoData(
+                geo_dataframe=gdf, name=dataset.metadata['title'])
+            geo_data_list.append(geo_data)
+
+            bbox = gdf.total_bounds
+            bbox_all = GeoUtil.merge_bbox(bbox_all, bbox)
+
+        m = GeoUtil.get_ipyleaflet_heatmap(bbox_all)
+
+        for entry in geo_data_list:
+            m.add_layer(entry)
+
+        m.add_control(ipylft.LayersControl())
+        return m
+
+    @staticmethod
+    def get_ipyleaflet_heatmap(bbox=None, max_val=1000,):
+        map = ipylft.Map(basemap=ipylft.basemaps.Stamen.Toner,
+                         crs=projections.EPSG3857, scroll_wheel_zoom=True)
+
+        heatmap = ipylft.Heatmap(
+            locations=popdata,
+            radius=10,
+            max_val=1000,
+            blur=10,
+            gradient={0.2: 'yellow', 0.5: 'orange', 1.0: 'red'},
+            name='Low Income Renters',
+        )
+
+        # map.add_layer(heatmap);
+        # control = LayersControl(position='topright')
+        # map.add_control(control)
         return map
