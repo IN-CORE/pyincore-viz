@@ -6,6 +6,9 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [unreleased]
+### Added
+- Heatmap for point, line, and polygon dataset [INCORE1-1081](https://opensource.ncsa.illinois.edu/jira/browse/INCORE1-1081)
+
 ### Fixed
 - pytest for network dataset [INCORE1-866](https://opensource.ncsa.illinois.edu/jira/browse/INCORE1-866)
 
