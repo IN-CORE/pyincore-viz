@@ -808,7 +808,7 @@ class GeoUtil:
         return map
 
     @staticmethod
-    def plot_heatmap(dataset, fld_name, radius=10, blur=10, max=1, multiply_factor=100):
+    def plot_heatmap(dataset, fld_name, radius=10, blur=10, max=1, multiplier=1, name=""):
         """Creates ipyleaflet map object and fit the map using the bounding box information
 
             Args:
@@ -817,7 +817,8 @@ class GeoUtil:
                 radius (float): Radius of each “point” of the heatmap
                 blur (float): Amount of blur
                 max (float): Maximum point intensity
-                multiply_factor (float): multipy factor for making fld value to more clearly in the map
+                multiplier (float): multipy factor for making fld value to more clearly in the map
+                name (str): name that represents the layer
 
             Returns:
                 map (ipyleaflet.Map): ipyleaflet Map object
@@ -827,8 +828,9 @@ class GeoUtil:
         geo_data = ipylft.GeoData(
             geo_dataframe=gdf, name=dataset.metadata['title'])
 
-        if gdf.geom_type[0].lower() != "point":
-            raise Exception("Error, the input dataset should be point dataset.")
+        if gdf.geom_type[0].lower() != "point" and gdf.geom_type[0].lower() != "polygon" \
+                and gdf.geom_type[0].lower() != "linestring":
+            raise Exception("Error, the input dataset's geometry is not supported.")
         bbox = gdf.total_bounds
         bbox = [bbox[0], bbox[1], bbox[2], bbox[3]]
 
@@ -836,8 +838,28 @@ class GeoUtil:
 
         # create locations for heatmap using x, y value and field value.
         locations = []
-        for index, row in gdf.iterrows():
-            locations.append([row.geometry.y, row.geometry.x, row[fld_name] * multiply_factor])
+
+        # convert polygon to point
+        if gdf.geom_type[0].lower() == "polygon":
+            points = gdf.copy()
+            points.geometry = points['geometry'].centroid
+            points.crs = gdf.crs
+            gdf = points
+
+        # convert line to point
+        if gdf.geom_type[0].lower() == "linestring":
+            lines = gdf.copy()
+            lines.geometry = lines['geometry'].centroid
+            lines.crs = gdf.crs
+            gdf = lines
+
+        # check if the fld_name column is number format by multiplying by mulitplier
+        # if it is not a number, it will raise an error message
+        try:
+            for index, row in gdf.iterrows():
+                locations.append([row.geometry.y, row.geometry.x, row[fld_name] * multiplier])
+        except:
+            raise Exception("The given field is not number")
 
         heatmap = GeoUtil.get_ipyleaflet_heatmap(locations=locations, radius=radius, blur=blur, max=max, name=fld_name)
 
@@ -855,6 +877,7 @@ class GeoUtil:
                 radius (float): Radius of each “point” of the heatmap
                 blur (float): Amount of blur
                 max (float): Maximum point intensity
+                name (str): name that represents the layer
 
             Returns:
                 map (ipyleaflet.Map): ipyleaflet Map object
@@ -870,10 +893,3 @@ class GeoUtil:
         heatmap.gradient = {0.4: 'red', 0.6: 'yellow', 0.7: 'lime', 0.8: 'cyan', 1.0: 'blue'}
 
         return heatmap
-
-# add this to notebook
-# # visualize heatmap
-# shelby_hospital_inv_id = "5a284f0bc7d30d13bc081a28"
-# dataset = Dataset.from_data_service(shelby_hospital_inv_id, DataService(client))
-# map = viz.plot_heatmap(dataset, "no_stories", 30, 50, 0.5) # try no_stories
-# map
