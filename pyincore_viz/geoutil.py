@@ -808,46 +808,72 @@ class GeoUtil:
         return map
 
     @staticmethod
-    def plot_heatmap(datasets:list):
-        # TODO: how to add a style for each dataset
-        # TODO: performance issue. If there are a lot of data, the browser will crash
-        geo_data_list = []
-        # (min_lat, min_lon, max_lat, max_lon)
-        bbox_all = [9999, 9999, -9999, -9999]
+    def plot_heatmap(dataset, fld_name, radius=10, blur=10, max=1, multiply_factor=100):
+        """Creates ipyleaflet map object and fit the map using the bounding box information
 
-        for dataset in datasets:
-            # maybe this part should be moved to Dataset Class
-            gdf = gpd.read_file(dataset.local_file_path)
-            geo_data = ipylft.GeoData(
-                geo_dataframe=gdf, name=dataset.metadata['title'])
-            geo_data_list.append(geo_data)
+            Args:
+                dataset (dataset):  A dataset to be mapped.
+                fld_name (str): column name to be plot in heat map
+                radius (float): Radius of each “point” of the heatmap
+                blur (float): Amount of blur
+                max (float): Maximum point intensity
+                multiply_factor (float): multipy factor for making fld value to more clearly in the map
 
-            bbox = gdf.total_bounds
-            bbox_all = GeoUtil.merge_bbox(bbox_all, bbox)
+            Returns:
+                map (ipyleaflet.Map): ipyleaflet Map object
 
-        m = GeoUtil.get_ipyleaflet_heatmap(bbox_all)
+        """
+        gdf = gpd.read_file(dataset.local_file_path)
+        geo_data = ipylft.GeoData(
+            geo_dataframe=gdf, name=dataset.metadata['title'])
 
-        for entry in geo_data_list:
-            m.add_layer(entry)
+        if gdf.geom_type[0].lower() != "point":
+            raise Exception("Error, the input dataset should be point dataset.")
+        bbox = gdf.total_bounds
+        bbox = [bbox[0], bbox[1], bbox[2], bbox[3]]
 
-        m.add_control(ipylft.LayersControl())
-        return m
+        map = GeoUtil.get_ipyleaflet_map(bbox)
+
+        # create locations for heatmap using x, y value and field value.
+        locations = []
+        for index, row in gdf.iterrows():
+            locations.append([row.geometry.y, row.geometry.x, row[fld_name] * multiply_factor])
+
+        heatmap = GeoUtil.get_ipyleaflet_heatmap(locations=locations, radius=radius, blur=blur, max=max, name=fld_name)
+
+        map.add_layer(heatmap)
+        map.add_control(ipylft.LayersControl(position='topright'))
+
+        return map
 
     @staticmethod
-    def get_ipyleaflet_heatmap(bbox=None, max_val=1000,):
-        map = ipylft.Map(basemap=ipylft.basemaps.Stamen.Toner,
+    def get_ipyleaflet_heatmap(locations=None, radius=10, blur=10, max=1, name=""):
+        """Creates ipyleaflet map object and fit the map using the bounding box information
+
+            Args:
+                locations (list):  List of center locations with values
+                radius (float): Radius of each “point” of the heatmap
+                blur (float): Amount of blur
+                max (float): Maximum point intensity
+
+            Returns:
+                map (ipyleaflet.Map): ipyleaflet Map object
+
+        """
+        m = ipylft.Map(basemap=ipylft.basemaps.Stamen.Toner,
                          crs=projections.EPSG3857, scroll_wheel_zoom=True)
 
-        heatmap = ipylft.Heatmap(
-            locations=popdata,
-            radius=10,
-            max_val=1000,
-            blur=10,
-            gradient={0.2: 'yellow', 0.5: 'orange', 1.0: 'red'},
-            name='Low Income Renters',
-        )
 
-        # map.add_layer(heatmap);
-        # control = LayersControl(position='topright')
-        # map.add_control(control)
-        return map
+        # create location list using x, y, and fld value
+        heatmap = ipylft.Heatmap(locations=locations, radius=radius, blur=blur, name=name)
+        heatmap.max = max
+        heatmap.gradient = {0.4: 'red', 0.6: 'yellow', 0.7: 'lime', 0.8: 'cyan', 1.0: 'blue'}
+
+        return heatmap
+
+# add this to notebook
+# # visualize heatmap
+# shelby_hospital_inv_id = "5a284f0bc7d30d13bc081a28"
+# dataset = Dataset.from_data_service(shelby_hospital_inv_id, DataService(client))
+# map = viz.plot_heatmap(dataset, "no_stories", 30, 50, 0.5) # try no_stories
+# map

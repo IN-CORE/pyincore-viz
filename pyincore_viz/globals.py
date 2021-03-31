@@ -10,8 +10,8 @@ from logging import config as logging_config
 
 PACKAGE_VERSION = "0.3.0"
 
-INCORE_GEOSERVER_WMS_URL = "https://incore-geoserver.ncsa.illinois.edu/geoserver/incore/wms"
-INCORE_GEOSERVER_DEV_WMS_URL = "https://incore-dev-kube.ncsa.illinois.edu/geoserver/incore/wms"
+INCORE_GEOSERVER_WMS_URL = "https://incore.ncsa.illinois.edu/geoserver/incore/wms"
+INCORE_GEOSERVER_DEV_WMS_URL = "https://incore-dev.ncsa.illinois.edu/geoserver/incore/wms"
 
 PYINCORE_VIZ_ROOT_FOLDER = os.path.dirname(os.path.dirname(__file__))
 
