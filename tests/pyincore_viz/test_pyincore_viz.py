@@ -1,37 +1,19 @@
 import pytest
 import matplotlib
-import os
-import jwt
 
 from pyincore import Dataset
-from pyincore import IncoreClient
 from pyincore import NetworkDataset
 from pyincore.dataservice import DataService
 from pyincore.fragilityservice import FragilityService
-from pyincore.globals import INCORE_API_DEV_URL
 from pyincore.hazardservice import HazardService
 from pyincore.models.fragilitycurveset import FragilityCurveSet
-
 from pyincore_viz.geoutil import GeoUtil as viz
 from pyincore_viz.plotutil import PlotUtil as plot
 
 
-# @pytest.fixture
-# def client():
-#     return pytest.client
-# @pytest.fixture
-# def client(monkeypatch):
-#     try:
-#         with open(os.path.join(os.path.dirname(__file__), ".incorepw"), 'r') as f:
-#             cred = f.read().splitlines()
-#     except EnvironmentError:
-#         assert False
-#     credentials = jwt.decode(cred[0], cred[1])
-#     monkeypatch.setattr("builtins.input", lambda x: credentials["username"])
-#     monkeypatch.setattr("getpass.getpass", lambda y: credentials["password"])
-#     client = IncoreClient(service_url=INCORE_API_DEV_URL, token_file_name=".incrtesttoken")
-#
-#     return client
+@pytest.fixture
+def client():
+    return pytest.client
 
 
 def test_visualize_earthquake(client):
@@ -182,5 +164,13 @@ def test_plot_table_dataset_list_from_single_source(client):
 
     map = viz.plot_table_dataset_list_from_single_source(
         client, dataset_list, 'failure_probability', seaside_building_polygon_id)
+
+    assert True
+
+
+def test_heatmap(client):
+    shelby_hospital_inv_id = "5a284f0bc7d30d13bc081a28"
+    dataset = Dataset.from_data_service(shelby_hospital_inv_id, DataService(client))
+    map = viz.plot_heatmap(dataset, "str_prob")
 
     assert True

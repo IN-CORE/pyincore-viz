@@ -825,16 +825,12 @@ class GeoUtil:
 
         """
         gdf = gpd.read_file(dataset.local_file_path)
-        geo_data = ipylft.GeoData(
-            geo_dataframe=gdf, name=dataset.metadata['title'])
 
         if gdf.geom_type[0].lower() != "point" and gdf.geom_type[0].lower() != "polygon" \
                 and gdf.geom_type[0].lower() != "linestring":
             raise Exception("Error, the input dataset's geometry is not supported.")
         bbox = gdf.total_bounds
         bbox = [bbox[0], bbox[1], bbox[2], bbox[3]]
-
-        map = GeoUtil.get_ipyleaflet_map(bbox)
 
         # create locations for heatmap using x, y value and field value.
         locations = []
@@ -858,11 +854,15 @@ class GeoUtil:
         try:
             for index, row in gdf.iterrows():
                 locations.append([row.geometry.y, row.geometry.x, row[fld_name] * multiplier])
-        except:
+        except Exception:
             raise Exception("The given field is not number")
 
-        heatmap = GeoUtil.get_ipyleaflet_heatmap(locations=locations, radius=radius, blur=blur, max=max, name=fld_name)
+        if name == "":
+            name = fld_name
 
+        heatmap = GeoUtil.get_ipyleaflet_heatmap(locations=locations, radius=radius, blur=blur, max=max, name=name)
+
+        map = GeoUtil.get_ipyleaflet_map(bbox)
         map.add_layer(heatmap)
         map.add_control(ipylft.LayersControl(position='topright'))
 
@@ -883,10 +883,6 @@ class GeoUtil:
                 map (ipyleaflet.Map): ipyleaflet Map object
 
         """
-        m = ipylft.Map(basemap=ipylft.basemaps.Stamen.Toner,
-                         crs=projections.EPSG3857, scroll_wheel_zoom=True)
-
-
         # create location list using x, y, and fld value
         heatmap = ipylft.Heatmap(locations=locations, radius=radius, blur=blur, name=name)
         heatmap.max = max
