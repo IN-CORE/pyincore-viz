@@ -849,13 +849,19 @@ class GeoUtil:
             lines.crs = gdf.crs
             gdf = lines
 
-        # check if the fld_name column is number format by multiplying by mulitplier
-        # if it is not a number, it will raise an error message
+        # check if the fld_name exists
+        if not fld_name in gdf.columns:
+            raise Exception("The given field name does not exists")
+
+        # check if the fld_name column is number format
+        row = gdf.loc[0]
         try:
-            for index, row in gdf.iterrows():
-                locations.append([row.geometry.y, row.geometry.x, row[fld_name] * multiplier])
-        except Exception:
+            row[fld_name] + 5
+        except TypeError:
             raise Exception("The given field is not number")
+
+        for index, row in gdf.iterrows():
+            locations.append([row.geometry.y, row.geometry.x, row[fld_name] * multiplier])
 
         if name == "":
             name = fld_name
