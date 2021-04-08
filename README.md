@@ -16,8 +16,8 @@ insert line: `backend : Agg` into `~/.matplotlib/matplotlibrc` file.
 To build the container with the documentation you can use:
 
 ```
-docker build -t incore/pyincore-viz -f Dockerfile.docs .
-docker run -ti -p 8000:80 incore/pyincore-viz
+docker build -t doc/pyincore-viz -f Dockerfile.docs .
+docker run -ti -p 8000:80 doc/pyincore-viz
 ```
 
 Then check the documentation at [http://localhost:8000/doc/pyincore_viz/](http://localhost:8000/doc/pyincore_viz/)
