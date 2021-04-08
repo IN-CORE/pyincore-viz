@@ -25,26 +25,8 @@ setup(
                       "Python framework acceses underlying data through local or remote services "
                       "and facilitates moving and synthesizing results."),
     # TODO need to figure out what are the dependency requirements
-    install_requires=[
-        "branca==0.3.1",
-        "ipyleaflet<0.13.7,>=0.13.4",
-        "ipywidgets<8,>=7.6.0",
-        "pandas>=0.24.1",
-        "geopandas>=0.6.1",
-        "rasterio>=1.1.3",
-        "descartes>=1.1.0",
-        "contextily>=1.0.0",
-        "numpy>=1.16.1",
-        "scipy>=1.2.0",
-        "networkx>=2.2",
-        "owslib>=0.17.1",
-        "matplotlib>=2.1.0",
-        "plotly>=3.6.0",
-        "pytest>=3.9.0",
-        "pyincore>=0.6.2",
-        "pyjwt>=1.7.1",
-        "pyincore>=0.6.2"
-    ],
+    # TODO this is a hack, really should only be packages needed to run
+    install_requires=[line.strip() for line in open("requirements.txt").readlines()],
     python_requires=">=3.5",
     classifiers=[
         "Development Status :: 4 - Beta",

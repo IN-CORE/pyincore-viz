@@ -1,54 +1,22 @@
 # ----------------------------------------------------------------------
 # Compiling documentation
 # ----------------------------------------------------------------------
-FROM python:3.7-slim AS builder
+FROM mambaorg/micromamba AS builder
 
-RUN apt-get -y update && apt-get install -y wget
-RUN apt install -y -qq python3-pip
+# install packages
+WORKDIR /src
+COPY requirements.txt .
+RUN micromamba install -y -c conda-forge -c in-core \
+    sphinx sphinx_rtd_theme \
+    -f requirements.txt
 
-# ----------------------------------------------------------------------
-# Getting and installing pyIncore
-# ----------------------------------------------------------------------
-# install miniconda
-RUN wget --quiet https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh -O ~/miniconda.sh && \
-    /bin/bash ~/miniconda.sh -b -p /opt/conda && \
-    rm ~/miniconda.sh && \
-    ln -s /opt/conda/etc/profile.d/conda.sh /etc/profile.d/conda.sh && \
-    echo ". /opt/conda/etc/profile.d/conda.sh" >> ~/.bashrc && \
-    echo "conda activate base" >> ~/.bashrc
-ENV PATH /opt/conda/bin:$PATH
-RUN conda update --all && conda --version
-
-# install the pyIncore package
-RUN conda config --add channels conda-forge
-RUN conda install -c in-core pyincore
-
-# ----------------------------------------------------------------------
-# install pyIncore viz
-# ----------------------------------------------------------------------
-COPY . /pyincore_viz_app
-WORKDIR /pyincore_viz_app/
-
-RUN python3 setup.py install
-
-# ----------------------------------------------------------------------
-# Compiling documentation
-# ----------------------------------------------------------------------
-RUN conda install sphinx && conda install sphinx_rtd_theme
-
-WORKDIR /pyincore_viz_app/docs/
-# do not use default make-mode: --no-use-make-mode (-M)
-RUN sphinx-build -M html "source" "build"
-
-# cleaning, little bit
-RUN apt autoremove -y -qq python3-pip && \
-apt autoremove -y -qq python3
+# copy code and generate documentation
+COPY . ./
+RUN sphinx-build -v -b html docs/source docs/build
 
 # ----------------------------------------------------------------------
 # Building actual container
 # ----------------------------------------------------------------------
 FROM nginx
 
-RUN mkdir -p /usr/share/nginx/html/doc/pyincore_viz
-COPY --from=builder /pyincore_viz_app/docs/build/html/ /usr/share/nginx/html/doc/pyincore_viz/
-COPY --from=builder /pyincore_viz_app/docs/pyincore_viz.conf /etc/nginx/conf.d/default.conf
+COPY --from=builder /src/docs/build/ /usr/share/nginx/html/doc/pyincore_viz/
