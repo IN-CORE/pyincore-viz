@@ -5,14 +5,15 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
-## [unreleased]
+## [1.0.0] - 2021-04-14
 ### Added
 - Heatmap for point, line, and polygon dataset [INCORE1-1081](https://opensource.ncsa.illinois.edu/jira/browse/INCORE1-1081)
 
 ### Fixed
 - pytest for network dataset [INCORE1-866](https://opensource.ncsa.illinois.edu/jira/browse/INCORE1-866)
+- pyincore-viz documentation [INCORE1-1103](https://opensource.ncsa.illinois.edu/jira/browse/INCORE1-1103)
 
-## [0.3.0] - 2020-02-15
+## [0.3.0] - 2021-02-15
 ### Added
 - Fit ipyleaflet map boundaries using bounding box [INCORE1-597](https://opensource.ncsa.illinois.edu/jira/browse/INCORE1-597)
 
