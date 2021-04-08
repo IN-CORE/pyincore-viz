@@ -10,3 +10,14 @@ Environment) initiative.
 [here](https://stackoverflow.com/questions/21784641/installation-issue-with-matplotlib-python). In a nutshell, 
 insert line: `backend : Agg` into `~/.matplotlib/matplotlibrc` file.
 
+
+# Documentation Containter
+
+To build the container with the documentation you can use:
+
+```
+docker build -t incore/pyincore-viz -f Dockerfile.docs .
+docker run -ti -p 8000:80 incore/pyincore-viz
+```
+
+Then check the documentation at [http://localhost:8000/doc/pyincore_viz/](http://localhost:8000/doc/pyincore_viz/)

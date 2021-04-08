@@ -13,14 +13,14 @@ import matplotlib.pyplot as plt
 import networkx as nx
 import rasterio
 import rasterio.plot
-import gdal
+from osgeo import gdal
 import copy
 import os
 import PIL
 import numpy as np
 import random
 
-from gdalconst import GA_ReadOnly
+from osgeo.gdalconst import GA_ReadOnly
 from pyincore.dataservice import DataService
 from pyincore.hazardservice import HazardService
 from pyincore import Dataset
