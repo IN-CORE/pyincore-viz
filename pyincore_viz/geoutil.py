@@ -863,7 +863,7 @@ class GeoUtil:
             is_geometry = False
 
         # check if the fld_name exists
-        if not fld_name in gdf.columns:
+        if fld_name not in gdf.columns:
             raise Exception("The given field name does not exists")
 
         # check if the fld_name column is number format
