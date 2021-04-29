@@ -119,6 +119,18 @@ def test_plot_fragility(client):
     plt.savefig('conditional.png')
     plt.clf()
 
+    # new format 2d
+    fragility_set = FragilityCurveSet(FragilityService(client).get_dfr3_set("602f31f381bd2c09ad8efcb4"))
+    plt = plot.get_fragility_plot(fragility_set, title="refactored fragility 2d curve")
+    plt.savefig('refactored_2d.png')
+    plt.clf()
+
+    # new format 3d
+    fragility_set = FragilityCurveSet(FragilityService(client).get_dfr3_set("606221fe618178207f6608a1"))
+    plt = plot.get_fragility_plot(fragility_set, title="refactored fragility 3d curve", dimension=3)
+    plt.savefig('refactored_3d.png')
+    plt.clf()
+
     assert True
 
 
