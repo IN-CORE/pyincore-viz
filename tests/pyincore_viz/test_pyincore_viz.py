@@ -113,7 +113,7 @@ def test_plot_fragility(client):
     plt.savefig('customExpression.png')
     plt.clf()
 
-    # 5ed6be9a5b6166000155d0b9 custom 2d
+    # 5ed6be9a5b6166000155d0b9 custom 3d
     fragility_set = FragilityCurveSet(FragilityService(client).get_dfr3_set("5ed6be9a5b6166000155d0b9"))
     plt = plot.get_fragility_plot(fragility_set, title="conditional fragility curve")
     plt.savefig('conditional.png')
@@ -121,13 +121,19 @@ def test_plot_fragility(client):
 
     # new format 2d
     fragility_set = FragilityCurveSet(FragilityService(client).get_dfr3_set("602f31f381bd2c09ad8efcb4"))
-    plt = plot.get_fragility_plot(fragility_set, title="refactored fragility 2d curve")
+
+    # comment on and off to compare curves
+    # plt = plot.get_fragility_plot_2d_refactored(fragility_set, title="refactored fragility 2d curve")
+    plt = plot.get_fragility_plot_2d_refactored(fragility_set, title="refactored fragility 2d curve",
+                                                custom_fragility_curve_parameters={"ffe_elev": 3})
+
     plt.savefig('refactored_2d.png')
     plt.clf()
 
     # new format 3d
-    fragility_set = FragilityCurveSet(FragilityService(client).get_dfr3_set("606221fe618178207f6608a1"))
-    plt = plot.get_fragility_plot(fragility_set, title="refactored fragility 3d curve", dimension=3)
+    fragility_set = FragilityCurveSet(FragilityService(client).get_dfr3_set("5f6ccf67de7b566bb71b202d"))
+    plt = plot.get_fragility_plot_3d_refactored(fragility_set, title="refactored fragility 3d curve",
+                                                limit_state="LS_0")
     plt.savefig('refactored_3d.png')
     plt.clf()
 
