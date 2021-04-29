@@ -183,24 +183,40 @@ class PlotUtil:
 
     @staticmethod
     def get_refactored_x_y(curve, demand_type_name, fragility_curve_parameters, custom_fragility_curve_parameters):
+        """
+        generate numpy array of x, y for plotting
+        :param curve: individual fragility curve object
+        :param demand_type_name: valid demand type names
+        :param fragility_curve_parameters: default fragility curve parameters
+        :param custom_fragility_curve_parameters: user specific curve parameters to overwrite the default
+        :return: [x0, x1, ...] and [y0, y1, ...]
+        """
         x = numpy.linspace(0.001, 10, 200)
         y = []
         for i in x:
             y.append(curve.calculate_limit_state_probability(hazard_values={demand_type_name:i},
                                                              fragility_curve_parameters=fragility_curve_parameters,
-                                                             **custom_fragility_curve_parameters)) #kwargs
+                                                             **custom_fragility_curve_parameters)) # kwargs
 
         return x, y
 
     @staticmethod
     def get_refactored_x_y_z(curve, demand_type_names, fragility_curve_parameters, custom_fragility_curve_parameters):
+        """
+        generate numpy array of x, y and z for plotting
+        :param curve: individual fragility curve object
+        :param demand_type_names: valid demand type names
+        :param fragility_curve_parameters: default fragility curve parameters
+        :param custom_fragility_curve_parameters: user specific curve parameters to overwrite the default
+        :return: numpy array of X, Y, Z
+        """
         x = y = numpy.arange(1, 50, 0.5)
 
         def _f(curve, x, y):
             return curve.calculate_limit_state_probability(hazard_values={demand_type_names[0]: x,
                                                                           demand_type_names[1]: y},
                                                            fragility_curve_parameters= fragility_curve_parameters,
-                                                           **custom_fragility_curve_parameters)
+                                                           **custom_fragility_curve_parameters) # kwargs
 
         X, Y = numpy.meshgrid(x, y)
         z = numpy.array([_f(curve, x, y) for x, y in zip(numpy.ravel(X), numpy.ravel(Y))])
@@ -264,6 +280,13 @@ class PlotUtil:
 
     @staticmethod
     def get_fragility_plot_2d_refactored(fragility_set, title=None, custom_fragility_curve_parameters={}):
+        """
+        method to plot 2 dimensional equation based fragility curves with multiple limit states
+        :param fragility_set: fragility curve set object
+        :param title: user input title
+        :param custom_fragility_curve_parameters: if you wish to overwrite default curve parameters(expression field)
+        :return: matplotlib pyplot object
+        """
         demand_type_names = []
         for parameter in fragility_set.fragility_curve_parameters:
             # for  hazard
@@ -294,6 +317,14 @@ class PlotUtil:
     @staticmethod
     def get_fragility_plot_3d_refactored(fragility_set, title=None, limit_state="LS_0",
                                          custom_fragility_curve_parameters={}):
+        """
+         method to plot 3 dimensional equation based fragility curves with specific limit state
+        :param fragility_set: fragility curve set object
+        :param title: user input title
+        :param limit_state: limit state name, such as LS_0, or insignific, etc...
+        :param custom_fragility_curve_parameters: if you wish to overwrite default curve parameters(expression field)
+        :return:  matplotlib pyplot object
+        """
         demand_type_names = []
         for parameter in fragility_set.fragility_curve_parameters:
             # for  hazard
