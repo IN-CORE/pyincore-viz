@@ -113,7 +113,7 @@ def test_plot_fragility(client):
     plt.savefig('customExpression.png')
     plt.clf()
 
-    # 5ed6be9a5b6166000155d0b9 custom 3d
+    # 5ed6be9a5b6166000155d0b9 conditional 2d
     fragility_set = FragilityCurveSet(FragilityService(client).get_dfr3_set("5ed6be9a5b6166000155d0b9"))
     plt = plot.get_fragility_plot(fragility_set, title="conditional fragility curve")
     plt.savefig('conditional.png')
