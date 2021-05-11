@@ -12,7 +12,6 @@ import numpy
 import pandas as pd
 from pyincore import StandardFragilityCurve, PeriodStandardFragilityCurve, PeriodBuildingFragilityCurve, \
     ConditionalStandardFragilityCurve, ParametricFragilityCurve, CustomExpressionFragilityCurve
-from pyincore.models.fragilitycurverefactored import FragilityCurveRefactored
 from pyincore.utils.expressioneval import Parser
 from scipy.stats import lognorm, norm
 
@@ -105,8 +104,9 @@ class PlotUtil:
             return PlotUtil.sample_normal_cdf(alpha, beta, 200)
 
     @staticmethod
-    def get_conditional_x_y(rules: dict, alpha_type, alpha: list, beta: list):
-        x = numpy.linspace(0.001, 50, 200)
+    def get_conditional_x_y(rules: dict, alpha_type, alpha: list, beta: list, start=0.001, end=50,
+                            sample_size: int = 50):
+        x = numpy.linspace(start, end, sample_size)
         y = []
         for i in x:
             index = ConditionalStandardFragilityCurve._fragility_curve_rules_match(rules, i)
@@ -128,11 +128,12 @@ class PlotUtil:
         return x, y
 
     @staticmethod
-    def get_period_building_x_y(a11_param, a12_param, a13_param, a14_param, a21_param, a22_param, period=0):
+    def get_period_building_x_y(a11_param, a12_param, a13_param, a14_param, a21_param, a22_param, period=0,
+                                start=0.001, end=5, sample_size: int = 50):
         # Assumption from Ergo BuildingLowPeriodSolver
         cutoff_period = 0.87
 
-        x = numpy.linspace(0.001, 5, 200)
+        x = numpy.linspace(start, end, sample_size)
         if period < cutoff_period:
             multiplier = cutoff_period - period
             surface_eq = (numpy.log(x) - (cutoff_period * a12_param + a11_param)) / \
@@ -146,9 +147,9 @@ class PlotUtil:
         return x, y
 
     @staticmethod
-    def get_custom_x_y(expression):
+    def get_custom_x_y(expression, start=0.001, end=50, sample_size: int = 200):
         parser = Parser()
-        x = numpy.linspace(0.001, 50, 200)
+        x = numpy.linspace(start, end, sample_size)
         y = []
         for i in x:
             variables = {'x': i}
@@ -157,9 +158,9 @@ class PlotUtil:
         return x, y
 
     @staticmethod
-    def get_parametric_x_y(curve_type, parameters, **kwargs):
+    def get_parametric_x_y(curve_type, parameters, start=0.001, end=0.999, sample_size: int = 200, **kwargs):
         if curve_type.lower() == "logit":
-            y = numpy.linspace(0.001, 0.999, 200)
+            y = numpy.linspace(start, end, sample_size)
             cumulate_term = 0  # X*theta'
             A1 = 1  # coefficent for demand X
 
@@ -182,41 +183,49 @@ class PlotUtil:
         return x, y
 
     @staticmethod
-    def get_refactored_x_y(curve, demand_type_name, fragility_curve_parameters, custom_fragility_curve_parameters):
+    def get_refactored_x_y(curve, demand_type_name, fragility_curve_parameters, custom_fragility_curve_parameters,
+                           start=0.001, end=10, sample_size: int = 200):
         """
         generate numpy array of x, y for plotting
         :param curve: individual fragility curve object
         :param demand_type_name: valid demand type names
         :param fragility_curve_parameters: default fragility curve parameters
         :param custom_fragility_curve_parameters: user specific curve parameters to overwrite the default
+        :param start: x start
+        :param end: x end
+        :param sample_size: number of points
         :return: [x0, x1, ...] and [y0, y1, ...]
         """
-        x = numpy.linspace(0.001, 10, 200)
+        x = numpy.linspace(start, end, sample_size)
         y = []
         for i in x:
-            y.append(curve.calculate_limit_state_probability(hazard_values={demand_type_name:i},
+            y.append(curve.calculate_limit_state_probability(hazard_values={demand_type_name: i},
                                                              fragility_curve_parameters=fragility_curve_parameters,
-                                                             **custom_fragility_curve_parameters)) # kwargs
+                                                             **custom_fragility_curve_parameters))  # kwargs
 
         return x, y
 
     @staticmethod
-    def get_refactored_x_y_z(curve, demand_type_names, fragility_curve_parameters, custom_fragility_curve_parameters):
+    def get_refactored_x_y_z(curve, demand_type_names, fragility_curve_parameters,
+                             custom_fragility_curve_parameters, start=1, end=50, sample_size: int = 0.5):
         """
         generate numpy array of x, y and z for plotting
         :param curve: individual fragility curve object
         :param demand_type_names: valid demand type names
         :param fragility_curve_parameters: default fragility curve parameters
         :param custom_fragility_curve_parameters: user specific curve parameters to overwrite the default
+        :param start: x/y start
+        :param end: x/y end
+        :param sample_size: number of points
         :return: numpy array of X, Y, Z
         """
-        x = y = numpy.arange(1, 50, 0.5)
+        x = y = numpy.arange(start, end, sample_size)
 
         def _f(curve, x, y):
             return curve.calculate_limit_state_probability(hazard_values={demand_type_names[0]: x,
                                                                           demand_type_names[1]: y},
-                                                           fragility_curve_parameters= fragility_curve_parameters,
-                                                           **custom_fragility_curve_parameters) # kwargs
+                                                           fragility_curve_parameters=fragility_curve_parameters,
+                                                           **custom_fragility_curve_parameters)  # kwargs
 
         X, Y = numpy.meshgrid(x, y)
         z = numpy.array([_f(curve, x, y) for x, y in zip(numpy.ravel(X), numpy.ravel(Y))])
@@ -232,6 +241,7 @@ class PlotUtil:
         Args:
             fragility_set (obj): A JSON like description of fragility assigned to the
                 infrastructure inventory.
+            title: title of the graph
 
         Returns:
             collection: Plot and its style functions.
@@ -299,8 +309,8 @@ class PlotUtil:
                         custom_fragility_curve_parameters:
                     raise ValueError("The required parameter: " + parameter.get("name")
                                      + " does not have a default or  custom value. Please check "
-                                     "your fragility curve setting. Alternatively, you can include it in the "
-                                     "custom_fragility_curve_parameters variable and passed it in this method. ")
+                                       "your fragility curve setting. Alternatively, you can include it in the "
+                                       "custom_fragility_curve_parameters variable and passed it in this method. ")
 
         for curve in fragility_set.fragility_curves:
             x, y = PlotUtil.get_refactored_x_y(curve, demand_type_names[0],
