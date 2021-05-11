@@ -826,42 +826,113 @@ class GeoUtil:
         """
         gdf = gpd.read_file(dataset.local_file_path)
 
-        if gdf.geom_type[0].lower() != "point" and gdf.geom_type[0].lower() != "polygon" \
-                and gdf.geom_type[0].lower() != "linestring":
-            raise Exception("Error, the input dataset's geometry is not supported.")
-        bbox = gdf.total_bounds
-        bbox = [bbox[0], bbox[1], bbox[2], bbox[3]]
+        map = GeoUtil.plot_heatmap_from_gdf(gdf, fld_name, radius, blur, max, multiplier, name)
 
-        # create locations for heatmap using x, y value and field value.
-        locations = []
+        return map
 
-        # convert polygon to point
-        if gdf.geom_type[0].lower() == "polygon":
-            points = gdf.copy()
-            points.geometry = points['geometry'].centroid
-            points.crs = gdf.crs
-            gdf = points
+    @staticmethod
+    def plot_heatmap_from_gdf(gdf, fld_name, radius=10, blur=10, max=1, multiplier=1, name=""):
+        """Creates ipyleaflet map object and fit the map using the bounding box information
 
-        # convert line to point
-        if gdf.geom_type[0].lower() == "linestring":
-            lines = gdf.copy()
-            lines.geometry = lines['geometry'].centroid
-            lines.crs = gdf.crs
-            gdf = lines
+            Args:
+                gdf (GeoDataFrame):  GeoPandas geodataframe
+                fld_name (str): column name to be plot in heat map
+                radius (float): Radius of each “point” of the heatmap
+                blur (float): Amount of blur
+                max (float): Maximum point intensity
+                multiplier (float): multipy factor for making fld value to more clearly in the map
+                name (str): name that represents the layer
+
+            Returns:
+                map (ipyleaflet.Map): ipyleaflet Map object
+
+        """
+        # when the geodataframe is processed, not original(converted directly)
+        # by some calculation or join,
+        # it loses its geometry object and just become simple object.
+        # In that case, it doesn't provide the ability of geometry funtions,
+        # such as, calculating the bounding box, get x and y coord, calc centroid, and so on.
+        # If this happened to the geodataframe
+        # It has to be manually processed by string manipulation
+        bbox = []
+
+        # check if geometry works
+        is_geometry = True
+        first_row = gdf.loc[1]
+        if isinstance(first_row.geometry, str):
+            is_geometry = False
 
         # check if the fld_name exists
-        if not fld_name in gdf.columns:
+        if fld_name not in gdf.columns:
             raise Exception("The given field name does not exists")
 
         # check if the fld_name column is number format
+        # used try and except because there were two many objects for numbers
+        # to check to see if it is number
         row = gdf.loc[0]
         try:
             row[fld_name] + 5
         except TypeError:
             raise Exception("The given field is not number")
 
-        for index, row in gdf.iterrows():
-            locations.append([row.geometry.y, row.geometry.x, row[fld_name] * multiplier])
+        # create locations placeholder for heatmap using x, y value and field value.
+        locations = []
+
+        if (is_geometry):
+            if gdf.geom_type[0].lower() != "point" and gdf.geom_type[0].lower() != "polygon" \
+                    and gdf.geom_type[0].lower() != "linestring":
+                raise Exception("Error, the input dataset's geometry is not supported.")
+
+            # convert polygon to point
+            if gdf.geom_type[0].lower() == "polygon":
+                points = gdf.copy()
+                points.geometry = points['geometry'].centroid
+                points.crs = gdf.crs
+                gdf = points
+
+            # convert line to point
+            if gdf.geom_type[0].lower() == "linestring":
+                lines = gdf.copy()
+                lines.geometry = lines['geometry'].centroid
+                lines.crs = gdf.crs
+                gdf = lines
+
+            bbox = gdf.total_bounds
+            bbox = [bbox[0], bbox[1], bbox[2], bbox[3]]
+
+            for index, row in gdf.iterrows():
+                locations.append([row.geometry.y, row.geometry.x, row[fld_name] * multiplier])
+        else:
+            # create location information for total bounding box
+            # set initial min, max values
+            # in this case, it only process when the information is point
+            # otherwise, it will need to create a method to create centroid
+            # from line and polygon strings, not from geometry,
+            # that is kind of out of scope for pyincore-viz.
+            # However, if it is needed, maybe it should be included
+            # in the future release for pyincore.
+            first_geometry = ((first_row.geometry).replace('(', '').replace(')', '')).split()
+            if first_geometry[0].lower() != 'point':
+                raise Exception("The given geometry is not point.")
+
+            minx = float(first_geometry[1])
+            maxx = float(first_geometry[1])
+            miny = float(first_geometry[2])
+            maxy = float(first_geometry[2])
+
+            for index, row in gdf.iterrows():
+                geometry = ((row.geometry).replace('(', '').replace(')', '')).split()
+                locations.append([geometry[2], geometry[1], row[fld_name] * multiplier])
+                if float(geometry[1]) < minx:
+                    minx = float(geometry[1])
+                if float(geometry[1]) > maxx:
+                    maxx = float(geometry[1])
+                if float(geometry[2]) < miny:
+                    miny = float(geometry[2])
+                if float(geometry[2]) > maxy:
+                    maxy = float(geometry[2])
+
+            bbox = [minx, miny, maxx, maxy]
 
         if name == "":
             name = fld_name
