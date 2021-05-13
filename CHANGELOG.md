@@ -5,6 +5,11 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## [1.1.0] - 2021-05-26
+### Added
+- Geodataframe based heatmap [INCORE1-1128](https://opensource.ncsa.illinois.edu/jira/browse/INCORE1-1128)
+- Visualize refactored (equation) based 2d and 3d fragility curves [INCORE1-1144](https://opensource.ncsa.illinois.edu/jira/browse/INCORE1-1144)
+
 ## [1.0.0] - 2021-04-14
 ### Added
 - Heatmap for point, line, and polygon dataset [INCORE1-1081](https://opensource.ncsa.illinois.edu/jira/browse/INCORE1-1081)
