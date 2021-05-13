@@ -27,7 +27,7 @@ setup(
     # TODO need to figure out what are the dependency requirements
     # TODO this is a hack, really should only be packages needed to run
     install_requires=[line.strip() for line in open("requirements.txt").readlines()],
-    python_requires=">=3.5",
+    python_requires=">=3.6",
     classifiers=[
         "Development Status :: 4 - Beta",
         "Intended Audience :: Science/Research",
