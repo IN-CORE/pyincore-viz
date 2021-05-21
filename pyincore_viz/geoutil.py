@@ -172,9 +172,9 @@ class GeoUtil:
                                     "Available demands for the earthquake are: " + "\n" + "\n".join(available_demands))
 
         if period > 0:
-            title = "Demand Type: " + demand_type + ", Period: " + str(period)
+            title = "Demand Type: " + demand_type.upper() + ", Period: " + str(period)
         else:
-            title = "Demand Type: " + demand_type
+            title = "Demand Type: " + demand_type.upper()
 
         eq_dataset = Dataset.from_data_service(
             eq_dataset_id, DataService(client))
