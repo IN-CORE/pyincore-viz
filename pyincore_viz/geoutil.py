@@ -21,17 +21,18 @@ import numpy as np
 import random
 
 from osgeo.gdalconst import GA_ReadOnly
+from ipyleaflet import projections
+from owslib.wms import WebMapService
 from pyincore.dataservice import DataService
 from pyincore.hazardservice import HazardService
 from pyincore import Dataset
 from pyincore import NetworkDataset
 from pyincore_viz import globals
-from owslib.wms import WebMapService
 from base64 import b64encode
 from io import BytesIO
 from pyincore_viz.plotutil import PlotUtil
 from pyincore_viz.tabledatasetlistmap import TableDatasetListMap as table_list_map
-from ipyleaflet import projections
+from pyincore_viz.helpers.common import get_period_and_demand_from_demandstr
 
 logger = globals.LOGGER
 
@@ -126,28 +127,49 @@ class GeoUtil:
         GeoUtil.plot_gdf_map(tornado_gdf, 'ef_rating', category, basemap)
 
     @staticmethod
-    def plot_earthquake(earthquake_id, client):
+    def plot_earthquake(earthquake_id, client, demand=None):
         """Plot earthquake raster data
 
         Args:
             earthquake_id (str):  ID of tornado hazard
             client (Client): pyincore service Client Object
+            demand (str): demand type, only applicable to dataset based earthquakes that can have one raster for
+            each demand.  e.g. PGA, PGV, 0.2 sec SA
 
         """
         eq_metadata = HazardService(
             client).get_earthquake_hazard_metadata(earthquake_id)
+
+        eq_dataset_id = None
 
         if eq_metadata['eqType'] == 'model':
             eq_dataset_id = eq_metadata['rasterDataset']['datasetId']
             demand_type = eq_metadata['rasterDataset']['demandType']
             period = eq_metadata['rasterDataset']['period']
         else:
-            if len(eq_metadata['hazardDatasets']) > 0 and eq_metadata['hazardDatasets'][0]['datasetId']:
-                eq_dataset_id = eq_metadata['hazardDatasets'][0]['datasetId']
-                demand_type = eq_metadata['hazardDatasets'][0]['demandType']
-                period = eq_metadata['hazardDatasets'][0]['period']
-            else:
-                raise Exception("No datasets found for the hazard")
+            if demand is None:  # get first dataset
+                if len(eq_metadata['hazardDatasets']) > 0 and eq_metadata['hazardDatasets'][0]['datasetId']:
+                    eq_dataset_id = eq_metadata['hazardDatasets'][0]['datasetId']
+                    demand_type = eq_metadata['hazardDatasets'][0]['demandType']
+                    period = eq_metadata['hazardDatasets'][0]['period']
+                else:
+                    raise Exception("No datasets found for the hazard")
+            else:  # match the passed demand with a dataset
+                demand_parts = get_period_and_demand_from_demandstr(demand)
+                demand_type = demand_parts['demandType']
+                period = demand_parts['period']
+
+                available_demands = []
+
+                for dataset in eq_metadata['hazardDatasets']:
+                    available_demands.append(dataset['demandType'] if dataset['period'] == 0 else
+                                             str(dataset['period']) + " " + dataset['demandType'])
+                    if dataset['demandType'] == demand_type and dataset['period'] == period:
+                        eq_dataset_id = dataset['datasetId']
+
+                if eq_dataset_id is None:
+                    raise Exception("Please provide a valid demand for the earthquake. "
+                                    "Available demands for the earthquake are: " + "\n" + "\n".join(available_demands))
 
         if period > 0:
             title = "Demand Type: " + demand_type + ", Period: " + str(period)

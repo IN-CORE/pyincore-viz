@@ -28,6 +28,12 @@ def test_visualize_dataset_earthquake(client):
     assert True
 
 
+def test_visualize_dataset_earthquake_with_demand(client):
+    eq_hazard_id = "5ba8ed5cec23090435209069"
+    viz.plot_earthquake(eq_hazard_id, client, "0.4 SA")
+    assert True
+
+
 def test_visualize_joplin_tornado_building(client):
     # testing datasets
     tornado_hazard_id = "5dfa32bbc0601200080893fb"
