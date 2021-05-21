@@ -1,3 +1,4 @@
+from typing import List, Dict
 
 
 def get_period_and_demand_from_str(demand: str):
@@ -22,3 +23,19 @@ def get_period_and_demand_from_str(demand: str):
         except ValueError:
             print("Demand type provided is possibly not in the correct format")
             raise
+
+
+def get_demands_for_dataset_hazards(datasets: List) -> List[str]:
+    """Gets all the demands for the defined datasets of a dataset based hazard
+
+    Args:
+        datasets: List of datasets
+
+    Returns: List of defined demands as strings
+
+    """
+    available_demands = []
+    for dataset in datasets:
+        available_demands.append(dataset['demandType'] if dataset['period'] == 0 else
+                                 str(dataset['period']) + " " + dataset['demandType'])
+    return available_demands

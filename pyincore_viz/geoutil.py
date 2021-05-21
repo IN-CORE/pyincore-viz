@@ -32,7 +32,7 @@ from base64 import b64encode
 from io import BytesIO
 from pyincore_viz.plotutil import PlotUtil
 from pyincore_viz.tabledatasetlistmap import TableDatasetListMap as table_list_map
-from pyincore_viz.helpers.common import get_period_and_demand_from_str
+from pyincore_viz.helpers.common import get_period_and_demand_from_str, get_demands_for_dataset_hazards
 
 logger = globals.LOGGER
 
@@ -159,15 +159,12 @@ class GeoUtil:
                 demand_type = demand_parts['demandType']
                 period = demand_parts['period']
 
-                available_demands = []
-
                 for dataset in eq_metadata['hazardDatasets']:
-                    available_demands.append(dataset['demandType'] if dataset['period'] == 0 else
-                                             str(dataset['period']) + " " + dataset['demandType'])
                     if dataset['demandType'].lower() == demand_type.lower() and dataset['period'] == period:
                         eq_dataset_id = dataset['datasetId']
 
                 if eq_dataset_id is None:
+                    available_demands = get_demands_for_dataset_hazards(eq_metadata['hazardDatasets'])
                     raise Exception("Please provide a valid demand for the earthquake. "
                                     "Available demands for the earthquake are: " + "\n" + "\n".join(available_demands))
 
