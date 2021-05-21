@@ -1,4 +1,4 @@
-from typing import List, Dict
+from typing import List
 
 
 def get_period_and_demand_from_str(demand: str):
