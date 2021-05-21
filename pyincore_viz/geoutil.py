@@ -32,7 +32,7 @@ from base64 import b64encode
 from io import BytesIO
 from pyincore_viz.plotutil import PlotUtil
 from pyincore_viz.tabledatasetlistmap import TableDatasetListMap as table_list_map
-from pyincore_viz.helpers.common import get_period_and_demand_from_demandstr
+from pyincore_viz.helpers.common import get_period_and_demand_from_str
 
 logger = globals.LOGGER
 
@@ -155,7 +155,7 @@ class GeoUtil:
                 else:
                     raise Exception("No datasets found for the hazard")
             else:  # match the passed demand with a dataset
-                demand_parts = get_period_and_demand_from_demandstr(demand)
+                demand_parts = get_period_and_demand_from_str(demand)
                 demand_type = demand_parts['demandType']
                 period = demand_parts['period']
 

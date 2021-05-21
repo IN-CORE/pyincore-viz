@@ -1,17 +1,17 @@
 
 
-def get_period_and_demand_from_demandstr(demand_str: str):
+def get_period_and_demand_from_str(demand: str):
     """Converts a demand type notation in string format to a dictionary of demandType and period (if applicable)
 
     Args:
-        demand_str: Demand type represented in string format. Usually a combination of period and demand type
+        demand: Demand type represented in string format. Usually a combination of period and demand type
     wherever applicable. e.g. "PGA", "PGV", "0.2 sec SA", "0.2 SA".
 
     Returns: Dictionary of demandType and period
 
     """
 
-    demand_parts = demand_str.split(" ")
+    demand_parts = demand.split(" ")
     if len(demand_parts) == 0:
         raise Exception("Invalid demand format")
     elif len(demand_parts) == 1:
