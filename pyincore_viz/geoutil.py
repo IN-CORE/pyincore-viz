@@ -136,14 +136,30 @@ class GeoUtil:
         """
         eq_metadata = HazardService(
             client).get_earthquake_hazard_metadata(earthquake_id)
-        eq_dataset_id = eq_metadata['rasterDataset']['datasetId']
+
+        if eq_metadata['eqType'] == 'model':
+            eq_dataset_id = eq_metadata['rasterDataset']['datasetId']
+            demand_type = eq_metadata['rasterDataset']['demandType']
+            period = eq_metadata['rasterDataset']['period']
+        else:
+            if len(eq_metadata['hazardDatasets']) > 0 and eq_metadata['hazardDatasets'][0]['datasetId']:
+                eq_dataset_id = eq_metadata['hazardDatasets'][0]['datasetId']
+                demand_type = eq_metadata['hazardDatasets'][0]['demandType']
+                period = eq_metadata['hazardDatasets'][0]['period']
+            else:
+                raise Exception("No datasets found for the hazard")
+
+        if period > 0:
+            title = "Demand Type: " + demand_type + ", Period: " + str(period)
+        else:
+            title = "Demand Type: " + demand_type
 
         eq_dataset = Dataset.from_data_service(
             eq_dataset_id, DataService(client))
         raster_file_path = Path(eq_dataset.local_file_path).joinpath(
             eq_dataset.metadata['fileDescriptors'][0]['filename'])
         raster = rasterio.open(raster_file_path)
-        rasterio.plot.show(raster)
+        rasterio.plot.show(raster, title=title)
 
     @staticmethod
     def plot_graph_network(graph, coords):

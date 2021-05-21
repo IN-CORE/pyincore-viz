@@ -16,15 +16,15 @@ def client():
     return pytest.client
 
 
-def test_visualize_earthquake(client):
+def test_visualize_model_earthquake(client):
     eq_hazard_id = "5b902cb273c3371e1236b36b"
-
-    eq_metadata = HazardService(client).get_earthquake_hazard_metadata(eq_hazard_id)
-    eq_dataset_id = eq_metadata['rasterDataset']['datasetId']
-
-    eq_dataset = Dataset.from_data_service(eq_dataset_id, DataService(client))
     viz.plot_earthquake(eq_hazard_id, client)
+    assert True
 
+
+def test_visualize_dataset_earthquake(client):
+    eq_hazard_id = "5ba8ed5cec23090435209069"
+    viz.plot_earthquake(eq_hazard_id, client)
     assert True
 
 
