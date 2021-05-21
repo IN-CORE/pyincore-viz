@@ -164,7 +164,7 @@ class GeoUtil:
                 for dataset in eq_metadata['hazardDatasets']:
                     available_demands.append(dataset['demandType'] if dataset['period'] == 0 else
                                              str(dataset['period']) + " " + dataset['demandType'])
-                    if dataset['demandType'] == demand_type and dataset['period'] == period:
+                    if dataset['demandType'].lower() == demand_type.lower() and dataset['period'] == period:
                         eq_dataset_id = dataset['datasetId']
 
                 if eq_dataset_id is None:
