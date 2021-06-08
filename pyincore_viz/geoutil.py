@@ -10,6 +10,8 @@ import contextily as ctx
 import geopandas as gpd
 import ipyleaflet as ipylft
 import matplotlib.pyplot as plt
+from matplotlib import cm
+import matplotlib.colors as colors
 import networkx as nx
 import rasterio
 import rasterio.plot
@@ -20,6 +22,8 @@ import PIL
 import numpy as np
 import random
 
+from matplotlib.patches import Patch
+from matplotlib.colors import ListedColormap
 from osgeo.gdalconst import GA_ReadOnly
 from ipyleaflet import projections
 from owslib.wms import WebMapService
@@ -127,7 +131,7 @@ class GeoUtil:
         GeoUtil.plot_gdf_map(tornado_gdf, 'ef_rating', category, basemap)
 
     @staticmethod
-    def plot_earthquake(earthquake_id, client, demand=None):
+    def plot_earthquake(earthquake_id, client, demand=None, bins=5):
         """Plot earthquake raster data
 
         Args:
@@ -177,8 +181,26 @@ class GeoUtil:
             eq_dataset_id, DataService(client))
         raster_file_path = Path(eq_dataset.local_file_path).joinpath(
             eq_dataset.metadata['fileDescriptors'][0]['filename'])
-        raster = rasterio.open(raster_file_path)
-        rasterio.plot.show(raster, title=title)
+
+        with rasterio.open(raster_file_path) as earthquake_src:
+            earthquake_nd = earthquake_src.read(1)
+
+        min = earthquake_nd.min()
+        max = earthquake_nd.max()
+
+        # Define the default viridis colormap for viz
+        viz_cmap = cm.get_cmap('viridis', 256)
+
+        earthquake_nd = np.flip(earthquake_nd, axis=0)
+
+        fig, ax = plt.subplots(figsize=(6, 6), constrained_layout=True)
+        psm = ax.pcolormesh(earthquake_nd, cmap=viz_cmap, rasterized=True, vmin=min, vmax=max)
+        fig.colorbar(psm, ax=ax)
+        # since the x,y values in the images shows the cell location,
+        # this could be misleading. It could be better not showing the x and y value
+        plt.axis('off')
+        plt.title(title)
+        plt.show()
 
     @staticmethod
     def plot_graph_network(graph, coords):
