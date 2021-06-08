@@ -4,26 +4,22 @@
 # terms of the Mozilla Public License v2.0 which accompanies this distribution,
 # and is available at https://www.mozilla.org/en-US/MPL/2.0/
 
-from pathlib import Path
-
 import contextily as ctx
 import geopandas as gpd
 import ipyleaflet as ipylft
 import matplotlib.pyplot as plt
-from matplotlib import cm
-import matplotlib.colors as colors
 import networkx as nx
 import rasterio
 import rasterio.plot
-from osgeo import gdal
 import copy
 import os
 import PIL
 import numpy as np
 import random
 
-from matplotlib.patches import Patch
-from matplotlib.colors import ListedColormap
+from matplotlib import cm
+from pathlib import Path
+from osgeo import gdal
 from osgeo.gdalconst import GA_ReadOnly
 from ipyleaflet import projections
 from owslib.wms import WebMapService

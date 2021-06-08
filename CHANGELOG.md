@@ -8,7 +8,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ## [unreleased]
 ### Added
 - Legend for earthquake visualization [INCORE1-1214](https://opensource.ncsa.illinois.edu/jira/browse/INCORE1-1214)
-
+- Ability to plot Raster dataset [INCORE1-1222](https://opensource.ncsa.illinois.edu/jira/browse/INCORE1-1222)
 ## [1.1.1] - 2021-05-21
 ### Added
 - Ability to visualize dataset based earthquakes for a specific demand type [INCORE1-1202](https://opensource.ncsa.illinois.edu/jira/browse/INCORE1-1202)
