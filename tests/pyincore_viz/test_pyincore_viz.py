@@ -156,7 +156,7 @@ def test_plot_fragility(client):
 def test_visualize_raster_file(client):
     galvaston_wave_height_id = '5f11e503feef2d758c4df6db'
     dataset = Dataset.from_data_service(galvaston_wave_height_id, DataService(client))
-    map = viz.plot_raster_from_path(dataset.get_file_path('tif'))
+    map = viz.plot_map_raster_from_path(dataset.get_file_path('tif'))
 
     assert True
 

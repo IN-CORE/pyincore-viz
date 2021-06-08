@@ -17,6 +17,7 @@ import PIL
 import numpy as np
 import random
 
+from deprecated.sphinx import deprecated
 from matplotlib import cm
 from pathlib import Path
 from osgeo import gdal
@@ -201,6 +202,12 @@ class GeoUtil:
 
     @staticmethod
     def plot_raster_file_with_legend(file_path, title=None):
+        """plot raster file using matplotlib
+
+        Args:
+            file_path (str):  file path for the raster data
+            title (str): title for the plot
+        """
         with rasterio.open(file_path) as earthquake_src:
             earthquake_nd = earthquake_src.read(1)
 
@@ -641,8 +648,21 @@ class GeoUtil:
 
         return join_df, dataset_id_list, common_source_dataset_id
 
-    @staticmethod
+    @deprecated(version="1.2.0", reason="use plot_map_raster_from_path instead")
     def plot_raster_from_path(input_path):
+        """Creates map window with geo-referenced raster file from local or url visualized
+
+            Args:
+                input_path (str):  input raster dataset (GeoTiff) file path
+
+            Returns:
+                map (ipyleaflet.Map): ipyleaflet Map object
+
+        """
+        GeoUtil.plot_map_raster_from_path(input_path)
+
+    @staticmethod
+    def plot_map_raster_from_path(input_path):
         """Creates map window with geo-referenced raster file from local or url visualized
 
             Args:
