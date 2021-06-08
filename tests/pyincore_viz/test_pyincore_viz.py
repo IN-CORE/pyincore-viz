@@ -84,6 +84,13 @@ def test_visualize_network(client):
     assert True
 
 
+def test_plot_raster_dataset(client):
+    galveston_deterministic_hurricane = "5f10837ab922f96f4e9ffb86"
+    viz.plot_raster_dataset(galveston_deterministic_hurricane, client)
+
+    assert True
+
+
 def test_plot_fragility(client):
     # clean plots that are not closed/cleared
     matplotlib.pyplot.clf()

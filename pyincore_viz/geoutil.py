@@ -131,7 +131,7 @@ class GeoUtil:
         GeoUtil.plot_gdf_map(tornado_gdf, 'ef_rating', category, basemap)
 
     @staticmethod
-    def plot_earthquake(earthquake_id, client, demand=None, bins=5):
+    def plot_earthquake(earthquake_id, client, demand=None):
         """Plot earthquake raster data
 
         Args:
@@ -182,7 +182,30 @@ class GeoUtil:
         raster_file_path = Path(eq_dataset.local_file_path).joinpath(
             eq_dataset.metadata['fileDescriptors'][0]['filename'])
 
-        with rasterio.open(raster_file_path) as earthquake_src:
+        GeoUtil.plot_raster_file_with_legend(raster_file_path, title)
+
+    @staticmethod
+    def plot_raster_dataset(dataset_id, client):
+        """Plot raster data
+
+        Args:
+            dataset_id (str):  ID of tornado hazard
+            client (Client): pyincore service Client Object
+
+        """
+        metadata = DataService(client).get_dataset_metadata(dataset_id)
+        # metadata = DataService(client)
+        title = metadata['title']
+
+        dataset = Dataset.from_data_service(dataset_id, DataService(client))
+        raster_file_path = Path(dataset.local_file_path).\
+            joinpath(dataset.metadata['fileDescriptors'][0]['filename'])
+
+        GeoUtil.plot_raster_file_with_legend(raster_file_path, title)
+
+    @staticmethod
+    def plot_raster_file_with_legend(file_path, title=None):
+        with rasterio.open(file_path) as earthquake_src:
             earthquake_nd = earthquake_src.read(1)
 
         min = earthquake_nd.min()
