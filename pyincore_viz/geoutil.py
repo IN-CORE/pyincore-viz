@@ -648,7 +648,7 @@ class GeoUtil:
 
         return join_df, dataset_id_list, common_source_dataset_id
 
-    @deprecated(version="1.2.0", reason="use plot_map_raster_from_path instead")
+    @deprecated(version="1.2.0", reason="use map_raster_overlay_from_file instead")
     def plot_raster_from_path(input_path):
         """Creates map window with geo-referenced raster file from local or url visualized
 
@@ -659,10 +659,10 @@ class GeoUtil:
                 map (ipyleaflet.Map): ipyleaflet Map object
 
         """
-        GeoUtil.plot_map_raster_from_path(input_path)
+        GeoUtil.map_raster_overlay_from_file(input_path)
 
     @staticmethod
-    def plot_map_raster_from_path(input_path):
+    def map_raster_overlay_from_file(input_path):
         """Creates map window with geo-referenced raster file from local or url visualized
 
             Args:
