@@ -11,7 +11,8 @@ import matplotlib.pyplot as plt
 import numpy
 import pandas as pd
 from pyincore import StandardFragilityCurve, PeriodStandardFragilityCurve, PeriodBuildingFragilityCurve, \
-    ConditionalStandardFragilityCurve, ParametricFragilityCurve, CustomExpressionFragilityCurve
+    ConditionalStandardFragilityCurve, ParametricFragilityCurve, CustomExpressionFragilityCurve, \
+    FragilityCurveRefactored
 from pyincore.utils.expressioneval import Parser
 from scipy.stats import lognorm, norm
 
@@ -235,7 +236,8 @@ class PlotUtil:
         return X, Y, Z
 
     @staticmethod
-    def get_fragility_plot(fragility_set, title=None):
+    def get_fragility_plot(fragility_set, title=None, dimension=2, limit_state="LS_0",
+                           custom_fragility_curve_parameters={}):
         """Get fragility plot.
 
         Args:
@@ -247,46 +249,62 @@ class PlotUtil:
             collection: Plot and its style functions.
 
         """
-        for curve in fragility_set.fragility_curves:
-            if isinstance(curve, CustomExpressionFragilityCurve):
-                if curve.expression.find('x') >= 0 and curve.expression.find('y') < 0:
-                    x, y = PlotUtil.get_custom_x_y(curve.expression)
-                else:
-                    raise ValueError("We are only able to plot 2d fragility curve with x as variable name for now. "
-                                     "More implementation coming soon...")
-
-            elif isinstance(curve, StandardFragilityCurve) or isinstance(curve, PeriodStandardFragilityCurve):
-                if curve.alpha_type == 'lambda':
-                    alpha = curve.alpha
-                elif curve.alpha_type == 'median':
-                    alpha = math.log(curve.alpha)
-                else:
-                    raise ValueError("The alpha type is not implemented")
-                x, y = PlotUtil.get_standard_x_y(
-                    curve.curve_type, alpha, curve.beta)
-
-            elif isinstance(curve, ConditionalStandardFragilityCurve):
-                x, y = PlotUtil.get_conditional_x_y(curve.rules, curve.alpha_type, curve.alpha, curve.beta)
-
-            elif isinstance(curve, ParametricFragilityCurve):
-                x, y = PlotUtil.get_parametric_x_y(curve.curve_type, curve.parameters)
-
-            elif isinstance(curve, PeriodBuildingFragilityCurve):
-                x, y = PlotUtil.get_period_building_x_y(curve.fs_param0, curve.fs_param1, curve.fs_param2,
-                                                        curve.fs_param3, curve.fs_param4, curve.fs_param5)
+        ####################
+        # New Format
+        if isinstance(fragility_set.fragility_curves[0] , FragilityCurveRefactored):
+            if dimension == 2:
+                return PlotUtil.get_fragility_plot_2d_refactored(fragility_set,title, custom_fragility_curve_parameters)
+            if dimension == 3:
+                return PlotUtil.get_fragility_plot_3d_refactored(fragility_set, title, limit_state,
+                                                                 custom_fragility_curve_parameters)
             else:
-                raise ValueError("This type of fragility curve is not implemented!")
+                raise ValueError("We do not support "+ str(dimension) + "D fragility plotting")
 
-            plt.plot(x, y, label=curve.description)
+        ##################
+        # Legacy
+        else:
+            for curve in fragility_set.fragility_curves:
+                if isinstance(curve, CustomExpressionFragilityCurve):
+                    if curve.expression.find('x') >= 0 and curve.expression.find('y') < 0:
+                        x, y = PlotUtil.get_custom_x_y(curve.expression)
+                    else:
+                        raise ValueError("We are only able to plot 2d fragility curve with x as variable name for now. "
+                                         "More implementation coming soon...")
 
-        plt.xlabel((",").join(fragility_set.demand_types) + " (" + (",").join(fragility_set.demand_units) + ")")
-        if title is None:
-            title = fragility_set.description
+                elif isinstance(curve, StandardFragilityCurve) or isinstance(curve, PeriodStandardFragilityCurve):
+                    if curve.alpha_type == 'lambda':
+                        alpha = curve.alpha
+                    elif curve.alpha_type == 'median':
+                        alpha = math.log(curve.alpha)
+                    else:
+                        raise ValueError("The alpha type is not implemented")
+                    x, y = PlotUtil.get_standard_x_y(
+                        curve.curve_type, alpha, curve.beta)
 
-        plt.title(title)
-        plt.legend()
+                elif isinstance(curve, ConditionalStandardFragilityCurve):
+                    x, y = PlotUtil.get_conditional_x_y(curve.rules, curve.alpha_type, curve.alpha, curve.beta)
 
-        return plt
+                elif isinstance(curve, ParametricFragilityCurve):
+                    x, y = PlotUtil.get_parametric_x_y(curve.curve_type, curve.parameters)
+
+                elif isinstance(curve, PeriodBuildingFragilityCurve):
+                    x, y = PlotUtil.get_period_building_x_y(curve.fs_param0, curve.fs_param1, curve.fs_param2,
+                                                            curve.fs_param3, curve.fs_param4, curve.fs_param5)
+                else:
+                    raise ValueError("This type of fragility curve is not implemented!")
+
+                plt.plot(x, y, label=curve.description)
+
+            plt.xlabel((",").join(fragility_set.demand_types) + " (" + (",").join(fragility_set.demand_units) + ")")
+            if title is None:
+                title = fragility_set.description
+
+            plt.title(title)
+            plt.legend()
+
+            return plt
+
+    def _get_demand_type(self):
 
     @staticmethod
     def get_fragility_plot_2d_refactored(fragility_set, title=None, custom_fragility_curve_parameters={}):
@@ -337,7 +355,7 @@ class PlotUtil:
         """
         demand_type_names = []
         for parameter in fragility_set.fragility_curve_parameters:
-            # for  hazard
+            # for hazard
             if parameter.get("name") in fragility_set.demand_types or parameter.get("key") in \
                     fragility_set.demand_types:
                 demand_type_names.append(parameter["name"])
