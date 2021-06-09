@@ -238,7 +238,7 @@ class PlotUtil:
 
     @staticmethod
     def get_fragility_plot(fragility_set, title=None, dimension=2, limit_state="LS_0",
-                           custom_fragility_curve_parameters={}):
+                           custom_fragility_curve_parameters={}, **kwargs):
         """Get fragility plot.
 
         Args:
@@ -257,10 +257,13 @@ class PlotUtil:
         # New Format
         if isinstance(fragility_set.fragility_curves[0] , FragilityCurveRefactored):
             if dimension == 2:
-                return PlotUtil.get_fragility_plot_2d_refactored(fragility_set,title, custom_fragility_curve_parameters)
+                return PlotUtil.get_fragility_plot_2d_refactored(fragility_set, title,
+                                                                 custom_fragility_curve_parameters,
+                                                                 **kwargs)
             if dimension == 3:
                 return PlotUtil.get_fragility_plot_3d_refactored(fragility_set, title, limit_state,
-                                                                 custom_fragility_curve_parameters)
+                                                                 custom_fragility_curve_parameters,
+                                                                 **kwargs)
             else:
                 raise ValueError("We do not support "+ str(dimension) + "D fragility plotting")
 
@@ -309,7 +312,7 @@ class PlotUtil:
             return plt
 
     @staticmethod
-    def get_fragility_plot_2d_refactored(fragility_set, title=None, custom_fragility_curve_parameters={}):
+    def get_fragility_plot_2d_refactored(fragility_set, title=None, custom_fragility_curve_parameters={}, **kwargs):
         """
         method to plot 2 dimensional equation based fragility curves with multiple limit states
         :param fragility_set: fragility curve set object
@@ -335,7 +338,8 @@ class PlotUtil:
         for curve in fragility_set.fragility_curves:
             x, y = PlotUtil.get_refactored_x_y(curve, demand_type_names[0],
                                                fragility_set.fragility_curve_parameters,
-                                               custom_fragility_curve_parameters)
+                                               custom_fragility_curve_parameters,
+                                               **kwargs)
             plt.plot(x, y, label=curve.return_type["description"])
 
         plt.xlabel(fragility_set.demand_types[0] + " (" + fragility_set.demand_units[0] + ")")
@@ -346,7 +350,7 @@ class PlotUtil:
 
     @staticmethod
     def get_fragility_plot_3d_refactored(fragility_set, title=None, limit_state="LS_0",
-                                         custom_fragility_curve_parameters={}):
+                                         custom_fragility_curve_parameters={}, **kwargs):
         """
          method to plot 3 dimensional equation based fragility curves with specific limit state
         :param fragility_set: fragility curve set object
@@ -382,7 +386,8 @@ class PlotUtil:
                 x, y, z = PlotUtil.get_refactored_x_y_z(curve,
                                                         demand_type_names[:2],
                                                         fragility_set.fragility_curve_parameters,
-                                                        custom_fragility_curve_parameters)
+                                                        custom_fragility_curve_parameters,
+                                                        **kwargs)
                 ax = plt.axes(projection='3d')
                 ax.plot_surface(x, y, z, rstride=1, cstride=1, cmap='viridis', edgecolor='none')
                 ax.set_xlabel(fragility_set.demand_types[0] + " (" + fragility_set.demand_units[0] + ")")

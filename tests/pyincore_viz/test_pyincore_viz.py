@@ -89,17 +89,17 @@ def test_plot_fragility(client):
     matplotlib.pyplot.clf()
     matplotlib.pyplot.cla()
 
-    # 5b47b2d7337d4a36187c61c9 period standard
-    fragility_set = FragilityCurveSet(FragilityService(client).get_dfr3_set("5b47b2d7337d4a36187c61c9"))
-    plt = plot.get_fragility_plot(fragility_set, title="period standard fragility curve")
-    plt.savefig('periodStandard.png')
-    plt.clf()
-
-    # 5b4903c7337d4a48f7d88dcf standard
-    fragility_set = FragilityCurveSet(FragilityService(client).get_dfr3_set("5b4903c7337d4a48f7d88dcf"))
-    plt = plot.get_fragility_plot(fragility_set, title="standard fragility curve")
-    plt.savefig('standard.png')
-    plt.clf()
+    # # 5b47b2d7337d4a36187c61c9 period standard
+    # fragility_set = FragilityCurveSet(FragilityService(client).get_dfr3_set("5b47b2d7337d4a36187c61c9"))
+    # plt = plot.get_fragility_plot(fragility_set, title="period standard fragility curve")
+    # plt.savefig('periodStandard.png')
+    # plt.clf()
+    #
+    # # 5b4903c7337d4a48f7d88dcf standard
+    # fragility_set = FragilityCurveSet(FragilityService(client).get_dfr3_set("5b4903c7337d4a48f7d88dcf"))
+    # plt = plot.get_fragility_plot(fragility_set, title="standard fragility curve")
+    # plt.savefig('standard.png')
+    # plt.clf()
 
     # 5b47b34e337d4a36290754a0 period building
     fragility_set = FragilityCurveSet(FragilityService(client).get_dfr3_set("5b47b34e337d4a36290754a0"))
@@ -107,44 +107,44 @@ def test_plot_fragility(client):
     plt.savefig('periodBuilding.png')
     plt.clf()
 
-    # 5ed6bfc35b6166000155d0d9 parametric
-    fragility_set = FragilityCurveSet(FragilityService(client).get_dfr3_set("5ed6bfc35b6166000155d0d9"))
-    plt = plot.get_fragility_plot(fragility_set, title="parametric fragility curve")
-    plt.savefig('parametric.png')
-    plt.clf()
-
-    # 5b47ba6f337d4a372105936f custom 2d
-    fragility_set = FragilityCurveSet(FragilityService(client).get_dfr3_set("5b47ba6f337d4a372105936f"))
-    plt = plot.get_fragility_plot(fragility_set, title="customExpression 2d fragility curve")
-    plt.savefig('customExpression.png')
-    plt.clf()
-
-    # 5ed6be9a5b6166000155d0b9 conditional 2d
-    fragility_set = FragilityCurveSet(FragilityService(client).get_dfr3_set("5ed6be9a5b6166000155d0b9"))
-    plt = plot.get_fragility_plot(fragility_set, title="conditional fragility curve")
-    plt.savefig('conditional.png')
-    plt.clf()
-
-    # new format 2d
-    fragility_set = FragilityCurveSet(FragilityService(client).get_dfr3_set("602f31f381bd2c09ad8efcb4"))
-    # comment on and off to compare curves
-    # plt = plot.get_fragility_plot_2d_refactored(fragility_set, title="refactored fragility 2d curve")
+    # # 5ed6bfc35b6166000155d0d9 parametric
+    # fragility_set = FragilityCurveSet(FragilityService(client).get_dfr3_set("5ed6bfc35b6166000155d0d9"))
+    # plt = plot.get_fragility_plot(fragility_set, title="parametric fragility curve")
+    # plt.savefig('parametric.png')
+    # plt.clf()
+    #
+    # # 5b47ba6f337d4a372105936f custom 2d
+    # fragility_set = FragilityCurveSet(FragilityService(client).get_dfr3_set("5b47ba6f337d4a372105936f"))
+    # plt = plot.get_fragility_plot(fragility_set, title="customExpression 2d fragility curve")
+    # plt.savefig('customExpression.png')
+    # plt.clf()
+    #
+    # # 5ed6be9a5b6166000155d0b9 conditional 2d
+    # fragility_set = FragilityCurveSet(FragilityService(client).get_dfr3_set("5ed6be9a5b6166000155d0b9"))
+    # plt = plot.get_fragility_plot(fragility_set, title="conditional fragility curve")
+    # plt.savefig('conditional.png')
+    # plt.clf()
+    #
+    # # new format 2d
+    # fragility_set = FragilityCurveSet(FragilityService(client).get_dfr3_set("602f31f381bd2c09ad8efcb4"))
+    # # comment on and off to compare curves
+    # # plt = plot.get_fragility_plot_2d_refactored(fragility_set, title="refactored fragility 2d curve")
     # plt = plot.get_fragility_plot_2d_refactored(fragility_set, title="refactored fragility 2d curve",
     #                                             custom_fragility_curve_parameters={"ffe_elev": 3})
-    plt = plot.get_fragility_plot(fragility_set, title="refactored fragility 2d curve",
-                                  custom_fragility_curve_parameters={"ffe_elev": 3})
-
-    plt.savefig('refactored_2d.png')
-    plt.clf()
-
-    # new format 3d
-    fragility_set = FragilityCurveSet(FragilityService(client).get_dfr3_set("5f6ccf67de7b566bb71b202d"))
+    # # plt = plot.get_fragility_plot(fragility_set, title="refactored fragility 2d curve",
+    # #                               custom_fragility_curve_parameters={"ffe_elev": 3})
+    #
+    # plt.savefig('refactored_2d.png')
+    # plt.clf()
+    #
+    # # new format 3d
+    # fragility_set = FragilityCurveSet(FragilityService(client).get_dfr3_set("5f6ccf67de7b566bb71b202d"))
     # plt = plot.get_fragility_plot_3d_refactored(fragility_set, title="refactored fragility 3d curve",
     #                                             limit_state="LS_0")
-    plt = plot.get_fragility_plot(fragility_set, title="refactored fragility 3d curve", limit_state="LS_0",
-                                  dimension=3, custom_fragility_curve_parameters={"ffe_elev": 3})
-    plt.savefig('refactored_3d.png')
-    plt.clf()
+    # # plt = plot.get_fragility_plot(fragility_set, title="refactored fragility 3d curve", limit_state="LS_0",
+    # #                               dimension=3, custom_fragility_curve_parameters={"ffe_elev": 3})
+    # plt.savefig('refactored_3d.png')
+    # plt.clf()
 
     assert True
 
