@@ -11,8 +11,9 @@ import matplotlib.pyplot as plt
 import numpy
 import pandas as pd
 from pyincore import StandardFragilityCurve, PeriodStandardFragilityCurve, PeriodBuildingFragilityCurve, \
-    ConditionalStandardFragilityCurve, ParametricFragilityCurve, CustomExpressionFragilityCurve, \
-    FragilityCurveRefactored
+    ConditionalStandardFragilityCurve, ParametricFragilityCurve, CustomExpressionFragilityCurve
+# TODO need to add that to pyincore's __init__.py
+from pyincore.models.fragilitycurverefactored import FragilityCurveRefactored
 from pyincore.utils.expressioneval import Parser
 from scipy.stats import lognorm, norm
 
@@ -244,6 +245,9 @@ class PlotUtil:
             fragility_set (obj): A JSON like description of fragility assigned to the
                 infrastructure inventory.
             title: title of the graph
+            dimension: 2d vs 3d
+            limit_state: limit state name, such as LS_0, or insignific, etc...
+            custom_fragility_curve_parameters: if you wish to overwrite default curve parameters(expression field)
 
         Returns:
             collection: Plot and its style functions.
@@ -303,8 +307,6 @@ class PlotUtil:
             plt.legend()
 
             return plt
-
-    def _get_demand_type(self):
 
     @staticmethod
     def get_fragility_plot_2d_refactored(fragility_set, title=None, custom_fragility_curve_parameters={}):
