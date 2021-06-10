@@ -255,7 +255,7 @@ class PlotUtil:
         """
         ####################
         # New Format
-        if isinstance(fragility_set.fragility_curves[0] , FragilityCurveRefactored):
+        if isinstance(fragility_set.fragility_curves[0], FragilityCurveRefactored):
             if dimension == 2:
                 return PlotUtil.get_fragility_plot_2d_refactored(fragility_set, title,
                                                                  custom_fragility_curve_parameters,
