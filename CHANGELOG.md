@@ -5,6 +5,17 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## [unreleased]
+### Added
+- Legend for earthquake visualization [INCORE1-1214](https://opensource.ncsa.illinois.edu/jira/browse/INCORE1-1214)
+- Ability to plot Raster dataset [INCORE1-1222](https://opensource.ncsa.illinois.edu/jira/browse/INCORE1-1222)
+
+### Changed
+- Renamed the method 'plot_raster_from_path' to 'plot_map_raster_from_path' to avoid confusion [INCORE1-1224](https://opensource.ncsa.illinois.edu/jira/browse/INCORE1-1224)
+
+### Fixed
+- Combine refactored and legacy fragility plotting into the main function "get_fragility_plot" for backward compatibility [INCORE1-1228](https://opensource.ncsa.illinois.edu/jira/browse/INCORE1-1228)
+
 ## [1.1.1] - 2021-05-21
 ### Added
 - Ability to visualize dataset based earthquakes for a specific demand type [INCORE1-1202](https://opensource.ncsa.illinois.edu/jira/browse/INCORE1-1202)

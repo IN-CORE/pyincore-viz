@@ -4,8 +4,6 @@
 # terms of the Mozilla Public License v2.0 which accompanies this distribution,
 # and is available at https://www.mozilla.org/en-US/MPL/2.0/
 
-from pathlib import Path
-
 import contextily as ctx
 import geopandas as gpd
 import ipyleaflet as ipylft
@@ -13,13 +11,16 @@ import matplotlib.pyplot as plt
 import networkx as nx
 import rasterio
 import rasterio.plot
-from osgeo import gdal
 import copy
 import os
 import PIL
 import numpy as np
 import random
 
+from deprecated.sphinx import deprecated
+from matplotlib import cm
+from pathlib import Path
+from osgeo import gdal
 from osgeo.gdalconst import GA_ReadOnly
 from ipyleaflet import projections
 from owslib.wms import WebMapService
@@ -177,8 +178,55 @@ class GeoUtil:
             eq_dataset_id, DataService(client))
         raster_file_path = Path(eq_dataset.local_file_path).joinpath(
             eq_dataset.metadata['fileDescriptors'][0]['filename'])
-        raster = rasterio.open(raster_file_path)
-        rasterio.plot.show(raster, title=title)
+
+        GeoUtil.plot_raster_file_with_legend(raster_file_path, title)
+
+    @staticmethod
+    def plot_raster_dataset(dataset_id, client):
+        """Plot raster data
+
+        Args:
+            dataset_id (str):  ID of tornado hazard
+            client (Client): pyincore service Client Object
+
+        """
+        metadata = DataService(client).get_dataset_metadata(dataset_id)
+        # metadata = DataService(client)
+        title = metadata['title']
+
+        dataset = Dataset.from_data_service(dataset_id, DataService(client))
+        raster_file_path = Path(dataset.local_file_path).\
+            joinpath(dataset.metadata['fileDescriptors'][0]['filename'])
+
+        GeoUtil.plot_raster_file_with_legend(raster_file_path, title)
+
+    @staticmethod
+    def plot_raster_file_with_legend(file_path, title=None):
+        """plot raster file using matplotlib
+
+        Args:
+            file_path (str):  file path for the raster data
+            title (str): title for the plot
+        """
+        with rasterio.open(file_path) as earthquake_src:
+            earthquake_nd = earthquake_src.read(1)
+
+        min = earthquake_nd.min()
+        max = earthquake_nd.max()
+
+        # Define the default viridis colormap for viz
+        viz_cmap = cm.get_cmap('viridis', 256)
+
+        earthquake_nd = np.flip(earthquake_nd, axis=0)
+
+        fig, ax = plt.subplots(figsize=(6, 6), constrained_layout=True)
+        psm = ax.pcolormesh(earthquake_nd, cmap=viz_cmap, rasterized=True, vmin=min, vmax=max)
+        fig.colorbar(psm, ax=ax)
+        # since the x,y values in the images shows the cell location,
+        # this could be misleading. It could be better not showing the x and y value
+        plt.axis('off')
+        plt.title(title)
+        plt.show()
 
     @staticmethod
     def plot_graph_network(graph, coords):
@@ -600,8 +648,21 @@ class GeoUtil:
 
         return join_df, dataset_id_list, common_source_dataset_id
 
-    @staticmethod
+    @deprecated(version="1.2.0", reason="use map_raster_overlay_from_file instead")
     def plot_raster_from_path(input_path):
+        """Creates map window with geo-referenced raster file from local or url visualized
+
+            Args:
+                input_path (str):  input raster dataset (GeoTiff) file path
+
+            Returns:
+                map (ipyleaflet.Map): ipyleaflet Map object
+
+        """
+        GeoUtil.map_raster_overlay_from_file(input_path)
+
+    @staticmethod
+    def map_raster_overlay_from_file(input_path):
         """Creates map window with geo-referenced raster file from local or url visualized
 
             Args:
