@@ -659,7 +659,7 @@ class GeoUtil:
                 map (ipyleaflet.Map): ipyleaflet Map object
 
         """
-        GeoUtil.map_raster_overlay_from_file(input_path)
+        return GeoUtil.map_raster_overlay_from_file(input_path)
 
     @staticmethod
     def map_raster_overlay_from_file(input_path):
