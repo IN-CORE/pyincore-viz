@@ -55,23 +55,23 @@ def test_visualize_joplin_tornado_building(client):
     assert True
 
 
-# def test_visualize_inventory(client):
-#     shelby_hospital_inv_id = "5a284f0bc7d30d13bc081a28"
-#     shelby_road_id = "5a284f2bc7d30d13bc081eb6"
-#
-#     # get shelvy building inventory and road
-#     sh_bldg_inv = Dataset.from_data_service(shelby_hospital_inv_id, DataService(client))
-#     sh_road = Dataset.from_data_service(shelby_road_id, DataService(client))
-#
-#     # visualize building inventory
-#     viz.plot_map(sh_bldg_inv, column="struct_typ", category=False, basemap=True)
-#
-#     # visualize building inventory from geoserver
-#     viz.get_wms_map([sh_bldg_inv, sh_road])
-#     viz.get_gdf_map([sh_bldg_inv, sh_road])
-#     viz.get_gdf_wms_map([sh_bldg_inv], [sh_road])
-#
-#     assert True
+def test_visualize_inventory(client):
+    shelby_hospital_inv_id = "5a284f0bc7d30d13bc081a28"
+    shelby_road_id = "5a284f2bc7d30d13bc081eb6"
+
+    # get shelvy building inventory and road
+    sh_bldg_inv = Dataset.from_data_service(shelby_hospital_inv_id, DataService(client))
+    sh_road = Dataset.from_data_service(shelby_road_id, DataService(client))
+
+    # visualize building inventory
+    viz.plot_map(sh_bldg_inv, column="struct_typ", category=False, basemap=True)
+
+    # visualize building inventory from geoserver
+    viz.get_wms_map([sh_bldg_inv, sh_road])
+    viz.get_gdf_map([sh_bldg_inv, sh_road])
+    viz.get_gdf_wms_map([sh_bldg_inv], [sh_road])
+
+    assert True
 
 
 def test_visualize_network(client):
