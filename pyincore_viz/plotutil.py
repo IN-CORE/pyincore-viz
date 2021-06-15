@@ -254,6 +254,9 @@ class PlotUtil:
 
         """
         ####################
+        if title is None:
+            title = fragility_set.description
+
         # New Format
         if isinstance(fragility_set.fragility_curves[0], FragilityCurveRefactored):
             if dimension == 2:
@@ -303,8 +306,6 @@ class PlotUtil:
                 plt.plot(x, y, label=curve.description)
 
             plt.xlabel((",").join(fragility_set.demand_types) + " (" + (",").join(fragility_set.demand_units) + ")")
-            if title is None:
-                title = fragility_set.description
 
             plt.title(title)
             plt.legend()
