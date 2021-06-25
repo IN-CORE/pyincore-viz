@@ -26,8 +26,8 @@ class PlotUtil:
         """Get values from a lognormal distribution.
 
         Args:
-            mean (float):  A mean of the lognormal distribution.
-            std (float):  A standard deviation of the lognormal distribution.
+            mean (float): A mean of the lognormal distribution.
+            std (float): A standard deviation of the lognormal distribution.
             sample_size (int): Number of samples to generate. Numpy default is 50.
 
         Returns:
@@ -47,8 +47,8 @@ class PlotUtil:
         """Get values from a lognormal distribution.
 
         Args:
-            location (float):  A location parameter.
-            scale (float):  A scale parameter.
+            location (float): A location parameter.
+            scale (float): A scale parameter.
             sample_size (int): Number of samples to generate. Numpy default is 50.
 
         Returns:
@@ -72,8 +72,8 @@ class PlotUtil:
         """Get values from a normal distribution.
 
         Args:
-            mean (float):  A mean of the normal distribution.
-            std (float):  A standard deviation of the normal distribution.
+            mean (float): A mean of the normal distribution.
+            std (float): A standard deviation of the normal distribution.
             sample_size (int): Number of samples to generate. Numpy default is 50.
 
         Returns:
@@ -90,12 +90,12 @@ class PlotUtil:
 
     @staticmethod
     def get_standard_x_y(disttype: str, alpha: float, beta: float):
-        """Get arrays of x and y values for standard fragility or period standard fragility
+        """Get arrays of x and y values for standard fragility or period standard fragility.
 
         Args:
-            disttype (str):  A distribution type (log normal and normal).
-            alpha (float):  A distribution parameter (mostly mean).
-            beta (float):  A distribution parameter (mostly standard deviation).
+            disttype (str): A distribution type (log normal and normal).
+            alpha (float): A distribution parameter (mostly mean).
+            beta (float): A distribution parameter (mostly standard deviation).
 
         Returns:
             ndarray: X sampling values.
@@ -112,16 +112,16 @@ class PlotUtil:
     @staticmethod
     def get_conditional_x_y(rules: dict, alpha_type, alpha: list, beta: list, start=0.001, end=50,
                             sample_size: int = 50):
-        """Get arrays of x and y values for conditional standard fragility curves
+        """Get arrays of x and y values for conditional standard fragility curves.
 
         Args:
-            rules (dict):  Rules.
-            alpha_type (str): A type of alpha float value, median or lambda
-            alpha (list):  A list of distribution parameters.
-            beta (list):  A list of distribution parameters.
-            start (float):  A start value.
-            end (float):  An end value.
-            sample_size (int):  A sample size.
+            rules (dict): Rules.
+            alpha_type (str): A type of alpha float value, median or lambda.
+            alpha (list): A list of distribution parameters.
+            beta (list): A list of distribution parameters.
+            start (float): A start value.
+            end (float): An end value.
+            sample_size (int): Number of points.
 
         Returns:
             ndarray: X sampling values.
@@ -152,7 +152,7 @@ class PlotUtil:
     @staticmethod
     def get_period_building_x_y(a11_param, a12_param, a13_param, a14_param, a21_param, a22_param, period=0,
                                 start=0.001, end=5, sample_size: int = 50):
-        """Get arrays of x and y values for period building fragility curves
+        """Get arrays of x and y values for period building fragility curves.
 
         Args:
             a11_param (float): A parameter of period building fragility curve.
@@ -162,9 +162,9 @@ class PlotUtil:
             a21_param (float): A parameter of period building fragility curve.
             a22_param (float): A parameter of period building fragility curve.
             period (float): A period value.
-            start (float):  A start value.
-            end (float):  An end value.
-            sample_size (int):  A sample size.
+            start (float): A start value.
+            end (float): An end value.
+            sample_size (int): Number of points.
 
         Returns:
             ndarray: X sampling values.
@@ -189,6 +189,19 @@ class PlotUtil:
 
     @staticmethod
     def get_custom_x_y(expression, start=0.001, end=50, sample_size: int = 200):
+        """Get arrays of x and y values for custom fragility curves.
+
+        Args:
+            expression (expression): An expression to be evaluated.
+            start (float): A start value.
+            end (float): An end value.
+            sample_size (int): Number of points.
+
+        Returns:
+            ndarray: X sampling values.
+            ndarray: Y cumulative density values.
+
+        """
         parser = Parser()
         x = numpy.linspace(start, end, sample_size)
         y = []
@@ -200,6 +213,21 @@ class PlotUtil:
 
     @staticmethod
     def get_parametric_x_y(curve_type, parameters, start=0.001, end=0.999, sample_size: int = 200, **kwargs):
+        """Get arrays of x and y values for parametric fragility curves.
+
+        Args:
+            curve_type (str): A type of curve such as "logit".
+            parameters (expression): An expression to be evaluated.
+            start (float): A start value.
+            end (float): An end value.
+            sample_size (int): Number of points.
+            **kwargs: Keyword arguments.
+
+        Returns:
+            ndarray: X sampling values.
+            ndarray: Y cumulative density values.
+
+        """
         if curve_type.lower() == "logit":
             y = numpy.linspace(start, end, sample_size)
             cumulate_term = 0  # X*theta'
@@ -226,16 +254,20 @@ class PlotUtil:
     @staticmethod
     def get_refactored_x_y(curve, demand_type_name, fragility_curve_parameters, custom_fragility_curve_parameters,
                            start=0.001, end=10, sample_size: int = 200):
-        """
-        generate numpy array of x, y for plotting
-        :param curve: individual fragility curve object
-        :param demand_type_name: valid demand type names
-        :param fragility_curve_parameters: default fragility curve parameters
-        :param custom_fragility_curve_parameters: user specific curve parameters to overwrite the default
-        :param start: x start
-        :param end: x end
-        :param sample_size: number of points
-        :return: [x0, x1, ...] and [y0, y1, ...]
+        """Get arrays of x and y values for plotting refactored fragility curves.
+
+        Args:
+            curve (obj): An individual fragility curve object.
+            fragility_curve_parameters (list): Default fragility curve parameters.
+            start (float): A start value.
+            end (float): An end value.
+            sample_size (int): Number of points.
+            **custom_fragility_curve_parameters: Keyword arguments.
+
+        Returns:
+            ndarray: X sampling values.
+            ndarray: Y cumulative density values.
+
         """
         x = numpy.linspace(start, end, sample_size)
         y = []
@@ -243,22 +275,27 @@ class PlotUtil:
             y.append(curve.calculate_limit_state_probability(hazard_values={demand_type_name: i},
                                                              fragility_curve_parameters=fragility_curve_parameters,
                                                              **custom_fragility_curve_parameters))  # kwargs
-
         return x, y
 
     @staticmethod
     def get_refactored_x_y_z(curve, demand_type_names, fragility_curve_parameters,
                              custom_fragility_curve_parameters, start=1, end=50, sample_size: int = 0.5):
-        """
-        generate numpy array of x, y and z for plotting
-        :param curve: individual fragility curve object
-        :param demand_type_names: valid demand type names
-        :param fragility_curve_parameters: default fragility curve parameters
-        :param custom_fragility_curve_parameters: user specific curve parameters to overwrite the default
-        :param start: x/y start
-        :param end: x/y end
-        :param sample_size: number of points
-        :return: numpy array of X, Y, Z
+        """Get arrays of x, y and z values for plotting refactored fragility plots.
+
+        Args:
+            curve (obj): An individual fragility curve object.
+            demand_type_names (dict): Valid demand type names.
+            fragility_curve_parameters (list): Default fragility curve parameters.
+            **custom_fragility_curve_parameters: Keyword arguments.
+            start (float): A start value.
+            end (float): An end value.
+            sample_size (int): Number of points.
+
+        Returns:
+            ndarray: X sampling values.
+            ndarray: Y sampling values.
+            ndarray: Z cumulative density values.
+
         """
         x = y = numpy.arange(start, end, sample_size)
 
@@ -283,13 +320,16 @@ class PlotUtil:
         Args:
             fragility_set (obj): A JSON like description of fragility assigned to the
                 infrastructure inventory.
-            title: title of the graph
-            dimension: 2d vs 3d
-            limit_state: limit state name, such as LS_0, or insignific, etc...
-            custom_fragility_curve_parameters: if you wish to overwrite default curve parameters(expression field)
+            title (str): A title of the plot.
+            dimension (int): 2d versus 3d.
+            limit_state (str): A limit state name, such as LS_0, or insignific, etc.
+            custom_fragility_curve_parameters (dict): Custom fragility curve parameters.
+                If you wish to overwrite default curve parameters (expression field).
+            **kwargs: Keyword arguments.
+
 
         Returns:
-            collection: Plot and its style functions.
+            obj: Plot and its style functions.
 
         """
         ####################
@@ -353,12 +393,20 @@ class PlotUtil:
 
     @staticmethod
     def get_fragility_plot_2d_refactored(fragility_set, title=None, custom_fragility_curve_parameters={}, **kwargs):
-        """
-        method to plot 2 dimensional equation based fragility curves with multiple limit states
-        :param fragility_set: fragility curve set object
-        :param title: user input title
-        :param custom_fragility_curve_parameters: if you wish to overwrite default curve parameters(expression field)
-        :return: matplotlib pyplot object
+        """Get 2d refactored fragility plot.
+
+        Args:
+            fragility_set (obj): A JSON like description of fragility assigned to the
+                infrastructure inventory.
+            title (str): A title of the plot.
+            custom_fragility_curve_parameters (dict): Custom fragility curve parameters.
+                If you wish to overwrite default curve parameters (expression field).
+            **kwargs: Keyword arguments.
+
+
+        Returns:
+            obj: Matplotlib pyplot object.
+
         """
         demand_type_names = []
         for parameter in fragility_set.fragility_curve_parameters:
@@ -391,13 +439,21 @@ class PlotUtil:
     @staticmethod
     def get_fragility_plot_3d_refactored(fragility_set, title=None, limit_state="LS_0",
                                          custom_fragility_curve_parameters={}, **kwargs):
-        """
-         method to plot 3 dimensional equation based fragility curves with specific limit state
-        :param fragility_set: fragility curve set object
-        :param title: user input title
-        :param limit_state: limit state name, such as LS_0, or insignific, etc...
-        :param custom_fragility_curve_parameters: if you wish to overwrite default curve parameters(expression field)
-        :return:  matplotlib pyplot object
+        """Get 3d refactored fragility plot.
+
+        Args:
+            fragility_set (obj): A JSON like description of fragility assigned to the
+                infrastructure inventory.
+            title (str): A title of the plot.
+            limit_state (str): A limit state name, such as LS_0, or insignific, etc.
+            custom_fragility_curve_parameters (dict): Custom fragility curve parameters.
+                If you wish to overwrite default curve parameters (expression field).
+            **kwargs: Keyword arguments.
+
+
+        Returns:
+            obj: Matplotlib pyplot object.
+
         """
         demand_type_names = []
         for parameter in fragility_set.fragility_curve_parameters:
@@ -443,6 +499,15 @@ class PlotUtil:
 
     @staticmethod
     def inventory_to_geodataframe(inventory_dataset):
+        """Convert inventory_dataset to GeoDataFrame.
+
+        Args:
+            inventory_dataset (obj): An inventory dataset.
+
+        Returns:
+            GeoDataFrame: Inventory.
+
+        """
         # TODO: need to move this method to Dataset Class
         fname = inventory_dataset.get_file_path(type="shp")
         inventory_df = gpd.read_file(fname)
@@ -451,17 +516,46 @@ class PlotUtil:
 
     @staticmethod
     def remove_null_inventories(inventory_df, key='guid'):
+        """Remove null inventory.
+
+        Args:
+            inventory_df (df): An inventory DataFrame.
+            key (str): A key such as "guid".
+
+        Returns:
+            DataFrame: Inventory.
+
+        """
         inventory_df.dropna(subset=[key], inplace=True)
 
         return inventory_df
 
     @staticmethod
     def dmg_state2value(damage_result, dmg_ratio_tbl):
+        """Damage state to value.
+
+        Args:
+            damage_result (str): A damage result value.
+            dmg_ratio_tbl (dict): A damage ratio table.
+
+        Returns:
+
+        """
         # TODO given damage ratio table, subtitute the damage state with actual mean damage factor
         pass
 
     @staticmethod
     def merge_inventory_w_dmg(inventory_df, damage_result):
+        """Merge inventory with damages.
+
+        Args:
+            inventory_df (df): A Panda's Data frame inventory.
+            damage_result (df): A Panda's Data frame damage results.
+
+        Returns:
+            DataFrame: Inventory.
+
+        """
         inventory_df = inventory_df.merge(damage_result, on='guid')
 
         return inventory_df
@@ -469,7 +563,19 @@ class PlotUtil:
     @staticmethod
     def mean_damage_histogram(mean_damage_dataset, histogram_bins=20, figure_size=(10, 5), axes_font_size=12,
                               title_font_size=12):
+        """Figure with mean damage histogram.
 
+        Args:
+            mean_damage_dataset (obj): Mean damage dataset.
+            histogram_bins (int): Number of bins.
+            figure_size (list): Figure size, x and y.
+            axes_font_size (int): Axle font size.
+            title_font_size (int): Title font size.
+
+        Returns:
+            obj: Figure with damage histograms.
+
+        """
         mean_damage = mean_damage_dataset.get_dataframe_from_csv()
         ax = mean_damage['meandamage'].hist(
             bins=histogram_bins, figsize=figure_size)
@@ -482,6 +588,21 @@ class PlotUtil:
 
     @staticmethod
     def histogram_from_csv_with_column(plot_title, x_title, y_title, column, in_csv, num_bins, figure_size):
+        """Get histogram from csv with column.
+
+        Args:
+            plot_title (str): A title of the plot.
+            x_title (str): A title of the X axis.
+            y_title (str): A title of the Y axis.
+            column (str): A name of the column.
+            in_csv (obj): A csv file with the column to be plotted.
+            num_bins (int): Number of histogram bins.
+            figure_size (list): Figure size, x and y.
+
+        Returns:
+            obj: Figure with damage histograms.
+
+        """
         data_frame = pd.read_csv(in_csv)
         ax = data_frame[column].hist(bins=num_bins, figsize=figure_size)
         ax.set_title(plot_title)

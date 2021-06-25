@@ -43,13 +43,13 @@ class GeoUtil:
 
     @staticmethod
     def plot_gdf_map(gdf, column, category=False, basemap=True):
-        """Plot Geopandas DataFrame
+        """Plot Geopandas DataFrame.
 
         Args:
-            gdf (GeoDataFrame):  Geopandas DataFarme object
-            column (str): column name to be plot
-            category (boolean): turn on/off category option
-            basemap (boolean): turn on/off base map (e.g. openstreetmap)
+            gdf (obj): Geopandas DataFrame object.
+            column (str): A column name to be plot.
+            category (bool): Turn on/off category option.
+            basemap (bool): Turn on/off base map (e.g. openstreetmap).
 
         """
         gdf = gdf.to_crs(epsg=3857)
@@ -60,14 +60,14 @@ class GeoUtil:
 
     @staticmethod
     def join_datasets(geodataset, dataset):
-        """Join Geospatial Dataset and non-geospatial Dataset
+        """Join Geospatial Dataset and non-geospatial Dataset.
 
         Args:
-            geodataset (Dataset):  pyincore Dataset object with geospatial data
-            dataset (Dataset): pyincore Dataset object without geospatial data
+            geodataset (obj): pyincore dataset with geospatial data.
+            dataset (obj): pyincore dataset without geospatial data.
 
         Returns:
-            GeoDataFrame: Geopandas DataFrame object
+            GeoDataFrame: Geopandas DataFrame object.
 
         """
 
@@ -80,13 +80,13 @@ class GeoUtil:
 
     @staticmethod
     def plot_map(dataset, column, category=False, basemap=True):
-        """Plot a map of geospatial dataset
+        """Plot a map of geospatial dataset.
 
         Args:
-            dataset (Dataset):  pyincore Dataset object with geospatial data
-            column (str): column name to be plot
-            category (boolean): turn on/off category option
-            basemap (boolean): turn on/off base map (e.g. openstreetmap)
+            dataset (obj):  pyincore Dataset object with geospatial data.
+            column (str): column name to be plot.
+            category (bool): turn on/off category option.
+            basemap (bool): turn on/off base map (e.g. openstreetmap).
 
         """
         # maybe this part should be moved to Dataset Class (reading csv to create gdf)
@@ -95,14 +95,14 @@ class GeoUtil:
 
     @staticmethod
     def plot_join_map(geodataset, dataset, column, category=False, basemap=True):
-        """Plot a map from geospatial dataset and non-geospatial dataset
+        """Plot a map from geospatial dataset and non-geospatial dataset.
 
         Args:
-            geodataset (Dataset):  pyincore Dataset object with geospatial data
-            dataset (Dataset): pyincore Dataset object without geospatial data
-            column (str): column name to be plot
-            category (boolean): turn on/off category option
-            basemap (boolean): turn on/off base map (e.g. openstreetmap)
+            geodataset (obj): pyincore Dataset object with geospatial data.
+            dataset (obj): pyincore Dataset object without geospatial data.
+            column (str): Column name to be plotted.
+            category (bool): turn on/off category option.
+            basemap (bool): turn on/off base map (e.g. openstreetmap).
 
         """
         gdf = GeoUtil.join_datasets(geodataset, dataset)
@@ -110,13 +110,13 @@ class GeoUtil:
 
     @staticmethod
     def plot_tornado(tornado_id, client, category=False, basemap=True):
-        """Plot a tornado path
+        """Plot a tornado path.
 
         Args:
-            tornado_id (str):  ID of tornado hazard
-            client (Client): pyincore service Client Object
-            category (boolean): turn on/off category option
-            basemap (boolean): turn on/off base map (e.g. openstreetmap)
+            tornado_id (str):  ID of tornado hazard.
+            client (obj): pyincore service Client Object.
+            category (bool): turn on/off category option.
+            basemap (bool): turn on/off base map (e.g. openstreetmap).
 
         """
         # it needs descartes package for polygon plotting
@@ -131,13 +131,13 @@ class GeoUtil:
 
     @staticmethod
     def plot_earthquake(earthquake_id, client, demand=None):
-        """Plot earthquake raster data
+        """Plot earthquake raster data.
 
         Args:
-            earthquake_id (str):  ID of tornado hazard
-            client (Client): pyincore service Client Object
-            demand (str): demand type, only applicable to dataset based earthquakes that can have one raster for
-            each demand.  e.g. PGA, PGV, 0.2 sec SA
+            earthquake_id (str): ID of tornado hazard.
+            client (obj): pyincore service Client Object.
+            demand (str): A demand type, only applicable to dataset based earthquakes that can have one raster for
+                each demand. e.g. PGA, PGV, 0.2 sec SA.
 
         """
         eq_metadata = HazardService(
@@ -185,11 +185,11 @@ class GeoUtil:
 
     @staticmethod
     def plot_raster_dataset(dataset_id, client):
-        """Plot raster data
+        """Plot raster data.
 
         Args:
-            dataset_id (str):  ID of tornado hazard
-            client (Client): pyincore service Client Object
+            dataset_id (str): ID of tornado hazard.
+            client (obj): pyincore service Client Object.
 
         """
         metadata = DataService(client).get_dataset_metadata(dataset_id)
@@ -204,11 +204,11 @@ class GeoUtil:
 
     @staticmethod
     def plot_raster_file_with_legend(file_path, title=None):
-        """plot raster file using matplotlib
+        """Plot raster file using matplotlib.
 
         Args:
-            file_path (str):  file path for the raster data
-            title (str): title for the plot
+            file_path (str): A file path for the raster data.
+            title (str): A title for the plot.
 
         """
         with rasterio.open(file_path) as earthquake_src:
@@ -236,7 +236,7 @@ class GeoUtil:
         """Plot graph.
 
         Args:
-            graph (obj):  A nx graph to be drawn.
+            graph (obj): A nx graph to be drawn.
             coords (dict): Position coordinates.
 
         """
@@ -286,14 +286,14 @@ class GeoUtil:
 
     @staticmethod
     def merge_bbox(bbox1, bbox2):
-        """merge bbox to create bigger bbox to contain both bbox
+        """Merge bbox to create bigger bbox to contain both bbox.
 
         Args:
-            bbox1 (list): [min_lat, min_lon, max_lat, max_lon]
-            bbox2 (list): [min_lat, min_lon, max_lat, max_lon]
+            bbox1 (list): [min_lat, min_lon, max_lat, max_lon].
+            bbox2 (list): [min_lat, min_lon, max_lat, max_lon].
 
         Returns:
-            list: merged bbox [min_lat, min_lon, max_lat, max_lon]
+            list: merged bbox [min_lat, min_lon, max_lat, max_lon].
 
         """
         bbox = [bbox1[0], bbox1[1], bbox1[2], bbox1[3]]
@@ -311,13 +311,13 @@ class GeoUtil:
 
     @staticmethod
     def get_gdf_map(datasets: list):
-        """Get ipyleaflet map with list of datasets with geopandas .
+        """Get ipyleaflet map with list of datasets with geopandas.
 
         Args:
-            datasets (list): a list of pyincore Dataset objects
+            datasets (list): a list of pyincore Dataset objects.
 
         Returns:
-            obj: An ipyleaflet Map
+            obj: An ipyleaflet Map.
 
         """
 
@@ -347,15 +347,15 @@ class GeoUtil:
 
     @staticmethod
     def get_wms_map(datasets: list, wms_url=globals.INCORE_GEOSERVER_WMS_URL, layer_check=True):
-        """Get a map with WMS layers from list of datasets
+        """Get a map with WMS layers from list of datasets.
 
         Args:
-            datasets (list): list of pyincore Dataset objects
-            wms_url (str): URL of WMS server
-            layer_check (bool): boolean for checking the layer availability in wms server
+            datasets (list): list of pyincore Dataset objects.
+            wms_url (str): URL of WMS server.
+            layer_check (bool): boolean for checking the layer availability in wms server.
 
         Returns:
-            obj: An ipyleaflet Map
+            obj: An ipyleaflet Map.
 
         """
         # TODO: how to add a style for each WMS layers (pre-defined styles on WMS server)
@@ -404,15 +404,15 @@ class GeoUtil:
 
     @staticmethod
     def get_gdf_wms_map(datasets, wms_datasets, wms_url=globals.INCORE_GEOSERVER_WMS_URL):
-        """Get a map with WMS layers from list of datasets for geopandas and list of datasets for WMS
+        """Get a map with WMS layers from list of datasets for geopandas and list of datasets for WMS.
 
         Args:
-            datasets (list): list of pyincore Dataset objects
-            wms_datasets (list): list of pyincore Dataset objects for wms layers
-            wms_url (str): URL of WMS server
+            datasets (list): A list of pyincore dataset objects.
+            wms_datasets (list): A list of pyincore dataset objects for wms layers.
+            wms_url (str): URL of WMS server.
 
         Returns:
-            obj: An ipyleaflet Map
+            obj: An ipyleaflet Map.
 
         """
 
@@ -456,13 +456,13 @@ class GeoUtil:
 
     @staticmethod
     def plot_network_dataset(network_dataset: NetworkDataset):
-        """Creates map window with Network Dataset visualized
+        """Creates map window with Network Dataset visualized.
 
         Args:
-            network_dataset (NetworkDataset):  pyincore Network Dataset object
+            network_dataset (obj): pyincore Network Dataset.
 
         Returns:
-            obj: An ipyleaflet Map object, GeoUtil.map (ipyleaflet.Map)
+            obj: An ipyleaflet Map object, GeoUtil.map (ipyleaflet.Map).
 
         """
         # get node file name path
@@ -503,14 +503,14 @@ class GeoUtil:
 
     @staticmethod
     def plot_table_dataset(dataset, client, column=str, category=False, basemap=True):
-        """ Creates map window with table dataset
+        """ Creates map window with table dataset.
 
             Args:
-                dataset (Dataset): pyincore dataset object
-                client (Client): pyincore service object
-                column (str): column name to be plot
-                category (boolean): turn on/off category option
-                basemap (boolean): turn on/off base map (e.g. openstreetmap)
+                dataset (obj): pyincore dataset.
+                client (obj): pyincore service.
+                column (str): column name to be plot.
+                category (bool): turn on/off category option.
+                basemap (bool): turn on/off base map (e.g. openstreetmap).
 
         """
         joined_gdf = GeoUtil.join_table_dataset_with_source_dataset(dataset, client)
@@ -520,14 +520,14 @@ class GeoUtil:
 
     @staticmethod
     def join_table_dataset_with_source_dataset(dataset, client):
-        """Creates geopandas dataframe by joining table dataset and its source dataset
+        """Creates geopandas dataframe by joining table dataset and its source dataset.
 
             Args:
-                dataset (Dataset): pyincore dataset object
-                client (Client): pyincore service client object
+                dataset (obj): pyincore dataset.
+                client (obj): pyincore service client.
 
             Returns:
-                geodataframe: Geopandas geodataframe object
+                obj: Geopandas geodataframe object.
 
         """
         is_source_dataset = False
@@ -556,16 +556,16 @@ class GeoUtil:
 
     @staticmethod
     def plot_table_dataset_list_from_single_source(client, dataset_list=list, column=str, in_source_dataset_id=None):
-        """Creates map window with a list of table dataset and source dataset
+        """Creates map window with a list of table dataset and source dataset.
 
             Args:
-                client (Client): pyincore service Client Object
-                dataset_list (list): list of table dataset
-                column (str): column name to be plot
-                in_source_dataset_id (str): source dataset id, the dafault is None
+                client (obj): pyincore service Client Object.
+                dataset_list (list): list of table dataset.
+                column (str): column name to be plot.
+                in_source_dataset_id (str): source dataset id, the dafault is None.
 
             Returns:
-                obj: An ipyleaflet Map, GeoUtil.map (ipyleaflet.Map)
+                obj: An ipyleaflet Map, GeoUtil.map (ipyleaflet.Map).
 
             """
         source_dataset_id = None
@@ -601,18 +601,18 @@ class GeoUtil:
 
     @staticmethod
     def merge_table_dataset_with_field(dataset_list: list, column=str, in_source_dataset_id=None):
-        """Creates pandas dataframe with all dataset in the list joined with guid and column
+        """Creates pandas dataframe with all dataset in the list joined with guid and column.
 
         Args:
-            dataset_list (list): list of table dataset
-            column (str): column name to be plot
-            source_dataset (str): source dataset id, default is None
+            dataset_list (list): list of table dataset.
+            column (str): column name to be plot.
+            source_dataset (str): source dataset id, default is None.
 
         Returns:
-            dataframe: pandas dataframe with all dataset joined together with guid
-            list: list of dataset id
-            list: list of dataset title
-            str: common source dataset id from datasets
+            obj: Pandas dataframe with all dataset joined together with guid.
+            list: A list of dataset id.
+            list: A list of dataset title.
+            str: A common source dataset id from datasets.
 
         """
         dataset_id_list = []
@@ -655,26 +655,26 @@ class GeoUtil:
 
     @deprecated(version="1.2.0", reason="use map_raster_overlay_from_file instead")
     def plot_raster_from_path(input_path):
-        """Creates map window with geo-referenced raster file from local or url visualized
+        """Creates map window with geo-referenced raster file from local or url visualized.
 
             Args:
-                input_path (str):  input raster dataset (GeoTiff) file path
+                input_path (str): An input raster dataset (GeoTiff) file path.
 
             Returns:
-                obj: An ipyleaflet Map, GeoUtil.map (ipyleaflet.Map)
+                obj: An ipyleaflet Map, GeoUtil.map (ipyleaflet.Map).
 
         """
         return GeoUtil.map_raster_overlay_from_file(input_path)
 
     @staticmethod
     def map_raster_overlay_from_file(input_path):
-        """Creates map window with geo-referenced raster file from local or url visualized
+        """Creates map window with geo-referenced raster file from local or url visualized.
 
             Args:
-                input_path (str):  input raster dataset (GeoTiff) file path
+                input_path (str): An input raster dataset (GeoTiff) file path.
 
             Returns:
-                map (ipyleaflet.Map): ipyleaflet Map object
+                obj: ipyleaflet Map object.
 
         """
         bbox = GeoUtil.get_raster_boundary(input_path)
@@ -692,13 +692,13 @@ class GeoUtil:
 
     @staticmethod
     def get_raster_boundary(input_path):
-        """Creates boundary list from raster dataset file
+        """Creates boundary list from raster dataset file.
 
             Args:
-                input_path (str):  input raster dataset (GeoTiff) file path
+                input_path (str): An input raster dataset (GeoTiff) file path.
 
             Returns:
-                list: A list of boundary values
+                list: A list of boundary values.
 
         """
         data = gdal.Open(input_path, GA_ReadOnly)
@@ -713,13 +713,13 @@ class GeoUtil:
 
     @staticmethod
     def create_data_img_url_from_geotiff_for_ipyleaflet(input_path):
-        """Creates boundary list from raster dataset file
+        """Creates boundary list from raster dataset file.
 
             Args:
-                input_path (str):  input raster dataset (GeoTiff) file path
+                input_path (str): An input raster dataset (GeoTiff) file path.
 
             Returns:
-                string: Data for the png data converted from GeoTiff
+                str: Data for the png data converted from GeoTiff.
 
         """
         data = gdal.Open(input_path, GA_ReadOnly)
@@ -747,17 +747,17 @@ class GeoUtil:
 
     @staticmethod
     def plot_maps_dataset_list(dataset_list, client, column='guid', category=False, basemap=True):
-        """Create map window using dataset list. Should be okay whether it is shapefile or geotiff
+        """Create map window using dataset list. Should be okay whether it is shapefile or geotiff.
 
             Args:
-                dataset_list (list):  A list of dataset to be mapped.
-                column (str): column name to be plot
-                client (Client): pyincore service Client Object
-                category (boolean): turn on/off category option
-                basemap (boolean): turn on/off base map (e.g. openstreetmap)
+                dataset_list (list): A list of dataset to be mapped.
+                column (str): A column name to be plot.
+                client (obj): pyincore service Client.
+                category (bool): turn on/off category option.
+                basemap (bool): turn on/off base map (e.g. openstreetmap).
 
             Returns:
-                obj: An ipyleaflet Map
+                obj: An ipyleaflet Map.
 
         """
         layer_list = []
@@ -814,14 +814,14 @@ class GeoUtil:
 
     @staticmethod
     def create_geodata_from_geodataframe(gdf, name):
-        """Create map window using dataset list. Should be okay whether it is shapefile or geotiff
+        """Create map window using dataset list. Should be okay whether it is shapefile or geotiff.
 
             Args:
-                gdf (GeoDataFrame):  geopandas geodataframe object
-                name (str): name of the gdf
+                gdf (obj): A geopandas geodataframe.
+                name (str): A name of the gdf.
 
             Returns:
-                obj: An ipyleaflet GeoData
+                obj: An ipyleaflet GeoData.
 
         """
         # create random color
@@ -835,13 +835,13 @@ class GeoUtil:
 
     @staticmethod
     def convert_bound_to_ipylft_format(bbox):
-        """Convert conventional geodata's bounding box to ipyleaflet bounding box format
+        """Convert conventional geodata's bounding box to ipyleaflet bounding box format.
 
             Args:
-                bbox (list): [min_lat, min_lon, max_lat, max_lon]
+                bbox (list): Geodata bounding box with [min_lat, min_lon, max_lat, max_lon].
 
             Returns:
-                list: A bounding box coordinates, [[south, east], [north, west]]
+                list: A bounding box coordinates, [[south, east], [north, west]].
 
         """
         south = bbox[1]
@@ -855,14 +855,14 @@ class GeoUtil:
 
     @staticmethod
     def calc_center_from_bbox(bbox):
-        """Calulate center point location from given bounding box
+        """Calculate center point location from given bounding box.
 
             Args:
-                bbox (list): [min_lat, min_lon, max_lat, max_lon]
+                bbox (list): Geodata bounding box with [min_lat, min_lon, max_lat, max_lon].
 
             Returns:
-                float: A latitude of center location in the bounding box
-                float: A longitude of center location in the bounding box
+                float: A latitude of center location in the bounding box.
+                float: A longitude of center location in the bounding box.
 
         """
         cen_lat, cen_lon = (bbox[2] + bbox[0]) / 2.0, (bbox[3] + bbox[1]) / 2.0
@@ -871,15 +871,15 @@ class GeoUtil:
 
     @staticmethod
     def get_ipyleaflet_map_with_center_location(cen_lon, cen_lat, zoom_level):
-        """Creates ipyleaflet map object and fit the map using the center point location and zoom level
+        """Creates ipyleaflet map object and fit the map using the center point location and zoom level.
 
             Args:
-                cen_lon (float): longitude of map's center location
-                cen_lat (float): latitude of map's center location
-                zoom_level (int): initial zoom level of the map
+                cen_lon (float): Longitude of map's center location.
+                cen_lat (float): Latitude of map's center location.
+                zoom_level (int): An initial zoom level of the map.
 
             Returns:
-                obj: An ipyleaflet Map
+                obj: An ipyleaflet map.
 
         """
         map = ipylft.Map(center=(cen_lon, cen_lat), zoom=zoom_level, basemap=ipylft.basemaps.Stamen.Toner,
@@ -889,13 +889,13 @@ class GeoUtil:
 
     @staticmethod
     def get_ipyleaflet_map(bbox=None):
-        """Creates ipyleaflet map object and fit the map using the bounding box information
+        """Creates ipyleaflet map object and fit the map using the bounding box information.
 
             Args:
-                bbox (list): list of boundary values
+                bbox (list): Geodata bounding box.
 
             Returns:
-                obj: An ipyleaflet Map
+                obj: An ipyleaflet map.
 
         """
         map = ipylft.Map(basemap=ipylft.basemaps.Stamen.Toner,
@@ -910,19 +910,19 @@ class GeoUtil:
 
     @staticmethod
     def plot_heatmap(dataset, fld_name, radius=10, blur=10, max=1, multiplier=1, name=""):
-        """Creates ipyleaflet map object and fit the map using the bounding box information
+        """Creates ipyleaflet map object and fit the map using the bounding box information.
 
             Args:
-                dataset (dataset):  A dataset to be mapped.
-                fld_name (str): column name to be plot in heat map
-                radius (float): Radius of each “point” of the heatmap
-                blur (float): Amount of blur
-                max (float): Maximum point intensity
-                multiplier (float): A multiplication factor for making fld value to more clearly in the map
-                name (str): name that represents the layer
+                dataset (obj): A dataset to be mapped.
+                fld_name (str): A column name to be plot in heat map.
+                radius (float): Radius of each "point" of the heatmap.
+                blur (float): Amount of blur.
+                max (float): Maximum point intensity.
+                multiplier (float): A multiplication factor for making fld value to more clearly in the map.
+                name (str): name that represents the layer.
 
             Returns:
-                obj: An ipyleaflet Map
+                obj: An ipyleaflet map.
 
         """
         gdf = gpd.read_file(dataset.local_file_path)
@@ -933,19 +933,19 @@ class GeoUtil:
 
     @staticmethod
     def plot_heatmap_from_gdf(gdf, fld_name, radius=10, blur=10, max=1, multiplier=1, name=""):
-        """Creates ipyleaflet map object and fit the map using the bounding box information
+        """Creates ipyleaflet map object and fit the map using the bounding box information.
 
             Args:
-                gdf (GeoDataFrame):  GeoPandas geodataframe
-                fld_name (str): column name to be plot in heat map
-                radius (float): Radius of each “point” of the heatmap
-                blur (float): Amount of blur
-                max (float): Maximum point intensity
-                multiplier (float): multipy factor for making fld value to more clearly in the map
-                name (str): name that represents the layer
+                gdf (GeoDataFrame): GeoPandas geodataframe.
+                fld_name (str): column name to be plot in heat map.
+                radius (float): Radius of each "point" of the heatmap.
+                blur (float): Amount of blur.
+                max (float): Maximum point intensity.
+                multiplier (float): A multiplication factor for making fld value to more clearly in the map.
+                name (str): A name that represents the layer.
 
             Returns:
-                obj: An ipyleaflet Map
+                obj: An ipyleaflet map.
 
         """
         # when the geodataframe is processed, not original(converted directly)
@@ -1048,17 +1048,17 @@ class GeoUtil:
 
     @staticmethod
     def get_ipyleaflet_heatmap(locations=None, radius=10, blur=10, max=1, name=""):
-        """Creates ipyleaflet map object and fit the map using the bounding box information
+        """Creates ipyleaflet map object and fit the map using the bounding box information.
 
             Args:
-                locations (list):  List of center locations with values
-                radius (float): Radius of each “point” of the heatmap
-                blur (float): Amount of blur
-                max (float): Maximum point intensity
-                name (str): name that represents the layer
+                locations (list): A list of center locations with values.
+                radius (float): A radius of each "point" of the heatmap.
+                blur (float): Amount of blur.
+                max (float): A maximum point intensity.
+                name (str): A name that represents the layer.
 
             Returns:
-                obj: An ipyleaflet Map
+                obj: An ipyleaflet map.
 
         """
         # create location list using x, y, and fld value
