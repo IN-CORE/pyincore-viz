@@ -103,6 +103,7 @@ class GeoUtil:
             column (str): column name to be plot
             category (boolean): turn on/off category option
             basemap (boolean): turn on/off base map (e.g. openstreetmap)
+
         """
         gdf = GeoUtil.join_datasets(geodataset, dataset)
         GeoUtil.plot_gdf_map(gdf, column, category, basemap)
@@ -116,8 +117,9 @@ class GeoUtil:
             client (Client): pyincore service Client Object
             category (boolean): turn on/off category option
             basemap (boolean): turn on/off base map (e.g. openstreetmap)
+
         """
-        # it needs descartes pakcage for polygon plotting
+        # it needs descartes package for polygon plotting
         # getting tornado dataset should be part of Tornado Hazard code
         tornado_dataset_id = HazardService(
             client).get_tornado_hazard_metadata(tornado_id)['datasetId']
@@ -207,6 +209,7 @@ class GeoUtil:
         Args:
             file_path (str):  file path for the raster data
             title (str): title for the plot
+
         """
         with rasterio.open(file_path) as earthquake_src:
             earthquake_nd = earthquake_src.read(1)
@@ -253,11 +256,12 @@ class GeoUtil:
 
         Args:
             filename (str):  A name of a geo dataset resource recognized by Fiona package.
-            is_directed (bool, optional (Defaults to False)): Graph type. True for directed Graph,
-                False for Graph.
+            is_directed (bool): Graph type. True for directed Graph,
+                False default for Graph.
 
         Returns:
-            obj, dict: Graph and node coordinates.
+            obj: Graph.
+            dict: Node coordinates.
 
         """
 
@@ -313,7 +317,7 @@ class GeoUtil:
             datasets (list): a list of pyincore Dataset objects
 
         Returns:
-            ipyleaflet.Map: ipyleaflet Map object
+            obj: An ipyleaflet Map
 
         """
 
@@ -351,7 +355,7 @@ class GeoUtil:
             layer_check (bool): boolean for checking the layer availability in wms server
 
         Returns:
-            obj: A ipylfealet Map object
+            obj: An ipyleaflet Map
 
         """
         # TODO: how to add a style for each WMS layers (pre-defined styles on WMS server)
@@ -408,7 +412,7 @@ class GeoUtil:
             wms_url (str): URL of WMS server
 
         Returns:
-            obj: A ipylfealet Map object
+            obj: An ipyleaflet Map
 
         """
 
@@ -458,7 +462,7 @@ class GeoUtil:
             network_dataset (NetworkDataset):  pyincore Network Dataset object
 
         Returns:
-            m (ipyleaflet.Map): ipyleaflet Map object
+            obj: An ipyleaflet Map object, GeoUtil.map (ipyleaflet.Map)
 
         """
         # get node file name path
@@ -502,11 +506,12 @@ class GeoUtil:
         """ Creates map window with table dataset
 
             Args:
-                dataset (Dataset): pyincore dataset obeject
-                client (Client): pyincore service Client Object
+                dataset (Dataset): pyincore dataset object
+                client (Client): pyincore service object
                 column (str): column name to be plot
                 category (boolean): turn on/off category option
                 basemap (boolean): turn on/off base map (e.g. openstreetmap)
+
         """
         joined_gdf = GeoUtil.join_table_dataset_with_source_dataset(dataset, client)
 
@@ -522,7 +527,7 @@ class GeoUtil:
                 client (Client): pyincore service client object
 
             Returns:
-                joined_dbf (geodataframe): geopandas geodataframe object
+                geodataframe: Geopandas geodataframe object
 
         """
         is_source_dataset = False
@@ -560,7 +565,7 @@ class GeoUtil:
                 in_source_dataset_id (str): source dataset id, the dafault is None
 
             Returns:
-                GeoUtil.map (ipyleaflet.Map): ipyleaflet Map object
+                obj: An ipyleaflet Map, GeoUtil.map (ipyleaflet.Map)
 
             """
         source_dataset_id = None
@@ -604,10 +609,10 @@ class GeoUtil:
             source_dataset (str): source dataset id, default is None
 
         Returns:
-            join_df (dataframe): pandas dataframe with all dataset joined together with guid
-            dataset_id_list (list): list of dataset id
-            dataset_title_list (list): list of dataset title
-            common_source_dataset_id (str): common source dataset id from datasets
+            dataframe: pandas dataframe with all dataset joined together with guid
+            list: list of dataset id
+            list: list of dataset title
+            str: common source dataset id from datasets
 
         """
         dataset_id_list = []
@@ -656,7 +661,7 @@ class GeoUtil:
                 input_path (str):  input raster dataset (GeoTiff) file path
 
             Returns:
-                map (ipyleaflet.Map): ipyleaflet Map object
+                obj: An ipyleaflet Map, GeoUtil.map (ipyleaflet.Map)
 
         """
         return GeoUtil.map_raster_overlay_from_file(input_path)
@@ -693,7 +698,7 @@ class GeoUtil:
                 input_path (str):  input raster dataset (GeoTiff) file path
 
             Returns:
-                boundary (list): list of boundary values
+                list: A list of boundary values
 
         """
         data = gdal.Open(input_path, GA_ReadOnly)
@@ -714,7 +719,7 @@ class GeoUtil:
                 input_path (str):  input raster dataset (GeoTiff) file path
 
             Returns:
-                image_url (string): data for the png data converted from GeoTiff
+                string: Data for the png data converted from GeoTiff
 
         """
         data = gdal.Open(input_path, GA_ReadOnly)
@@ -752,7 +757,7 @@ class GeoUtil:
                 basemap (boolean): turn on/off base map (e.g. openstreetmap)
 
             Returns:
-                map(ipyleaflet.Map): ipyleaflet map obejct
+                obj: An ipyleaflet Map
 
         """
         layer_list = []
@@ -816,7 +821,7 @@ class GeoUtil:
                 name (str): name of the gdf
 
             Returns:
-                geodata (ipyleaflet.GeoData): ipyleaflet GeoData obejct
+                obj: An ipyleaflet GeoData
 
         """
         # create random color
@@ -836,7 +841,7 @@ class GeoUtil:
                 bbox (list): [min_lat, min_lon, max_lat, max_lon]
 
             Returns:
-                bounds (list): [[south, east], [north, west]]
+                list: A bounding box coordinates, [[south, east], [north, west]]
 
         """
         south = bbox[1]
@@ -856,8 +861,8 @@ class GeoUtil:
                 bbox (list): [min_lat, min_lon, max_lat, max_lon]
 
             Returns:
-                cen_lat (float): latitude of center location in the bounding box
-                cent_lon (float) longitude of center location in the bounding box
+                float: A latitude of center location in the bounding box
+                float: A longitude of center location in the bounding box
 
         """
         cen_lat, cen_lon = (bbox[2] + bbox[0]) / 2.0, (bbox[3] + bbox[1]) / 2.0
@@ -874,7 +879,7 @@ class GeoUtil:
                 zoom_level (int): initial zoom level of the map
 
             Returns:
-                map (ipyleaflet.Map): ipyleaflet Map object
+                obj: An ipyleaflet Map
 
         """
         map = ipylft.Map(center=(cen_lon, cen_lat), zoom=zoom_level, basemap=ipylft.basemaps.Stamen.Toner,
@@ -890,7 +895,7 @@ class GeoUtil:
                 bbox (list): list of boundary values
 
             Returns:
-                map (ipyleaflet.Map): ipyleaflet Map object
+                obj: An ipyleaflet Map
 
         """
         map = ipylft.Map(basemap=ipylft.basemaps.Stamen.Toner,
@@ -913,11 +918,11 @@ class GeoUtil:
                 radius (float): Radius of each “point” of the heatmap
                 blur (float): Amount of blur
                 max (float): Maximum point intensity
-                multiplier (float): multipy factor for making fld value to more clearly in the map
+                multiplier (float): A multiplication factor for making fld value to more clearly in the map
                 name (str): name that represents the layer
 
             Returns:
-                map (ipyleaflet.Map): ipyleaflet Map object
+                obj: An ipyleaflet Map
 
         """
         gdf = gpd.read_file(dataset.local_file_path)
@@ -940,7 +945,7 @@ class GeoUtil:
                 name (str): name that represents the layer
 
             Returns:
-                map (ipyleaflet.Map): ipyleaflet Map object
+                obj: An ipyleaflet Map
 
         """
         # when the geodataframe is processed, not original(converted directly)
@@ -1053,7 +1058,7 @@ class GeoUtil:
                 name (str): name that represents the layer
 
             Returns:
-                map (ipyleaflet.Map): ipyleaflet Map object
+                obj: An ipyleaflet Map
 
         """
         # create location list using x, y, and fld value

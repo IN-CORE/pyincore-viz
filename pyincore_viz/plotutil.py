@@ -31,7 +31,8 @@ class PlotUtil:
             sample_size (int): Number of samples to generate. Numpy default is 50.
 
         Returns:
-            ndarray, ndarray: X sampling, Y cummulative density values.
+            ndarray: X sampling values.
+            ndarray: Y cumulative density values.
 
         """
         dist = lognorm(s=std, loc=0, scale=numpy.exp(mean))
@@ -51,7 +52,8 @@ class PlotUtil:
             sample_size (int): Number of samples to generate. Numpy default is 50.
 
         Returns:
-            ndarray, ndarray: X sampling, Y cummulative density values.
+            ndarray: X sampling values.
+            ndarray: Y cumulative density values.
 
         """
         # convert location and scale parameters to the normal mean and std
@@ -75,7 +77,8 @@ class PlotUtil:
             sample_size (int): Number of samples to generate. Numpy default is 50.
 
         Returns:
-            ndarray, ndarray: X sampling, Y cummulative density values.
+            ndarray: X sampling values.
+            ndarray: Y cumulative density values.
 
         """
         dist = norm(mean, std)
@@ -95,7 +98,8 @@ class PlotUtil:
             beta (float):  A distribution parameter (mostly standard deviation).
 
         Returns:
-            ndarray, ndarray: X sampling, Y cummulative density values.
+            ndarray: X sampling values.
+            ndarray: Y cumulative density values.
 
         """
         if disttype == 'LogNormal':
@@ -108,6 +112,22 @@ class PlotUtil:
     @staticmethod
     def get_conditional_x_y(rules: dict, alpha_type, alpha: list, beta: list, start=0.001, end=50,
                             sample_size: int = 50):
+        """Get arrays of x and y values for conditional standard fragility curves
+
+        Args:
+            rules (dict):  Rules.
+            alpha_type (str): A type of alpha float value, median or lambda
+            alpha (list):  A list of distribution parameters.
+            beta (list):  A list of distribution parameters.
+            start (float):  A start value.
+            end (float):  An end value.
+            sample_size (int):  A sample size.
+
+        Returns:
+            ndarray: X sampling values.
+            ndarray: Y cumulative density values.
+
+        """
         x = numpy.linspace(start, end, sample_size)
         y = []
         for i in x:
@@ -132,6 +152,25 @@ class PlotUtil:
     @staticmethod
     def get_period_building_x_y(a11_param, a12_param, a13_param, a14_param, a21_param, a22_param, period=0,
                                 start=0.001, end=5, sample_size: int = 50):
+        """Get arrays of x and y values for period building fragility curves
+
+        Args:
+            a11_param (float): A parameter of period building fragility curve.
+            a12_param (float): A parameter of period building fragility curve.
+            a13_param (float): A parameter of period building fragility curve.
+            a14_param (float): A parameter of period building fragility curve.
+            a21_param (float): A parameter of period building fragility curve.
+            a22_param (float): A parameter of period building fragility curve.
+            period (float): A period value.
+            start (float):  A start value.
+            end (float):  An end value.
+            sample_size (int):  A sample size.
+
+        Returns:
+            ndarray: X sampling values.
+            ndarray: Y cumulative density values.
+
+        """
         # Assumption from Ergo BuildingLowPeriodSolver
         cutoff_period = 0.87
 
