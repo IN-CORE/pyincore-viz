@@ -126,7 +126,7 @@ class PlotUtil:
             else:
                 raise ValueError("No matching rule has been found in this conditonal standard fragility curve. "
                                  "Please verify it's the right curve to use.")
-
+        y = numpy.asarray(y)
         return x, y
 
     @staticmethod
@@ -157,6 +157,7 @@ class PlotUtil:
             variables = {'x': i}
             y.append(parser.parse(expression).evaluate(variables))
 
+        y = numpy.asarray(y)
         return x, y
 
     @staticmethod
@@ -204,7 +205,7 @@ class PlotUtil:
             y.append(curve.calculate_limit_state_probability(hazard_values={demand_type_name: i},
                                                              fragility_curve_parameters=fragility_curve_parameters,
                                                              **custom_fragility_curve_parameters))  # kwargs
-
+        y = numpy.asarray(y)
         return x, y
 
     @staticmethod
