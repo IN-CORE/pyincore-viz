@@ -5,6 +5,10 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## [1.3.0] - unreleased
+### Changed
+- docstrings expanded in pyincore viz classes in Google notation [INCORE1-1216](https://opensource.ncsa.illinois.edu/jira/browse/INCORE1-1216)
+
 ## [1.2.0] - 2021-06-16
 ### Added
 - Legend for earthquake visualization [INCORE1-1214](https://opensource.ncsa.illinois.edu/jira/browse/INCORE1-1214)
