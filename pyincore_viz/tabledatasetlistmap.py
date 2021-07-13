@@ -21,14 +21,14 @@ class TableDatasetListMap:
         self.map = ipylft.Map(center=(0, 0), zoom=12, basemap=ipylft.basemaps.Stamen.Toner, scroll_wheel_zoom=True)
 
     def create_basemap_ipylft(self, geo_dataframe, title_list):
-        """Creates map window with given inventory with multiple table dataset file using folder location
+        """Creates map window with given inventory with multiple table dataset file using folder location.
 
         Args:
-            geo_dataframe (DataFrame): Geopandas DataFrame object
-            title_list (list): list of the file names in the folder
+            geo_dataframe (obj): Geopandas DataFrame.
+            title_list (list): A list of the file names in the folder.
 
         Returns:
-            m(ipyleaflet.Map): ipyleaflet Map object
+            obj: ipyleaflet map.
 
         """
         ext = geo_dataframe.total_bounds
@@ -44,10 +44,10 @@ class TableDatasetListMap:
         return self.map
 
     def create_map_widgets(self, title_list, map, inventory_df):
-        """Create and add map widgets into map
+        """Create and add map widgets into map.
 
         Args:
-            title_list (list): list of the file names in the folder
+            title_list (list): A list of the file names in the folder.
 
         """
         map_dropdown = ipywgt.Dropdown(description='Outputfile - 1', options=title_list, width=500)
@@ -75,10 +75,10 @@ class TableDatasetListMap:
         return map
 
     def on_button_clicked(self, b):
-        """button click action for map
+        """A button click action for map.
 
         Args:
-            b (action): button click action for tablemap
+            b (action): A button click action for tablemap.
 
         """
         print('Loading: ', self.map_dropdown.value)
@@ -87,10 +87,10 @@ class TableDatasetListMap:
         print('\n')
 
     def create_choropleth_layer(self, key):
-        """add choropleth layer to map
+        """add choropleth layer to map.
 
         Args:
-            key (str): selected value from tablemap's layer selection drop down menu
+            key (str): A selected value from tablemap's layer selection drop down menu.
 
         """
 
