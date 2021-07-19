@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ## [1.3.0] - unreleased
 ### Changed
 - docstrings expanded in pyincore viz classes in Google notation [INCORE1-1216](https://opensource.ncsa.illinois.edu/jira/browse/INCORE1-1216)
+- replace key with fullName [INCORE1-1296](https://opensource.ncsa.illinois.edu/jira/browse/INCORE1-1296)
 
 ## [1.2.0] - 2021-06-16
 ### Added
