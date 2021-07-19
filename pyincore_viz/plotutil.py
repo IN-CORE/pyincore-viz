@@ -411,7 +411,7 @@ class PlotUtil:
         demand_type_names = []
         for parameter in fragility_set.fragility_curve_parameters:
             # for  hazard
-            if parameter.get("name") in fragility_set.demand_types or parameter.get("key") in \
+            if parameter.get("name") in fragility_set.demand_types or parameter.get("fullName") in \
                     fragility_set.demand_types:
                 demand_type_names.append(parameter["name"])
             # check the rest of the parameters see if default or custom value has passed in
@@ -458,7 +458,7 @@ class PlotUtil:
         demand_type_names = []
         for parameter in fragility_set.fragility_curve_parameters:
             # for hazard
-            if parameter.get("name") in fragility_set.demand_types or parameter.get("key") in \
+            if parameter.get("name") in fragility_set.demand_types or parameter.get("fullName") in \
                     fragility_set.demand_types:
                 demand_type_names.append(parameter["name"])
             # check the rest of the parameters see if default or custom value has passed in
