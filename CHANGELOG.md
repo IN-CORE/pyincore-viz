@@ -9,7 +9,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Changed
 - docstrings expanded in pyincore viz classes in Google notation [INCORE1-1216](https://opensource.ncsa.illinois.edu/jira/browse/INCORE1-1216)
 - Standardize the x, y, z coordinates in fragility curves plotting to Numpy object [INCORE1-1276](https://opensource.ncsa.illinois.edu/jira/browse/INCORE1-1276)
-  
+- replace key with fullName [INCORE1-1296](https://opensource.ncsa.illinois.edu/jira/browse/INCORE1-1296)
+
 ## [1.2.0] - 2021-06-16
 ### Added
 - Legend for earthquake visualization [INCORE1-1214](https://opensource.ncsa.illinois.edu/jira/browse/INCORE1-1214)
