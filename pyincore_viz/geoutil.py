@@ -51,7 +51,7 @@ class GeoUtil:
             category (bool): Turn on/off category option.
             basemap (bool): Turn on/off base map (e.g. openstreetmap).
             source(obj): source of the Map to be used. examples, ctx.providers.OpenStreetMap.Mapnik (default),
-                ctx.providers.Stamen.Terrain, ctx.providers.OpenTopoMap.attribution, ctx.providers.CartoDB.Positron etc.
+                ctx.providers.Stamen.Terrain, ctx.providers.CartoDB.Positron etc.
 
         """
         gdf = gdf.to_crs(epsg=3857)
@@ -98,7 +98,8 @@ class GeoUtil:
         GeoUtil.plot_gdf_map(gdf, column, category, basemap, source)
 
     @staticmethod
-    def plot_join_map(geodataset, dataset, column, category=False, basemap=True):
+    def plot_join_map(geodataset, dataset, column, category=False, basemap=True,
+                      source=ctx.providers.OpenStreetMap.Mapnik):
         """Plot a map from geospatial dataset and non-geospatial dataset.
 
         Args:
@@ -107,13 +108,15 @@ class GeoUtil:
             column (str): Column name to be plotted.
             category (bool): turn on/off category option.
             basemap (bool): turn on/off base map (e.g. openstreetmap).
+            source(obj): source of the Map to be used. examples, ctx.providers.OpenStreetMap.Mapnik (default),
+                ctx.providers.Stamen.Terrain, ctx.providers.CartoDB.Positron etc.
 
         """
         gdf = GeoUtil.join_datasets(geodataset, dataset)
-        GeoUtil.plot_gdf_map(gdf, column, category, basemap)
+        GeoUtil.plot_gdf_map(gdf, column, category, basemap, source)
 
     @staticmethod
-    def plot_tornado(tornado_id, client, category=False, basemap=True):
+    def plot_tornado(tornado_id, client, category=False, basemap=True, source=ctx.providers.OpenStreetMap.Mapnik):
         """Plot a tornado path.
 
         Args:
@@ -121,6 +124,8 @@ class GeoUtil:
             client (obj): pyincore service Client Object.
             category (bool): turn on/off category option.
             basemap (bool): turn on/off base map (e.g. openstreetmap).
+            source(obj): source of the Map to be used. examples, ctx.providers.OpenStreetMap.Mapnik (default),
+                ctx.providers.Stamen.Terrain, ctx.providers.CartoDB.Positron etc.
 
         """
         # it needs descartes package for polygon plotting
@@ -131,7 +136,7 @@ class GeoUtil:
             tornado_dataset_id, DataService(client))
         tornado_gdf = gpd.read_file(tornado_dataset.local_file_path)
 
-        GeoUtil.plot_gdf_map(tornado_gdf, 'ef_rating', category, basemap)
+        GeoUtil.plot_gdf_map(tornado_gdf, 'ef_rating', category, basemap, source)
 
     @staticmethod
     def plot_earthquake(earthquake_id, client, demand=None):
@@ -506,7 +511,8 @@ class GeoUtil:
         return m
 
     @staticmethod
-    def plot_table_dataset(dataset, client, column=str, category=False, basemap=True):
+    def plot_table_dataset(dataset, client, column=str, category=False, basemap=True,
+                           source=ctx.providers.OpenStreetMap.Mapnik):
         """ Creates map window with table dataset.
 
             Args:
@@ -515,12 +521,14 @@ class GeoUtil:
                 column (str): column name to be plot.
                 category (bool): turn on/off category option.
                 basemap (bool): turn on/off base map (e.g. openstreetmap).
+                source(obj): source of the Map to be used. examples, ctx.providers.OpenStreetMap.Mapnik (default),
+                    ctx.providers.Stamen.Terrain, ctx.providers.CartoDB.Positron etc.
 
         """
         joined_gdf = GeoUtil.join_table_dataset_with_source_dataset(dataset, client)
 
         if joined_gdf is not None:
-            GeoUtil.plot_gdf_map(joined_gdf, column, category, basemap)
+            GeoUtil.plot_gdf_map(joined_gdf, column, category, basemap, source)
 
     @staticmethod
     def join_table_dataset_with_source_dataset(dataset, client):
