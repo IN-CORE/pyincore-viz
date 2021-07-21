@@ -42,7 +42,7 @@ class GeoUtil:
     """Utility methods for Geospatial Visualization"""
 
     @staticmethod
-    def plot_gdf_map(gdf, column, category=False, basemap=True):
+    def plot_gdf_map(gdf, column, category=False, basemap=True, source=ctx.providers.OpenStreetMap.Mapnik):
         """Plot Geopandas DataFrame.
 
         Args:
@@ -50,13 +50,15 @@ class GeoUtil:
             column (str): A column name to be plot.
             category (bool): Turn on/off category option.
             basemap (bool): Turn on/off base map (e.g. openstreetmap).
+            source(obj): source of the Map to be used. examples, ctx.providers.OpenStreetMap.Mapnik (default),
+                ctx.providers.Stamen.Terrain, ctx.providers.OpenTopoMap.attribution, ctx.providers.CartoDB.Positron etc.
 
         """
         gdf = gdf.to_crs(epsg=3857)
         ax = gdf.plot(figsize=(10, 10), column=column,
                       categorical=category, legend=True)
         if basemap:
-            ctx.add_basemap(ax)
+            ctx.add_basemap(ax, source=source)
 
     @staticmethod
     def join_datasets(geodataset, dataset):
@@ -79,7 +81,7 @@ class GeoUtil:
         return join_gdf
 
     @staticmethod
-    def plot_map(dataset, column, category=False, basemap=True):
+    def plot_map(dataset, column, category=False, basemap=True, source=ctx.providers.OpenStreetMap.Mapnik):
         """Plot a map of geospatial dataset.
 
         Args:
@@ -87,11 +89,13 @@ class GeoUtil:
             column (str): column name to be plot.
             category (bool): turn on/off category option.
             basemap (bool): turn on/off base map (e.g. openstreetmap).
+            source(obj): source of the Map to be used. examples, ctx.providers.OpenStreetMap.Mapnik (default),
+                ctx.providers.Stamen.Terrain, ctx.providers.OpenTopoMap.attribution, ctx.providers.CartoDB.Positron etc.
 
         """
         # maybe this part should be moved to Dataset Class (reading csv to create gdf)
         gdf = gpd.read_file(dataset.local_file_path)
-        GeoUtil.plot_gdf_map(gdf, column, category, basemap)
+        GeoUtil.plot_gdf_map(gdf, column, category, basemap, source)
 
     @staticmethod
     def plot_join_map(geodataset, dataset, column, category=False, basemap=True):

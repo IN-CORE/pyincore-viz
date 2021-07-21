@@ -210,3 +210,17 @@ def test_heatmap(client):
     map = viz.plot_heatmap(dataset, "str_prob")
 
     assert True
+
+
+def test_seaside_bridges(client):
+    trns_brdg_dataset_id = "5d251172b9219c0692cd7523"
+    trns_brdg_dataset = Dataset.from_data_service(trns_brdg_dataset_id, DataService(client))
+    viz.plot_map(trns_brdg_dataset, column=None, category=False, basemap=True)
+    assert True
+
+
+def test_seaside_roadways(client):
+    trns_brdg_dataset_id = "5ee7af50772cf80008577ae3"
+    trns_brdg_dataset = Dataset.from_data_service(trns_brdg_dataset_id, DataService(client))
+    viz.plot_map(trns_brdg_dataset, column=None, category=False, basemap=True)
+    assert True
