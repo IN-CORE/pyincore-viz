@@ -10,7 +10,6 @@ WORKDIR /src
 COPY requirements.txt .
 RUN micromamba install -y -n base -c anaconda -c conda-forge -c in-core \
     sphinx sphinx_rtd_theme \
-    pyincore \
     -f requirements.txt
 
 # copy code and generate documentation
