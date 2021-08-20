@@ -8,7 +8,7 @@ user root
 # install packages
 WORKDIR /src
 COPY requirements.txt .
-RUN micromamba install -y -n base -c anaconda -c conda-forge -c in-core \
+RUN micromamba install -y -n base -c conda-forge -c in-core \
     sphinx sphinx_rtd_theme \
     -f requirements.txt
 
