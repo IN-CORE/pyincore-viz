@@ -1,8 +1,16 @@
+import importlib
 
 class AnalysisViz:
 
-    def __init__(self):
-        pass
+    @staticmethod
+    def visualize(dataset):
+        # module_name = dataset.data_type
+        module_name = "IncoreHousingUnitAllocation"
+        module = importlib.import_module("analyse." + module_name.lower())
 
-    def visualize(self):
-        print("visualize parent class!")
+        dataset = getattr(module, module_name)
+        dataset.vis()
+
+
+if __name__ == "__main__":
+    AnalysisViz.visualize(dataset=None)
