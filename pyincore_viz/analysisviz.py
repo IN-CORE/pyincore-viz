@@ -16,10 +16,10 @@ class AnalysisViz:
             module = importlib.import_module("pyincore_viz.analysis." + module_name.lower())
 
             # load class
-            analyse_class = getattr(module, module_name)
+            analysis_class = getattr(module, module_name)
 
             # run vis
-            analyse_class.vis()
+            analysis_class.visualize()
 
         except:
             raise ValueError("Fail to dynamically import dataset to its corresponding class. Please double "
