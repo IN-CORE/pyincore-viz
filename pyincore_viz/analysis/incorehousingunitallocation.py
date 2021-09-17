@@ -20,7 +20,9 @@ class IncoreHousingunitallocation:
 
         """
         hua_df = pd.read_csv(dataset.get_file_path('csv'), header="infer")
-        IncoreHousingunitallocation.hua_results_table(hua_df, **kwargs)
+        table = IncoreHousingunitallocation.hua_results_table(hua_df, **kwargs)
+
+        return table
 
 
     @staticmethod

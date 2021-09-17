@@ -19,7 +19,7 @@ class AnalysisViz:
             analysis_class = getattr(module, module_name)
 
             # run vis
-            analysis_class.visualize(dataset, **kwargs)
+            return analysis_class.visualize(dataset, **kwargs)
 
         except:
             raise ValueError("Fail to dynamically import dataset to its corresponding class. Please double "
