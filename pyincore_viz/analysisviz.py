@@ -4,7 +4,7 @@ import importlib
 class AnalysisViz:
 
     @staticmethod
-    def visualize(dataset):
+    def visualize(dataset, **kwargs):
         try:
             module_name = ""
             # split by namespace, capitalize then join
@@ -13,13 +13,14 @@ class AnalysisViz:
 
             # load module
             # e.g. module_name = IncoreHousingUnitAllocation
+            print(module_name)
             module = importlib.import_module("pyincore_viz.analysis." + module_name.lower())
 
             # load class
             analysis_class = getattr(module, module_name)
 
             # run vis
-            analysis_class.visualize()
+            analysis_class.visualize(dataset, **kwargs)
 
         except:
             raise ValueError("Fail to dynamically import dataset to its corresponding class. Please double "
