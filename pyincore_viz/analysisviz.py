@@ -13,7 +13,6 @@ class AnalysisViz:
 
             # load module
             # e.g. module_name = IncoreHousingUnitAllocation
-            print(module_name)
             module = importlib.import_module("pyincore_viz.analysis." + module_name.lower())
 
             # load class
