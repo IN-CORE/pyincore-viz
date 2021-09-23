@@ -35,6 +35,7 @@ jobs:
           else
             BRANCH=${GITHUB_REF##*/}
           fi
+          echo $GITHUB_REF
           echo $BRANCH
           echo "GITHUB_BRANCH=${BRANCH}" >> $GITHUB_ENV
           if [ "$BRANCH" == "master" ]; then
