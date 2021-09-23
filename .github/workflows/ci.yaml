@@ -35,6 +35,7 @@ jobs:
           else
             BRANCH=${GITHUB_REF##*/}
           fi
+          echo $BRANCH
           echo "GITHUB_BRANCH=${BRANCH}" >> $GITHUB_ENV
           if [ "$BRANCH" == "master" ]; then
             version=$(cat package.json | grep \"version\" | head -1 | awk -F= "{ print $2 }" | sed 's/[version:,",]//g' | tr -d '[[:space:]]')
@@ -54,37 +55,39 @@ jobs:
             echo "VERSION=testing" >> $GITHUB_ENV
             echo "TAGS=${BRANCH}" >> $GITHUB_ENV
           fi
-      # build image
-      - name: Build image
-        uses: elgohr/Publish-Docker-Github-Action@3.04
-        env:
-          BRANCH: ${{ env.GITHUB_BRANCH }}
-          VERSION: ${{ env.VERSION }}
-          BUILDNUMBER: ${{ github.run_number }}
-          GITSHA1: ${{ github.sha }}
-        with:
-          registry: hub.ncsa.illinois.edu
-          name: incore/doc/pyincore-viz
-          #username: ${{ secrets.HUB_USERNAME }}
-          #password: ${{ secrets.HUB_PASSWORD }}
-          tags: "${{ env.TAGS }}"
-          buildargs: BRANCH,VERSION,BUILDNUMBER,GITSHA1
-          no_push: true
-
-      # this will publish to NCSA
-      - name: Publish to NCSA Hub
-        #if: github.event_name != 'pull_request' && github.repository == env.MAIN_REPO
-        if: github.repository == env.MAIN_REPO
-        uses: elgohr/Publish-Docker-Github-Action@2.22
-        env:
-          BRANCH: ${{ env.GITHUB_BRANCH }}
-          VERSION: ${{ env.VERSION }}
-          BUILDNUMBER: ${{ github.run_number }}
-          GITSHA1: ${{ github.sha  }}
-        with:
-          registry: hub.ncsa.illinois.edu
-          name: ${{ github.repository_owner }}/${{ matrix.IMAGE }}
-          username: ${{ secrets.HUB_USERNAME }}
-          password: ${{ secrets.HUB_PASSWORD }}
-          tags: "${{ env.TAGS }}"
-          buildargs: BRANCH,VERSION,BUILDNUMBER,GITSHA1
+          echo $VERSION
+          echo $TAGS
+#      # build image
+#      - name: Build image
+#        uses: elgohr/Publish-Docker-Github-Action@3.04
+#        env:
+#          BRANCH: ${{ env.GITHUB_BRANCH }}
+#          VERSION: ${{ env.VERSION }}
+#          BUILDNUMBER: ${{ github.run_number }}
+#          GITSHA1: ${{ github.sha }}
+#        with:
+#          registry: hub.ncsa.illinois.edu
+#          name: incore/doc/pyincore-viz
+#          #username: ${{ secrets.HUB_USERNAME }}
+#          #password: ${{ secrets.HUB_PASSWORD }}
+#          tags: "${{ env.TAGS }}"
+#          buildargs: BRANCH,VERSION,BUILDNUMBER,GITSHA1
+#          no_push: true
+#
+#      # this will publish to NCSA
+#      - name: Publish to NCSA Hub
+#        #if: github.event_name != 'pull_request' && github.repository == env.MAIN_REPO
+#        if: github.repository == env.MAIN_REPO
+#        uses: elgohr/Publish-Docker-Github-Action@2.22
+#        env:
+#          BRANCH: ${{ env.GITHUB_BRANCH }}
+#          VERSION: ${{ env.VERSION }}
+#          BUILDNUMBER: ${{ github.run_number }}
+#          GITSHA1: ${{ github.sha  }}
+#        with:
+#          registry: hub.ncsa.illinois.edu
+#          name: ${{ github.repository_owner }}
+#          username: ${{ secrets.HUB_USERNAME }}
+#          password: ${{ secrets.HUB_PASSWORD }}
+#          tags: "${{ env.TAGS }}"
+#          buildargs: BRANCH,VERSION,BUILDNUMBER,GITSHA1
