@@ -77,7 +77,7 @@ jobs:
       - name: Publish to NCSA Hub
         #if: github.event_name != 'pull_request' && github.repository == env.MAIN_REPO
         if: github.repository == env.MAIN_REPO
-        uses: elgohr/Publish-Docker-Github-Action@2.22
+        uses: elgohr/Publish-Docker-Github-Action@3.04
         env:
           BRANCH: ${{ env.GITHUB_BRANCH }}
           VERSION: ${{ env.VERSION }}
@@ -85,7 +85,7 @@ jobs:
           GITSHA1: ${{ github.sha  }}
         with:
           registry: hub.ncsa.illinois.edu
-          name: ${{ github.repository_owner }}
+          name: incore/doc/pyincore-viz
           username: ${{ secrets.HUB_USERNAME }}
           password: ${{ secrets.HUB_PASSWORD }}
           tags: "${{ env.TAGS }}"
