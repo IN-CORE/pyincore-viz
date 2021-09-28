@@ -1094,10 +1094,10 @@ class GeoUtil:
             in_gpd = gpd.read_file(dataset.local_file_path)
             center_x = in_gpd.bounds.minx.mean()
             center_y = in_gpd.bounds.miny.mean()
-        except:
-            raise("Not a geodataset")
+        except Exception:
+            raise("Given dataset is not a geodataset")
 
-        #skim geodataframe only for needed fields
+        # skim geodataframe only for needed fields
         field_list.append('geometry')
         in_gpd_tmp = in_gpd[field_list]
         geo_data_dic = json.loads(in_gpd_tmp.to_json())
@@ -1158,7 +1158,7 @@ class GeoUtil:
                 if bbox[3] <= tmp_bbox[3]:
                     bbox[3] = tmp_bbox[3]
 
-                #skim geodataframe only for needed fields
+                # skim geodataframe only for needed fields
                 tmp_fld_list = [fld, 'geometry']
                 tmp_gpd_skimmed = tmp_gpd[tmp_fld_list]
                 tmp_geo_data_dic = json.loads(tmp_gpd_skimmed.to_json())
@@ -1166,7 +1166,7 @@ class GeoUtil:
                 geodata_dic_list.append(tmp_geo_data_dic)
                 choro_data_list.append(tmp_choro_data)
 
-            except:
+            except Exception:
                 raise("Not a geodataset")
 
         # calculate center point
