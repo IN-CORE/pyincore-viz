@@ -30,11 +30,11 @@ jobs:
         run: |
           $CONDA/bin/conda env update --file environment.yaml --name base
           echo "install branca"
-          $CONDA/bin/conda installpip3 install branca>=0.3.1
+          $CONDA/bin/conda install branca>=0.3.1
           echo "install ipyleaflet"
           $CONDA/bin/conda install ipyleaflet<0.13.7,>=0.13.4
           echo "install contextily"
-          $CONDA/bin/conda installcontextily>=1.0.0
+          $CONDA/bin/conda inscontextily>=1.0.0
           $CONDA/bin/conda install --file requirements.txt
           $CONDA/bin/conda install pytest
       - name: Run tests with pytest
