@@ -28,6 +28,7 @@ jobs:
           python-version: 3.8
       - name: Install dependencies
         run: |
+          python3 -m pip install --upgrade pip
           pip install branca>=0.3.1
           pip install contextily>=1.0.0
           pip install ipyleaflet<0.13.7,>=0.13.4
