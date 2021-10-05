@@ -22,12 +22,13 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - name: Install Python 3
+      - name: Install Python 3.8
         uses: actions/setup-python@v2
         with:
           python-version: 3.8
       - name: Install dependencies
         run: |
+          sudo apt install -y $(grep -o ^[^#][[:alnum:]-]* "packages.list")
           python3 -m pip install --upgrade pip
           pip install branca>=0.3.1
           pip install contextily>=1.0.0
