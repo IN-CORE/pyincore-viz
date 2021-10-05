@@ -28,6 +28,9 @@ jobs:
           python-version: 3.8
       - name: Install dependencies
         run: |
+          pip install branca>=0.3.1
+          pip install contextily>=1.0.0
+          pip install ipyleaflet<0.13.7,>=0.13.4
           $CONDA/bin/conda env update --file environment.yaml --name base
           $CONDA/bin/conda install --file requirements.txt
           $CONDA/bin/conda install pytest
