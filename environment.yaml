@@ -7,3 +7,6 @@ dependencies:
   - python=3.8
   - pyincore=1.0.0
   - geopandas
+  - branca==0.3.1
+  - ipyleaflet<0.13.7,>=0.13.4
+  - contextily>=1.0.0
