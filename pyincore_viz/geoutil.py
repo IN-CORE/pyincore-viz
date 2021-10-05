@@ -18,7 +18,6 @@ import numpy as np
 import random
 import json
 
-from math import isnan
 from deprecated.sphinx import deprecated
 from matplotlib import cm
 from pathlib import Path
