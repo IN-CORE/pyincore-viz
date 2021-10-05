@@ -32,6 +32,7 @@ jobs:
           python3 -m pip install --upgrade pip
           echo "install branca"
           pip3 install branca>=0.3.1
+          echo "install ipyleaflet"
           pip3 install ipyleaflet<0.13.7,>=0.13.4
           echo "install contextily"
           pip3 install contextily>=1.0.0
