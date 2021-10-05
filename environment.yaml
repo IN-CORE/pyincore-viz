@@ -1,4 +1,4 @@
-name: pyincore
+name: base
 channels:
   - conda-forge
   - in-core
