@@ -7,6 +7,7 @@
 import contextily as ctx
 import geopandas as gpd
 import ipyleaflet as ipylft
+import lxml
 import matplotlib.pyplot as plt
 import networkx as nx
 import rasterio
@@ -377,7 +378,18 @@ class GeoUtil:
         # but the processing time could increase based upon the increase of the layers in the server
         # by putting on/off for this layer checking, it could make the process faster.
         if layer_check:
-            wms = WebMapService(wms_url + "?", version='1.1.1')
+            try:
+                wms = WebMapService(wms_url + "?", version='1.1.1')
+            except lxml.etree.XMLSyntaxError:
+                # The error is caused because it failed to parse the geoserver's return xml.
+                # This error will happen in geoserver when there is not complete dataset ingested,
+                # and it is very hard to avoid due to current operation setting.
+                # It should be passed because this is a proof of the geoserver service is working,
+                # and the further layer_check related operation should be stopped
+                layer_check = False
+            except Exception:
+                raise("Geoserver failed to set WMS service.")
+
         for dataset in datasets:
             wms_layer_name = 'incore:' + dataset.id
             # check availability of the wms layer
