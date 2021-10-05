@@ -17,6 +17,7 @@ import os
 import PIL
 import numpy as np
 import random
+import json
 
 from deprecated.sphinx import deprecated
 from matplotlib import cm
@@ -35,6 +36,7 @@ from io import BytesIO
 from pyincore_viz.plotutil import PlotUtil
 from pyincore_viz.tabledatasetlistmap import TableDatasetListMap as table_list_map
 from pyincore_viz.helpers.common import get_period_and_demand_from_str, get_demands_for_dataset_hazards
+from branca.colormap import linear
 
 logger = globals.LOGGER
 
@@ -1091,3 +1093,141 @@ class GeoUtil:
         heatmap.gradient = {0.4: 'red', 0.6: 'yellow', 0.7: 'lime', 0.8: 'cyan', 1.0: 'blue'}
 
         return heatmap
+
+    @staticmethod
+    def plot_choropleth_multiple_fields_from_single_dataset(dataset, field_list, zoom_level=10):
+        in_gpd = None
+        center_x = None
+        center_y = None
+
+        # check if the dataset is geodataset and convert dataset to geodataframe
+        try:
+            in_gpd = gpd.read_file(dataset.local_file_path)
+            center_x = in_gpd.bounds.minx.mean()
+            center_y = in_gpd.bounds.miny.mean()
+        except Exception:
+            raise("Given dataset is not a geodataset")
+
+        # skim geodataframe only for needed fields
+        field_list.append('geometry')
+        in_gpd_tmp = in_gpd[field_list]
+        geo_data_dic = json.loads(in_gpd_tmp.to_json())
+
+        out_map = ipylft.Map(center=(center_y, center_x), zoom=zoom_level,
+                             crs=projections.EPSG3857, scroll_wheel_zoom=True)
+
+        for fld in field_list:
+            if fld != 'geometry':
+                tmp_choro_data = GeoUtil.create_choro_data_from_pd(in_gpd, fld)
+                # add choropleth data to  map
+                tmp_layer = ipylft.Choropleth(
+                    geo_data=geo_data_dic,
+                    choro_data=tmp_choro_data,
+                    colormap=linear.YlOrRd_04,
+                    border_color='black',
+                    style={'fillOpacity': 0.8},
+                    name=fld
+                )
+
+                out_map.add_layer(tmp_layer)
+
+        out_map.add_control(ipylft.LayersControl(position='topright'))
+        out_map.add_control(ipylft.FullScreenControl(position='topright'))
+
+        return out_map
+
+    @staticmethod
+    def plot_choropleth_multiple_dataset(dataset_list, field_list, zoom_level=10):
+        geodata_dic_list = []
+        choro_data_list = []
+        bbox = None
+
+        # check the size of dataset list and field list
+        if len(dataset_list) != len(dataset_list):
+            raise Exception("The dataset list size and field list size doesn't match")
+
+        # check if the dataset is geodataset and convert dataset to geodataframe
+        for dataset, fld in zip(dataset_list, field_list):
+            try:
+                tmp_gpd = gpd.read_file(dataset.local_file_path)
+                tmp_fld_list = []
+                tmp_min_x = tmp_gpd.bounds.minx.mean()
+                tmp_min_y = tmp_gpd.bounds.miny.mean()
+                tmp_max_x = tmp_gpd.bounds.maxx.mean()
+                tmp_max_y = tmp_gpd.bounds.maxy.mean()
+
+                if bbox is None:
+                    bbox = [tmp_min_x, tmp_min_y, tmp_max_x, tmp_max_y]
+                tmp_bbox = [tmp_min_x, tmp_min_y, tmp_max_x, tmp_max_y]
+
+                if bbox[0] >= tmp_bbox[0]:
+                    bbox[0] = tmp_bbox[0]
+                if bbox[1] >= tmp_bbox[1]:
+                    bbox[1] = tmp_bbox[1]
+                if bbox[2] <= tmp_bbox[2]:
+                    bbox[2] = tmp_bbox[2]
+                if bbox[3] <= tmp_bbox[3]:
+                    bbox[3] = tmp_bbox[3]
+
+                # skim geodataframe only for needed fields
+                tmp_fld_list = [fld, 'geometry']
+                tmp_gpd_skimmed = tmp_gpd[tmp_fld_list]
+                tmp_geo_data_dic = json.loads(tmp_gpd_skimmed.to_json())
+                tmp_choro_data = GeoUtil.create_choro_data_from_pd(tmp_gpd_skimmed, fld)
+                geodata_dic_list.append(tmp_geo_data_dic)
+                choro_data_list.append(tmp_choro_data)
+
+            except Exception:
+                raise("Not a geodataset")
+
+        # calculate center point
+        center_x = ((bbox[2] - bbox[0]) / 2) + bbox[0]
+        center_y = ((bbox[3] - bbox[1]) / 2) + bbox[1]
+
+        out_map = ipylft.Map(center=(center_y, center_x), zoom=zoom_level,
+                             crs=projections.EPSG3857, scroll_wheel_zoom=True)
+
+        for geodata_dic, choro_data, fld in zip(geodata_dic_list, choro_data_list, field_list):
+            # add choropleth data to  map
+            tmp_layer = ipylft.Choropleth(
+                geo_data=geodata_dic,
+                choro_data=choro_data,
+                colormap=linear.YlOrRd_04,
+                border_color='black',
+                style={'fillOpacity': 0.8},
+                name=fld
+            )
+
+            out_map.add_layer(tmp_layer)
+
+        out_map.add_control(ipylft.LayersControl(position='topright'))
+        out_map.add_control(ipylft.FullScreenControl(position='topright'))
+
+        return out_map
+
+    @staticmethod
+    def create_choro_data_from_pd(pd, key):
+        """Create choropleth's choro-data from dataframe.
+
+        Args:
+            pd (object): an Input dataframe.
+            key (str): a string for dictionary key
+        Returns:
+            obj : A dictionary of dataframe
+
+        """
+        print("create choropleth data for", key)
+        temp_id = list(range(len(pd[key])))
+        temp_id = [str(i) for i in temp_id]
+        choro_data = dict(zip(temp_id, pd[key]))
+
+        # # when the fld is number
+        # # check the minimum value to use it to nan value, since nan value makes an error.
+        # min_val = pd[key].min()
+        # for item in choro_data:
+        #     if isnan(choro_data[item]):
+        #         choro_data[item] = 0
+        # # when the fld is not number
+        # # fill empty value as blank
+
+        return choro_data

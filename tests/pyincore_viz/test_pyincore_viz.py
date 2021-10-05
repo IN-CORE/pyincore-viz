@@ -216,6 +216,7 @@ def test_seaside_bridges(client):
     trns_brdg_dataset_id = "5d251172b9219c0692cd7523"
     trns_brdg_dataset = Dataset.from_data_service(trns_brdg_dataset_id, DataService(client))
     viz.plot_map(trns_brdg_dataset, column=None, category=False, basemap=True)
+
     assert True
 
 
@@ -223,4 +224,23 @@ def test_seaside_roadways(client):
     trns_brdg_dataset_id = "5ee7af50772cf80008577ae3"
     trns_brdg_dataset = Dataset.from_data_service(trns_brdg_dataset_id, DataService(client))
     viz.plot_map(trns_brdg_dataset, column=None, category=False, basemap=True)
+
+    assert True
+
+
+def test_choropleth_sinlge_dataset(client):
+    social_vulnerability_census_block_group = '5a284f57c7d30d13bc08254c'
+    dataset = Dataset.from_data_service(social_vulnerability_census_block_group, DataService(client))
+    viz.plot_choropleth_multiple_fields_from_single_dataset(dataset, ['tot_hh', 'totpop'])
+
+    assert True
+
+
+def test_choropleth_multiple_dataset(client):
+    social_vulnerability_census_block_group = '5a284f57c7d30d13bc08254c'
+    dislocation_census_block_group = '5a284f58c7d30d13bc082566'
+    dataset1 = Dataset.from_data_service(social_vulnerability_census_block_group, DataService(client))
+    dataset2 = Dataset.from_data_service(dislocation_census_block_group, DataService(client))
+    viz.plot_choropleth_multiple_dataset([dataset1, dataset2], ['tot_hh', 'p_16pyr'])
+
     assert True
