@@ -29,8 +29,6 @@ jobs:
       - name: Install dependencies
         run: |
           $CONDA/bin/conda env update --file environment.yaml --name base
-          $CONDA/bin/conda install --file requirements.txt
-          $CONDA/bin/conda install pytest
       - name: Run tests with pytest
         run: |
           $CONDA/bin/pytest tests/test_pyincore_viz.py --exitfirst --verbose
