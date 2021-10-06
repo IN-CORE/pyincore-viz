@@ -14,7 +14,7 @@ dependencies:
   - descartes>=1.1.0
   - contextily>=1.0.0
   - numpy>=1.16.6,<2.0a0
-  - cipy>=1.2.0
+  - scipy>=1.2.0
   - networkx>=2.2
   - owslib>=0.17.1
   - matplotlib>=2.1.0
