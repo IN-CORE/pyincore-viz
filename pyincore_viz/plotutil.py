@@ -349,7 +349,7 @@ class PlotUtil:
                                                                  custom_fragility_curve_parameters,
                                                                  **kwargs)
             else:
-                raise ValueError("We do not support "+ str(dimension) + "D fragility plotting")
+                raise ValueError("We do not support " + str(dimension) + "D fragility plotting")
 
         ##################
         # Legacy

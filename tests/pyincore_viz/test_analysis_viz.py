@@ -1,13 +1,20 @@
-from pyincore import IncoreClient
-from pyincore.analyses.housingunitallocation.housingunitallocation import HousingUnitAllocation
-import pyincore.globals as pyglobals
+# Copyright (c) 2019 University of Illinois and others. All rights reserved.
+#
+# This program and the accompanying materials are made available under the
+# terms of the Mozilla Public License v2.0 which accompanies this distribution,
+# and is available at https://www.mozilla.org/en-US/MPL/2.0/
+import pytest
 
+from pyincore.analyses.housingunitallocation.housingunitallocation import HousingUnitAllocation
 from pyincore_viz import AnalysisViz
 
 
-if __name__ == "__main__":
-    client = IncoreClient(pyglobals.INCORE_API_DEV_URL)
+@pytest.fixture
+def client():
+    return pytest.client
 
+
+def test_hua_visualization(client):
     # Joplin
     building_inv = "5f218e36114b783cb0b01833"
     housing_unit_inv = "5df7ce61425e0b00092d0013"  # 2ev3
@@ -30,4 +37,6 @@ if __name__ == "__main__":
 
     # test viz
     dataset = spa.get_output_dataset("result")
-    AnalysisViz.visualize(dataset)
+    df = AnalysisViz.visualize(dataset)
+
+    assert df.index[0] == '1 White alone, Not Hispanic'

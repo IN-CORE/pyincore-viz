@@ -6,6 +6,7 @@
 import numpy as np
 import pandas as pd
 
+
 class IncoreHousingunitallocation:
     """Utility methods for Housing Unit Allocation Visualization"""
     @staticmethod
@@ -19,11 +20,10 @@ class IncoreHousingunitallocation:
             None
 
         """
-        hua_df = pd.read_csv(dataset.get_file_path('csv'), header="infer")
+        hua_df = pd.read_csv(dataset.get_file_path('csv'), header="infer", low_memory=False)
         table = IncoreHousingunitallocation.hua_results_table(hua_df, **kwargs)
 
         return table
-
 
     @staticmethod
     def add_race_ethnicity_to_hua_df(df):
