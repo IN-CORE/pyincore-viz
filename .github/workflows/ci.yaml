@@ -28,12 +28,15 @@ jobs:
           python-version: 3.8
       - name: Install dependencies
         run: |
-          $CONDA/bin/conda env update --file environment.yaml --name base
-      - name: Run tests with pytest
-        run: |
-          echo "${{secrets.PYTEST_USER_TOKEN}}" > tests/pyincore_viz.incorepw
-          $CONDA/bin/pytest tests/test_pyincore_viz.py --exitfirst --verbose
-          --failed-first --cov=. --cov-report html
+          echo "${{secrets.PYTEST_USER_TOKEN}}"
+          echo pwd
+#        run: |
+#          $CONDA/bin/conda env update --file environment.yaml --name base
+#      - name: Run tests with pytest
+#        run: |
+#          echo "${{secrets.PYTEST_USER_TOKEN}}" > tests/pyincore_viz.incorepw
+#          $CONDA/bin/pytest tests/test_pyincore_viz.py --exitfirst --verbose
+#          --failed-first --cov=. --cov-report html
 
   # ----------------------------------------------------------------------
   # DOCKER BUILD
