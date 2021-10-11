@@ -29,7 +29,7 @@ jobs:
       - name: Install dependencies
         run: |
           echo "${{secrets.PYTEST_USER_TOKEN}}"
-          echo pwd
+          cd tests/pyincore_viz/
 #        run: |
 #          $CONDA/bin/conda env update --file environment.yaml --name base
 #      - name: Run tests with pytest
