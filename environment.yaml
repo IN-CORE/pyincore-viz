@@ -9,4 +9,4 @@ dependencies:
   - pyincore=1.0.0
   - pip
   - pip:
-      - -e pyincore_viz
+      - -e .
