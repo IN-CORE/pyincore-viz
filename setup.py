@@ -9,7 +9,7 @@ from setuptools import setup, find_packages
 setup(
     name='pyincore-viz',
     version='1.3.0',
-    packages=find_packages(where=".", exclude=["*.tests", "*.tests.*", "tests.*", "tests"]),
+    packages=find_packages(where=".", exclude=["*.tests", "*.tests.*", "tests.*"]),
     include_package_data=True,
     package_data={
         '': ['*.ini']
