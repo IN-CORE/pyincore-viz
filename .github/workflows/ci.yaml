@@ -29,8 +29,8 @@ jobs:
       - name: Install dependencies
         run: |
           $CONDA/bin/conda env update --file environment.yaml --name base
-      - name: Run tests with pytest
-        run: |
+#      - name: Run tests with pytest
+#        run: |
           $CONDA/bin/conda activate base
           echo "${{secrets.PYTEST_USER_TOKEN}}" > tests/pyincore_viz/.incorepw
           python setup.py build
