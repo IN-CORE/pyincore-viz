@@ -13,4 +13,4 @@ owslib>=0.17.1
 matplotlib>=2.1.0
 plotly>=3.6.0
 pytest>=3.9.0
-pyincore>=0.9.0
+pyincore>=1.0.0
