@@ -29,6 +29,8 @@ jobs:
       - name: Install dependencies
         run: |
           $CONDA/bin/conda env update --file environment.yaml --name base
+          $CONDA/bin/conda-build -c conda-forge -c in-core --output-folder conda recipes/
+          $CONDA/bin/conda install conda/noarc/pyincore-viz-1.3.0-py_0.tar.bz2
       - name: Run tests with pytest
         run: |
           echo "${{secrets.PYTEST_USER_TOKEN}}" > tests/pyincore_viz/.incorepw
