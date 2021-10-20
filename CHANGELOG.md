@@ -5,6 +5,10 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## Unreleased
+### Changed
+- remove check for fragilityCurveRefactored and support for old format [#20](https://github.com/IN-CORE/pyincore-viz/issues/20)
+
 ## [1.3.0] - 2021-07-28
 ### Added
 - pyincore-data reference link to pyincore-viz doc [INCORE1-1299](https://opensource.ncsa.illinois.edu/jira/browse/INCORE1-1299)
