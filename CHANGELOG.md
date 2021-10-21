@@ -5,9 +5,19 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
-## Unreleased
+## [1.4.0] - 2021-10-27
+### Added
+- Conda build recipe for publishing the pyincore-data to conda channel. [#7](https://github.com/IN-CORE/pyincore-viz/issues/7)
+- Choropleth map using single dataset with multiple field. [#2](https://github.com/IN-CORE/pyincore-viz/issues/2)
+- Choropleth map using multiple datasets. [#3](https://github.com/IN-CORE/pyincore-viz/issues/3)
+- Analysis visualization for Housing Unit Allocation. [#5](https://github.com/IN-CORE/pyincore-viz/issues/5)
+- Automatic documentation container build and publish. [#9](https://github.com/IN-CORE/pyincore-viz/issues/9)
+
 ### Changed
 - remove check for fragilityCurveRefactored and support for old format [#20](https://github.com/IN-CORE/pyincore-viz/issues/20)
+
+### Fixed
+- Bug in getting gdf map from the geoserver. [#14](https://github.com/IN-CORE/pyincore-viz/issues/14)
 
 ## [1.3.0] - 2021-07-28
 ### Added
