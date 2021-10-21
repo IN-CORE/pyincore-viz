@@ -1,12 +1,12 @@
 {% set name = "pyincore-viz" %}
-{% set version = "1.4.0" %}
+{% set version = "1.4.0.rc.1" %}
  
 package:
   name: {{ name|lower }}
   version: {{ version }}
  
 source:
-  path: /path/to/pyincore-viz
+  path: C:\\workspace-incore2\\pyincore-viz
   # This should be come from a URL. May be from the build server?
   #url: {{ name }}-{{ version }}.tar.gz
   #md5: {{ hash_value }}
@@ -48,6 +48,7 @@ requirements:
     - matplotlib>=2.1.0
     - plotly>=3.6.0
     - pytest>=3.9.0
+    - lxml>=4.6.3
     - pyincore>=1.0.0
  
 test:
