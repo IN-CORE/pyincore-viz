@@ -1,0 +1,74 @@
+{% set name = "pyincore-viz" %}
+{% set version = "1.4.0.rc.1" %}
+ 
+package:
+  name: {{ name|lower }}
+  version: {{ version }}
+ 
+source:
+  path: C:\\workspace-incore2\\pyincore-viz
+  # This should be come from a URL. May be from the build server?
+  #url: {{ name }}-{{ version }}.tar.gz
+  #md5: {{ hash_value }}
+ 
+build:
+  # If this is a new build for the same version, increment the build
+  # number. If you do not include this key, it defaults to 0.
+  # number: 1
+  noarch: python
+  script: "{{ PYTHON }} -m pip install --no-deps --ignore-installed -vv . " # verbose
+  skip: True  # [py<36]
+ 
+requirements:
+  build:
+    - python>=3.6
+    - pip
+    - numpy 1.16
+ 
+  host:
+    - python>=3.6
+    - pip
+    - numpy 1.16
+     
+  run:
+    - python>=3.6
+    - {{ pin_compatible('numpy') }}
+    - branca==0.3.1
+    - ipyleaflet<0.13.7,>=0.13.4
+    - ipywidgets<8,>=7.6.0
+    - pandas>=0.24.1
+    - geopandas>=0.6.1
+    - rasterio>=1.1.3
+    - descartes>=1.1.0
+    - contextily>=1.0.0
+    - numpy>=1.16.1
+    - scipy>=1.2.0   
+    - networkx>=2.2
+    - owslib>=0.17.1
+    - matplotlib>=2.1.0
+    - plotly>=3.6.0
+    - pytest>=3.9.0
+    - lxml>=4.6.3
+    - pyincore>=1.0.0
+ 
+test:
+  # Python imports
+  imports:
+    - ipyleaflet
+   
+  requires:
+    # Put any additional test requirements here.  For example
+    - pytest>=3.9
+  commands:
+    # You can put built-in test commands to be run here.  Use this to test that the entry points work.
+     python -c "import pyincore_viz; print('SUCCESS')" #; pyincore.test_client()"
+    # You can also put a file called run_test.py in the recipe that will be run at test time.
+ 
+about:
+  home: https://incore.ncsa.illinois.edu
+  license: MPL-2.0
+  summary: 'Python library for visualization and utilities of pyIncore'
+  description: 'pyincore-viz is a Python project that provides visualization and other utilities for use with 
+  pyincore'
+  dev_url: https://github.com/IN-CORE/pyincore-viz
+  doc_url: https://incore.ncsa.illinois.edu/doc/incore
