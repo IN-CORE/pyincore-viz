@@ -1,6 +1,6 @@
 {% set name = "pyincore-viz" %}
-{% set version = "1.3.0" %}
- 
+{% set version = "1.4.0" %}
+
 package:
   name: {{ name|lower }}
   version: {{ version }}
@@ -48,6 +48,7 @@ requirements:
     - matplotlib>=2.1.0
     - plotly>=3.6.0
     - pytest>=3.9.0
+    - lxml>=4.6.3
     - pyincore>=1.0.0
  
 test:
