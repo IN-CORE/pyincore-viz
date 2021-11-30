@@ -15,3 +15,5 @@ plotly>=3.6.0
 pytest>=3.9.0
 pyincore>=0.9.0
 lxml>=4.6.3
+palettable>=3.3.0
+mplcursors>=0.5.1
