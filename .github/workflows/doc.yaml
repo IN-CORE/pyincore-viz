@@ -5,17 +5,21 @@ on:
     branches:
       - master
       - develop
+      - 'release/*'
 
     tags:
       - '*'
 
   pull_request:
+    branches:
+      - master
+      - develop
+      - 'release/*'
 
 env:
   MAIN_REPO: IN-CORE/pyincore-viz
 
 jobs:
-
   # ----------------------------------------------------------------------
   # DOCKER BUILD
   # ----------------------------------------------------------------------
@@ -38,7 +42,7 @@ jobs:
           fi
           echo "GITHUB_BRANCH=${BRANCH}" >> $GITHUB_ENV
           if [ "$BRANCH" == "master" ]; then
-            version=$(cat package.json | grep \"version\" | head -1 | awk -F= "{ print $2 }" | sed 's/[version:,",]//g' | tr -d '[[:space:]]')
+            version=$(awk -F= '/^release/ { print $2}' docs/source/conf.py | sed "s/[ ']//g")
             tags="latest"
             oldversion=""
             while [ "${oldversion}" != "${version}" ]; do
@@ -59,18 +63,8 @@ jobs:
       # build image
       - name: Build image
         uses: elgohr/Publish-Docker-Github-Action@3.04
-        env:
-          BRANCH: ${{ env.GITHUB_BRANCH }}
-          VERSION: ${{ env.VERSION }}
-          BUILDNUMBER: ${{ github.run_number }}
-          GITSHA1: ${{ github.sha }}
         with:
-          registry: hub.ncsa.illinois.edu
           name: incore/doc/pyincore-viz
-          #username: ${{ secrets.HUB_USERNAME }}
-          #password: ${{ secrets.HUB_PASSWORD }}
-          tags: "${{ env.TAGS }}"
-          buildargs: BRANCH,VERSION,BUILDNUMBER,GITSHA1
           no_push: true
 
       # this will publish to NCSA
