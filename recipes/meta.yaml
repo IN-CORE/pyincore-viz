@@ -7,6 +7,7 @@ package:
  
 source:
   path: /path/to/pyincore-viz
+
   # This should be come from a URL. May be from the build server?
   #url: {{ name }}-{{ version }}.tar.gz
   #md5: {{ hash_value }}

@@ -35,7 +35,6 @@ version = '1.4'
 # The full version, including alpha/beta/rc tags
 release = '1.4.1'
 
-
 # -- General configuration ---------------------------------------------------
 
 # If your documentation.rst needs a minimal Sphinx version, state it here.
