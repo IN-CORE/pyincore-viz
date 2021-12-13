@@ -8,6 +8,7 @@ user root
 # install packages
 WORKDIR /src
 COPY requirements.txt .
+ENV PATH="/opt/conda/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
 RUN micromamba install -y -n base -c conda-forge -c in-core \
     sphinx sphinx_rtd_theme \
     -f requirements.txt
