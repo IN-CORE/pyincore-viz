@@ -5,6 +5,10 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## [1.4.1] - 2021-12-08
+### Added
+- Add *mplcursors* and *palettable* libraries needed for Retrofit notebook example. [#29](https://github.com/IN-CORE/pyincore-viz/issues/29)
+
 ## [1.4.0] - 2021-10-27
 ### Added
 - Conda build recipe for publishing the pyincore-data to conda channel. [#7](https://github.com/IN-CORE/pyincore-viz/issues/7)
