@@ -1,0 +1,358 @@
+# Copyright (c) 2021 University of Illinois and others. All rights reserved.
+#
+# This program and the accompanying materials are made available under the
+# terms of the Mozilla Public License v2.0 which accompanies this distribution,
+# and is available at https://www.mozilla.org/en-US/MPL/2.0/
+import numpy as np
+import pandas as pd
+
+
+class PopResultsTable:
+    """Utility methods for Population related data:
+        Housing Unit Inventory
+        Person Record Inventory
+        Job inventory
+        Housing Unit Allocation
+        Creates tables for data exploration and visualization"""
+
+    @staticmethod
+    def visualize(dataset, **kwargs):
+        """visualize Population related dataframe.
+        Args:
+            dataset (obj): Housing unit Inventory,
+                Person Record, or Job Inventory dataset object.
+        Returns:
+            None
+        """
+        pop_df = pd.read_csv(dataset.get_file_path('csv'), header="infer", low_memory=False)
+        table = PopResultsTable.pop_results_table(pop_df, **kwargs)
+
+        return table
+
+    @staticmethod
+    def add_race_ethnicity_to_pop_df(df):
+        """add race and ethnicity information to Pop dataframe.
+        Args:
+            df (obj): Pandas DataFrame object.
+        Returns:
+            object: Pandas DataFrame object.
+        """
+
+        df['Race Ethnicity'] = "0 Vacant HU No Race Ethnicity Data"
+        df['Race Ethnicity'].notes = "Identify Race and Ethnicity Housing Unit Characteristics."
+
+        df.loc[(df['race'] == 1) & (df['hispan'] == 0), 'Race Ethnicity'] = "1 White alone, Not Hispanic"
+        df.loc[(df['race'] == 2) & (df['hispan'] == 0), 'Race Ethnicity'] = "2 Black alone, Not Hispanic"
+        df.loc[(df['race'] == 3) & (df['hispan'] == 0), 'Race Ethnicity'] = "3 American Indian and Alaska " \
+                                                                            "Native alone, Not Hispanic"
+        df.loc[(df['race'] == 4) & (df['hispan'] == 0), 'Race Ethnicity'] = "4 Asian alone, Not Hispanic"
+        df.loc[(df['race'].isin([5, 6, 7])) & (df['hispan'] == 0), 'Race Ethnicity'] = "5 Other Race, Not Hispanic"
+        df.loc[(df['hispan'] == 1), 'Race Ethnicity'] = "6 Any Race, Hispanic"
+        df.loc[(df['gqtype'] >= 1) & (df['Race Ethnicity'] == "0 Vacant HU No Race Ethnicity Data"), 'Race Ethnicity'] \
+            = "7 Group Quarters no Race Ethnicity Data"
+        # Set variable to missing if structure is vacant - makes tables look nicer
+        df.loc[(df['Race Ethnicity'] == "0 Vacant HU No Race Ethnicity Data"), 'Race Ethnicity'] = np.nan
+
+        return df
+
+    @staticmethod
+    def add_vacancy_to_pop_df(df):
+        """add vacancy information to Pop dataframe.
+        Args:
+            df (obj): Pandas DataFrame object.
+        Returns:
+            object: Pandas DataFrame object.
+        """
+
+        df['Vacancy Type'] = "0 Occupied Housing Unit"
+        df['Vacancy Type'].notes = "Identify Vacancy Type Housing Unit Characteristics."
+
+        df.loc[(df['vacancy'] == 1), 'Vacancy Type'] = "1 For Rent"
+        df.loc[(df['vacancy'] == 2), 'Vacancy Type'] = "2 Rented, not occupied"
+        df.loc[(df['vacancy'] == 3), 'Vacancy Type'] = "3 For sale only"
+        df.loc[(df['vacancy'] == 4), 'Vacancy Type'] = "4 Sold, not occupied"
+        df.loc[(df['vacancy'] == 5), 'Vacancy Type'] = "5 For seasonal, recreational, or occasional use"
+        df.loc[(df['vacancy'] == 6), 'Vacancy Type'] = "6 For migrant workers"
+        df.loc[(df['vacancy'] == 7), 'Vacancy Type'] = "7 Other vacant"
+        # Set variable to missing if structure is occupied - makes tables look nicer
+        df.loc[(df['Vacancy Type'] == "0 Occupied Housing Unit"), 'Vacancy Type'] = np.nan
+
+        return df
+
+    @staticmethod
+    def add_tenure_to_pop_df(df):
+        """add tenure information to Pop dataframe.
+        Args:
+            df (obj): Pandas DataFrame object.
+        Returns:
+            object: Pandas DataFrame object.
+        """
+
+        df['Tenure Status'] = "0 No Tenure Status"
+        df['Tenure Status'].notes = "Identify Renter and Owner Occupied Housing Unit Characteristics."
+
+        df.loc[(df['ownershp'] == 1), 'Tenure Status'] = "1 Owner Occupied"
+        df.loc[(df['ownershp'] == 2), 'Tenure Status'] = "2 Renter Occupied"
+        # Set variable to missing if structure is vacant - makes tables look nicer
+        df.loc[(df['Tenure Status'] == "0 No Tenure Status"), 'Tenure Status'] = np.nan
+
+        return df
+
+    @staticmethod
+    def add_family_to_pop_df(df):
+        """add family status information to population dataframe.
+        Args:
+            df (obj): Pandas DataFrame object.
+        Returns:
+            object: Pandas DataFrame object.
+        """
+
+        df['Family Type'] = "0 No Family Data"
+        df['Family Type'].notes = "Identify Family and Non-Family Characteristics."
+
+        df.loc[(df['family'] == 1), 'Family Type'] = "1 Family Household"
+        df.loc[(df['family'] == 0), 'Family Type'] = "0 Non-Family Household"
+        # Set variable to missing if structure is vacant - makes tables look nicer
+        df.loc[(df['Family Type'] == "0 No Family Data"), 'Family Type'] = np.nan
+
+        return df
+
+    @staticmethod
+    def add_dislocates_pd_df(df):
+        """
+        Population dislocation requires data on building damage and
+        population characteristics
+        If the observation does not have building data then population dislocation
+        is set to missing.
+        """
+        df['Population Dislocation'] = "No Data"
+        df['Population Dislocation'].notes = "Identify Population Dislocation."
+
+        df.loc[(df['dislocated'] == False) & (df['guid'].notnull()), 'Population Dislocation'] = "0 Does not dislocate"
+        df.loc[(df['dislocated'] == True) & (df['guid'].notnull()), 'Population Dislocation'] = "1 Dislocates"
+        # Set Tenure Status to missing if structure is vacant - makes tables look nicer
+        df.loc[(df['Population Dislocation'] == "No Data"), 'Population Dislocation'] = np.nan
+
+        return df
+
+    @staticmethod
+    def add_jobtype_df(df):
+        """add job type information to dataframe.
+        Args:
+            df (obj): Pandas DataFrame object.
+        Returns:
+            object: Pandas DataFrame object.
+        """
+
+        df['Job Type'] = "0 No Job Type Information"
+        df['Job Type'].notes = "Identify Job Type Characteristics."
+
+        df.loc[(df['jobtype'] == 'JT03'), 'Job Type'] = "Private Primary Jobs"
+        df.loc[(df['jobtype'] == 'JT09'), 'Job Type'] = "Private Non-primary Jobs"
+        df.loc[(df['jobtype'] == 'JT05'), 'Job Type'] = "Federal Primary Jobs"
+        df.loc[(df['jobtype'] == 'JT10'), 'Job Type'] = "Federal Non-primary Jobs"
+        df.loc[(df['jobtype'] == 'JT07'), 'Job Type'] = "Public Sector Primary Jobs"
+        df.loc[(df['jobtype'] == 'JT11'), 'Job Type'] = "Public Sector Non-primary Jobs"
+        # Set variable to missing if structure is occupied - makes tables look nicer
+        df.loc[(df['Job Type'] == "0 No Job Type Information"), 'Job Type'] = np.nan
+
+        return df
+
+    @staticmethod
+    def add_industrycode_df(df):
+        """add industry code information to dataframe.
+        Args:
+            df (obj): Pandas DataFrame object.
+        Returns:
+            object: Pandas DataFrame object.
+        """
+
+        df['NAICS Industry Sector'] = "0 No NAICS Industry Sector"
+        df['NAICS Industry Sector'].notes = "Identify NAICS Industry Sector."
+
+        df.loc[(df['IndustryCode'] == 1), 'NAICS Industry Sector'] = "11 Agriculture, Forestry, Fishing and Hunting"
+        df.loc[(df['IndustryCode'] == 2), 'NAICS Industry Sector'] = "21 Mining, Quarrying, and Oil and Gas Extraction"
+        df.loc[(df['IndustryCode'] == 3), 'NAICS Industry Sector'] = "22 Utilities"
+        df.loc[(df['IndustryCode'] == 4), 'NAICS Industry Sector'] = "23 Construction"
+        df.loc[(df['IndustryCode'] == 5), 'NAICS Industry Sector'] = "31-33 Manufacturing"
+        df.loc[(df['IndustryCode'] == 6), 'NAICS Industry Sector'] = "42 Wholesale Trade"
+        df.loc[(df['IndustryCode'] == 7), 'NAICS Industry Sector'] = "44-45 Retail Trade"
+        df.loc[(df['IndustryCode'] == 8), 'NAICS Industry Sector'] = "48-49 Transportation and Warehousing"
+        df.loc[(df['IndustryCode'] == 9), 'NAICS Industry Sector'] = "51 Information"
+        df.loc[(df['IndustryCode'] == 10), 'NAICS Industry Sector'] = "52 Finance and Insurance"
+        df.loc[(df['IndustryCode'] == 11), 'NAICS Industry Sector'] = "53 Real Estate and Rental and Leasing"
+        df.loc[(df['IndustryCode'] == 12), 'NAICS Industry Sector'] = "54 Professional, Scientific, and Technical " \
+                                                                      "Services"
+        df.loc[(df['IndustryCode'] == 13), 'NAICS Industry Sector'] = "55 Management of Companies and Enterprises"
+        df.loc[(df['IndustryCode'] == 14), 'NAICS Industry Sector'] = "56 Administration & Support, Waste Management " \
+                                                                      "and Remediation"
+        df.loc[(df['IndustryCode'] == 15), 'NAICS Industry Sector'] = "61 Educational Services"
+        df.loc[(df['IndustryCode'] == 16), 'NAICS Industry Sector'] = "62 Health Care and Social Assistance"
+        df.loc[(df['IndustryCode'] == 17), 'NAICS Industry Sector'] = "71 Arts, Entertainment, and Recreation"
+        df.loc[(df['IndustryCode'] == 18), 'NAICS Industry Sector'] = "72 Accommodation and Food Services"
+        df.loc[(df['IndustryCode'] == 19), 'NAICS Industry Sector'] = "81 Other Services " \
+                                                                      "(excluding Public Administration)"
+        df.loc[(df['IndustryCode'] == 20), 'NAICS Industry Sector'] = "92 Public Administration"
+        # Set variable to missing if structure is occupied - makes tables look nicer
+        df.loc[(df['NAICS Industry Sector'] == "0 No NAICS Industry Sector"), 'NAICS Industry Sector'] = np.nan
+
+        return df
+
+    @staticmethod
+    def add_colpercent(df, sourcevar, formatedvar):
+        """add column percentage to help visualize data.
+        Args:
+            df (obj): Pandas DataFrame object.
+            sourcevar (obj): Pandas Pivottable Column object.
+            formatedvar (str): Column name.
+        Returns:
+            object: Pandas DataFrame object.
+        """
+
+        df['%'] = (df[sourcevar] / (df[sourcevar].sum()/2) * 100)
+        df['(%)'] = df.agg('({0[%]:.1f}%)'.format, axis=1)
+        df['value'] = df[sourcevar]
+        df['format value'] = df.agg('{0[value]:,.0f}'.format, axis=1)
+        df[formatedvar] = df['format value'] + '\t ' + df['(%)']
+
+        df = df.drop(columns=[sourcevar, '%', '(%)', 'value', 'format value'])
+
+        return df
+
+    @staticmethod
+    def pop_results_table(df, **kwargs):
+        """Explore and visualize population data with a formatted table.
+        Args:
+            df (obj): Pandas DataFrame object.
+            kwargs (kwargs): Keyword arguments for visualization title.
+            who (str): Who does the data represent (unit of analysis):
+                options: Total Households,
+                         Total Population by Householder.
+                         Total Population by Persons
+                         Total Jobs
+                         Median Household Income
+            what (str): What does the data represent ex: "by Race, Ethnicity"
+            when (str): What year is the source data ex: "2010"
+            where (str): Where does the data represent ex: "Robeson County, NC"
+            row_index (str): Variable to label rows ex: 'Race Ethnicity
+            col_index (str): Variable to label columns ex: 'Tenure'
+            row_percent (str): Variable to calculate row percentage
+                ex: "1 Dislocates" to see percentage dislocation by row
+        Returns:
+            object: Styled Table Pandas DataFrame object.
+        """
+        who = ""
+        what = ""
+        when = ""
+        where = ""
+        row_index = "race"
+        col_index = "hispan"
+        row_percent = ""
+
+        if "who" in kwargs.keys():
+            who = kwargs["who"]
+        if "what" in kwargs.keys():
+            what = kwargs["what"]
+        if "when" in kwargs.keys():
+            when = kwargs["when"]
+        if "where" in kwargs.keys():
+            where = kwargs["where"]
+        if "row_index" in kwargs.keys():
+            row_index = kwargs["row_index"]
+        if "col_index" in kwargs.keys():
+            col_index = kwargs["col_index"]
+        if "row_percent" in kwargs.keys():
+            row_percent = kwargs["row_percent"]
+
+        # check current column list and add categorical descriptions
+        current_col_list = list(df.columns)
+        # Add Race Ethnicity to columns
+        if all(col in current_col_list for col in ['race', 'hispan']):
+            df = PopResultsTable.add_race_ethnicity_to_pop_df(df)
+        if 'ownershp' in current_col_list:
+            df = PopResultsTable.add_tenure_to_pop_df(df)
+        if 'vacancy' in current_col_list:
+            df = PopResultsTable.add_tenure_to_pop_df(df)
+        if all(col in current_col_list for col in ['guid', 'dislocated']):
+            df = PopResultsTable.add_dislocates_pd_df(df)
+        if 'jobtype' in current_col_list:
+            df = PopResultsTable.add_jobtype_df(df)
+        if 'family' in current_col_list:
+            df = PopResultsTable.add_family_to_pop_df(df)
+        if 'IndustryCode' in current_col_list:
+            df = PopResultsTable.add_industrycode_df(df)
+
+        if who == "Total Households":
+            variable = 'huid'
+            function = 'count'
+            renamecol = {'Total': who, 'sum': ''}
+            num_format = "{:,.0f}"
+        elif who == "Total Population by Householder":
+            variable = 'numprec'
+            function = np.sum
+            renamecol = {'Total': who, 'sum': ''}
+            num_format = "{:,.0f}"
+        elif who == "Total Population by Persons":
+            variable = 'precid'
+            function = 'count'
+            renamecol = {'Total': who, 'sum': ''}
+            num_format = "{:,.0f}"
+        elif who == "Total Jobs":
+            variable = 'uniquejobid'
+            function = 'count'
+            renamecol = {'Total': who, 'sum': ''}
+            num_format = "{:,.0f}"
+        elif who == "Median Household Income":
+            variable = 'randincome'
+            function = np.median
+            renamecol = {'Total': who}
+            num_format = "${:,.0f}"
+        else:
+            variable = 'huid'
+            function = 'count'
+            renamecol = {'Total': who, 'sum': ''}
+            num_format = "{:,.0f}"
+
+        # Generate table
+        table = pd.pivot_table(df, values=variable, index=[row_index],
+                               margins=True, margins_name='Total',
+                               columns=[col_index], aggfunc=function).rename(columns=renamecol)
+        table_title = "Table. " + who + " " + what + ", " + where + ", " + when + "."
+        varformat = {(who): num_format}
+        for col in table.columns:
+            varformat[col] = num_format
+
+        # Add percent row column
+        if row_percent != '':
+            numerator = table[row_percent]
+            denomenator = table[who]
+            table['row_pct'] = numerator/denomenator * 100
+            table['Percent Row ' + '\n' + row_percent] = \
+                table.agg('{0[row_pct]:.1f}%'.format, axis=1)
+            table = table.drop(columns=['row_pct'])
+
+        # Add Column Percents
+        if "Total" in who:
+            # add column percent to all columns except the percent row column
+            row_pct_vars = [col for col in table if col.startswith('Percent Row ')]
+            columns = [col for col in table if col not in row_pct_vars]
+            for col in columns:
+                formated_column_name = col + ' (%)'
+                table = PopResultsTable.add_colpercent(table, col, formated_column_name)
+
+        # Move row percent to last column
+        if row_percent != '':
+            row_pct_vars = [col for col in table if col.startswith('Percent Row ')]
+            columns = [col for col in table if col not in row_pct_vars]
+            table = table[columns + row_pct_vars]
+
+        # Caption Title Style
+        styles = [dict(selector="caption",
+                       props=[("text-align", "center"), ("caption-side", "top"),  ("font-size", "150%")])]
+
+        table = table.style \
+            .set_caption(table_title) \
+            .set_table_styles(styles) \
+            .format(varformat)
+
+        return table

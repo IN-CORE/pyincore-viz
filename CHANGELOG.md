@@ -8,7 +8,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ## [Unreleased]
 ### Changed
 - Rename master branch to main. [#37](https://github.com/IN-CORE/pyincore-viz/issues/37)
-
+- Rename housing unit allocation to population result table and updated. [#42](https://github.com/IN-CORE/pyincore-viz/issues/42)
 ### Fixed
 - Auto build of documentation container. [#34](https://github.com/IN-CORE/pyincore-viz/issues/34)
 
