@@ -13,7 +13,8 @@ class PopResultsTable:
         Person Record Inventory
         Job inventory
         Housing Unit Allocation
-        Creates tables for data exploration and visualization"""
+        Creates tables for data exploration and visualization
+    """
 
     @staticmethod
     def visualize(dataset, **kwargs):
@@ -21,6 +22,20 @@ class PopResultsTable:
         Args:
             dataset (obj): Housing unit Inventory,
                 Person Record, or Job Inventory dataset object.
+            kwargs (kwargs): Keyword arguments for visualization title.
+            who (str): Who does the data represent (unit of analysis):
+                options: Total Households,
+                         Total Population by Householder.
+                         Total Population by Persons
+                         Total Jobs
+                         Median Household Income
+            what (str): What does the data represent ex: "by Race, Ethnicity"
+            when (str): What year is the source data ex: "2010"
+            where (str): Where does the data represent ex: "Robeson County, NC"
+            row_index (str): Variable to label rows ex: 'Race Ethnicity
+            col_index (str): Variable to label columns ex: 'Tenure'
+            row_percent (str): Variable to calculate row percentage
+                ex: "1 Dislocates" to see percentage dislocation by row
         Returns:
             None
         """
@@ -124,6 +139,11 @@ class PopResultsTable:
         population characteristics
         If the observation does not have building data then population dislocation
         is set to missing.
+        
+        Args:
+            df (obj): Pandas DataFrame object.
+        Returns:
+            object: Pandas DataFrame object.
         """
         df['Population Dislocation'] = "No Data"
         df['Population Dislocation'].notes = "Identify Population Dislocation."
