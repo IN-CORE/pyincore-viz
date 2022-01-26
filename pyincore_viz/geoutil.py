@@ -1095,20 +1095,12 @@ class GeoUtil:
         return heatmap
 
     @staticmethod
-    def plot_mulitple_vector_dataset_with_field(dataset_list, field_list, zoom_level=10):
+    def plot_mulitple_vector_dataset(dataset_list, zoom_level=10):
         geodata_dic_list = []
         title_list = []
         bbox = None
-
-        # check the size of dataset list and field list
-        if len(dataset_list) != len(field_list):
-            raise Exception("The dataset list size and field list size doesn't match")
-
-        # get the actual dataset from hazard dataset
-
-
         # check if the dataset is geodataset and convert dataset to geodataframe
-        for dataset, fld in zip(dataset_list, field_list):
+        for dataset in dataset_list:
             try:
                 tmp_gpd = gpd.read_file(dataset.local_file_path)
                 tmp_min_x = tmp_gpd.bounds.minx.mean()
@@ -1130,7 +1122,7 @@ class GeoUtil:
                     bbox[3] = tmp_bbox[3]
 
                 # skim geodataframe only for needed fields
-                tmp_fld_list = [fld, 'geometry']
+                tmp_fld_list = ['geometry']
                 tmp_gpd_skimmed = tmp_gpd[tmp_fld_list]
                 tmp_geo_data_dic = json.loads(tmp_gpd_skimmed.to_json())
                 geodata_dic_list.append(tmp_geo_data_dic)

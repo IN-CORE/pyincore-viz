@@ -249,3 +249,13 @@ def test_choropleth_multiple_dataset(client):
     viz.plot_choropleth_multiple_dataset([dataset1, dataset2], ['tot_hh', 'p_16pyr'])
 
     assert True
+
+def test_multiple_vector_visualization(client):
+    centerville_model_tornado = '60c917b498a93232884f367d'
+    centerville_epn_link = '5b1fdc2db1cf3e336d7cecc9'
+    tornado_metadata = HazardService(client).get_tornado_hazard_metadata(centerville_model_tornado)
+    dataset1 = Dataset.from_data_service(centerville_epn_link, DataService(client))
+    dataset2 = Dataset.from_data_service(tornado_metadata["datasetId"], DataService(client))
+    viz.plot_mulitple_vector_dataset([dataset1, dataset2])
+
+    assert True
