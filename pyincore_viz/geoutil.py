@@ -1129,7 +1129,7 @@ class GeoUtil:
                 title_list.append(dataset.metadata["title"])
 
             except Exception:
-                raise("The dataset might not be a vector geodataset or field name might not be correct.")
+                raise ValueError("Given dataset might not be a geodataset or has an error in the attribute")
 
         # calculate center point
         center_x = ((bbox[2] - bbox[0]) / 2) + bbox[0]
@@ -1179,7 +1179,7 @@ class GeoUtil:
             center_y = in_gpd.bounds.miny.mean()
             title = dataset.metadata["title"]
         except Exception:
-            raise("Given dataset might not be a geodataset or has an error in the attribute")
+            raise ValueError("Given dataset might not be a geodataset or has an error in the attribute")
 
         # skim geodataframe only for needed fields
         field_list.append('geometry')
