@@ -41,11 +41,12 @@ class PlotUtil:
 
     @staticmethod
     def get_x_y(curve, demand_type_name, curve_parameters, custom_curve_parameters,
-                           start=0.001, end=10, sample_size: int = 200):
+                start=0.001, end=10, sample_size: int = 200):
         """Get arrays of x and y values for plotting refactored fragility curves.
 
         Args:
             curve (obj): An individual fragility curve object.
+            demand_type_name (str): Demand type name
             curve_parameters (list): Default fragility curve parameters.
             start (float): A start value.
             end (float): An end value.
@@ -67,8 +68,8 @@ class PlotUtil:
         return x, y
 
     @staticmethod
-    def get_x_y_z(curve, demand_type_names, curve_parameters,
-                             custom_curve_parameters, start=1, end=50, sample_size: int = 0.5):
+    def get_x_y_z(curve, demand_type_names, curve_parameters, custom_curve_parameters, start=1, end=50,
+                  sample_size: int = 0.5):
         """Get arrays of x, y and z values for plotting refactored fragility plots.
 
         Args:
@@ -126,13 +127,9 @@ class PlotUtil:
             title = fragility_set.description
 
         if dimension == 2:
-            return PlotUtil.get_fragility_plot_2d(fragility_set, title,
-                                                             custom_curve_parameters,
-                                                             **kwargs)
+            return PlotUtil.get_fragility_plot_2d(fragility_set, title, custom_curve_parameters, **kwargs)
         if dimension == 3:
-            return PlotUtil.get_fragility_plot_3d(fragility_set, title, limit_state,
-                                                             custom_curve_parameters,
-                                                             **kwargs)
+            return PlotUtil.get_fragility_plot_3d(fragility_set, title, limit_state, custom_curve_parameters, **kwargs)
         else:
             raise ValueError("We do not support " + str(dimension) + "D fragility plotting")
 
@@ -170,10 +167,8 @@ class PlotUtil:
                                        "custom_curve_parameters variable and passed it in this method. ")
 
         for curve in fragility_set.fragility_curves:
-            x, y = PlotUtil.get_x_y(curve, demand_type_names[0],
-                                               fragility_set.curve_parameters,
-                                               custom_curve_parameters,
-                                               **kwargs)
+            x, y = PlotUtil.get_x_y(curve, demand_type_names[0], fragility_set.curve_parameters,
+                                    custom_curve_parameters, **kwargs)
             plt.plot(x, y, label=curve.return_type["description"])
 
         plt.xlabel(fragility_set.demand_types[0] + " (" + fragility_set.demand_units[0] + ")")
@@ -183,8 +178,7 @@ class PlotUtil:
         return plt
 
     @staticmethod
-    def get_fragility_plot_3d(fragility_set, title=None, limit_state="LS_0",
-                                         custom_curve_parameters={}, **kwargs):
+    def get_fragility_plot_3d(fragility_set, title=None, limit_state="LS_0", custom_curve_parameters={}, **kwargs):
         """Get 3d refactored fragility plot.
 
         Args:
@@ -226,11 +220,8 @@ class PlotUtil:
         for curve in fragility_set.fragility_curves:
             if limit_state == curve.return_type["description"]:
                 matched = True
-                x, y, z = PlotUtil.get_x_y_z(curve,
-                                                        demand_type_names[:2],
-                                                        fragility_set.curve_parameters,
-                                                        custom_curve_parameters,
-                                                        **kwargs)
+                x, y, z = PlotUtil.get_x_y_z(curve, demand_type_names[:2], fragility_set.curve_parameters,
+                                             custom_curve_parameters, **kwargs)
                 ax = plt.axes(projection='3d')
                 ax.plot_surface(x, y, z, rstride=1, cstride=1, cmap='viridis', edgecolor='none')
                 ax.set_xlabel(fragility_set.demand_types[0] + " (" + fragility_set.demand_units[0] + ")")
