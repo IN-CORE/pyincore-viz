@@ -4,15 +4,10 @@
 # terms of the Mozilla Public License v2.0 which accompanies this distribution,
 # and is available at https://www.mozilla.org/en-US/MPL/2.0/
 
-import math
-
 import geopandas as gpd
 import matplotlib.pyplot as plt
 import numpy
 import pandas as pd
-# TODO need to add that to pyincore's __init__.py
-from pyincore.utils.expressioneval import Parser
-from scipy.stats import lognorm, norm
 
 
 class PlotUtil:
@@ -46,6 +41,7 @@ class PlotUtil:
 
         Args:
             curve (obj): An individual fragility curve object.
+            demand_type_name (str): Demand type name
             curve_parameters (list): Default fragility curve parameters.
             start (float): A start value.
             end (float): An end value.
@@ -66,8 +62,9 @@ class PlotUtil:
         return x, y
 
     @staticmethod
-    def get_x_y_z(curve, demand_type_names, curve_parameters,
-                  custom_curve_parameters, start=1, end=50, sample_size: int = 0.5):
+
+    def get_x_y_z(curve, demand_type_names, curve_parameters, custom_curve_parameters, start=1, end=50,
+                  sample_size: int = 0.5):
         """Get arrays of x, y and z values for plotting refactored fragility plots.
 
         Args:
@@ -165,8 +162,8 @@ class PlotUtil:
                                        "custom_curve_parameters variable and passed it in this method. ")
 
         for curve in fragility_set.fragility_curves:
-            x, y = PlotUtil.get_x_y(
-                curve, demand_type_names[0], fragility_set.curve_parameters, custom_curve_parameters, **kwargs)
+            x, y = PlotUtil.get_x_y(curve, demand_type_names[0], fragility_set.curve_parameters,
+                                    custom_curve_parameters, **kwargs)
             plt.plot(x, y, label=curve.return_type["description"])
 
         plt.xlabel(fragility_set.demand_types[0] + " (" + fragility_set.demand_units[0] + ")")
@@ -218,8 +215,8 @@ class PlotUtil:
         for curve in fragility_set.fragility_curves:
             if limit_state == curve.return_type["description"]:
                 matched = True
-                x, y, z = PlotUtil.get_x_y_z(
-                    curve, demand_type_names[:2], fragility_set.curve_parameters, custom_curve_parameters, **kwargs)
+                x, y, z = PlotUtil.get_x_y_z(curve, demand_type_names[:2], fragility_set.curve_parameters,
+                                             custom_curve_parameters, **kwargs)
                 ax = plt.axes(projection='3d')
                 ax.plot_surface(x, y, z, rstride=1, cstride=1, cmap='viridis', edgecolor='none')
                 ax.set_xlabel(fragility_set.demand_types[0] + " (" + fragility_set.demand_units[0] + ")")

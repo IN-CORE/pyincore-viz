@@ -6,6 +6,9 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
+### Added
+- Multiple vector dataset visualization. [#19](https://github.com/IN-CORE/pyincore-viz/issues/19)
+
 ### Changed
 - Rename master branch to main. [#37](https://github.com/IN-CORE/pyincore-viz/issues/37)
 - Rename housing unit allocation to population result table and updated. [#42](https://github.com/IN-CORE/pyincore-viz/issues/42)
