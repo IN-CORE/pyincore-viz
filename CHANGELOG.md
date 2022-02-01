@@ -6,6 +6,9 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
+### Added
+- Multiple vector dataset visualization. [#19](https://github.com/IN-CORE/pyincore-viz/issues/19)
+
 ### Changed
 - Rename master branch to main. [#37](https://github.com/IN-CORE/pyincore-viz/issues/37)
 - Make viz methods compatible with the DFR3 naming changes done on pyincore (v1.3.0) [#40](https://github.com/IN-CORE/pyincore-viz/issues/40)
