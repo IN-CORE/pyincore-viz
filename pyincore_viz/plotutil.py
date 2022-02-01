@@ -61,9 +61,8 @@ class PlotUtil:
         x = numpy.linspace(start, end, sample_size)
         y = []
         for i in x:
-            y.append(curve.calculate_limit_state_probability(hazard_values={demand_type_name: i},
-                                                             curve_parameters=curve_parameters,
-                                                             **custom_curve_parameters))  # kwargs
+            y.append(curve.solve_curve_expression(hazard_values={demand_type_name: i},
+                                                  curve_parameters=curve_parameters, **custom_curve_parameters))
         y = numpy.asarray(y)
         return x, y
 
@@ -90,10 +89,10 @@ class PlotUtil:
         x = y = numpy.arange(start, end, sample_size)
 
         def _f(curve, x, y):
-            return curve.calculate_limit_state_probability(hazard_values={demand_type_names[0]: x,
-                                                                          demand_type_names[1]: y},
-                                                           curve_parameters=curve_parameters,
-                                                           **custom_curve_parameters)  # kwargs
+            return curve.solve_curve_expression(hazard_values={demand_type_names[0]: x,
+                                                demand_type_names[1]: y},
+                                                curve_parameters=curve_parameters,
+                                                **custom_curve_parameters)  # kwargs
 
         X, Y = numpy.meshgrid(x, y)
         z = numpy.array([_f(curve, x, y) for x, y in zip(numpy.ravel(X), numpy.ravel(Y))])

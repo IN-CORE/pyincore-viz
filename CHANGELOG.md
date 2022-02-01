@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Changed
 - Rename master branch to main. [#37](https://github.com/IN-CORE/pyincore-viz/issues/37)
+- Make viz methods compatible with the DFR3 naming changes done on pyincore (v1.3.0) [#40](https://github.com/IN-CORE/pyincore-viz/issues/40)
 
 ### Fixed
 - Auto build of documentation container. [#34](https://github.com/IN-CORE/pyincore-viz/issues/34)
