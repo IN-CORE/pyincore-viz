@@ -139,7 +139,6 @@ class PopResultsTable:
         population characteristics
         If the observation does not have building data then population dislocation
         is set to missing.
-        
         Args:
             df (obj): Pandas DataFrame object.
         Returns:
@@ -148,8 +147,10 @@ class PopResultsTable:
         df['Population Dislocation'] = "No Data"
         df['Population Dislocation'].notes = "Identify Population Dislocation."
 
-        df.loc[(df['dislocated'] == False) & (df['guid'].notnull()), 'Population Dislocation'] = "0 Does not dislocate"
-        df.loc[(df['dislocated'] == True) & (df['guid'].notnull()), 'Population Dislocation'] = "1 Dislocates"
+        if (df['dislocated'] is False) & (df['guid'].notnull()):
+            df.loc['Population Dislocation'] = "0 Does not dislocate"
+        if (df['dislocated'] is True) & (df['guid'].notnull()):
+            df.loc['Population Dislocation'] = "1 Dislocates"
         # Set Tenure Status to missing if structure is vacant - makes tables look nicer
         df.loc[(df['Population Dislocation'] == "No Data"), 'Population Dislocation'] = np.nan
 
