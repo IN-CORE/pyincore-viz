@@ -4,15 +4,10 @@
 # terms of the Mozilla Public License v2.0 which accompanies this distribution,
 # and is available at https://www.mozilla.org/en-US/MPL/2.0/
 
-import math
-
 import geopandas as gpd
 import matplotlib.pyplot as plt
 import numpy
 import pandas as pd
-# TODO need to add that to pyincore's __init__.py
-from pyincore.utils.expressioneval import Parser
-from scipy.stats import lognorm, norm
 
 
 class PlotUtil:
