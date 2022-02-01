@@ -390,7 +390,7 @@ class GeoUtil:
                 # and the further layer_check related operation should be stopped
                 layer_check = False
             except Exception:
-                raise("Geoserver failed to set WMS service.")
+                raise Exception("Geoserver failed to set WMS service.")
 
         for dataset in datasets:
             wms_layer_name = 'incore:' + dataset.id
@@ -1254,7 +1254,7 @@ class GeoUtil:
                 title_list.append(tmp_title)
 
             except Exception:
-                raise("Not a geodataset")
+                raise Exception("Not a geodataset")
 
         # calculate center point
         center_x = ((bbox[2] - bbox[0]) / 2) + bbox[0]
