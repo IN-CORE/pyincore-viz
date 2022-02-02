@@ -1095,7 +1095,7 @@ class GeoUtil:
         return heatmap
 
     @staticmethod
-    def plot_mulitple_vector_dataset(dataset_list, zoom_level=10):
+    def plot_multiple_vector_dataset(dataset_list, zoom_level=10):
         geodata_dic_list = []
         title_list = []
         bbox = None
