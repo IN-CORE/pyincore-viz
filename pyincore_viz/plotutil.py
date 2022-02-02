@@ -62,6 +62,7 @@ class PlotUtil:
         return x, y
 
     @staticmethod
+
     def get_x_y_z(curve, demand_type_names, curve_parameters, custom_curve_parameters, start=1, end=50,
                   sample_size: int = 0.5):
         """Get arrays of x, y and z values for plotting refactored fragility plots.

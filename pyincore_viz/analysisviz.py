@@ -19,6 +19,9 @@ class AnalysisViz:
                 None
 
         """
+        # data types that needs to use pop_results_table visualization
+        pop_result_table_data_types = ['incorehousingunitallocation']
+
         try:
             module_name = ""
             # split by namespace, capitalize then join
@@ -27,7 +30,12 @@ class AnalysisViz:
 
             # load module
             # e.g. module_name = IncoreHousingUnitAllocation
+            # this is a special case for using popresultstable
+            if module_name.lower() in pop_result_table_data_types:
+                module_name = "PopResultsTable"
+
             module = importlib.import_module("pyincore_viz.analysis." + module_name.lower())
+            print("Loaded pyincore_viz.analysis." + module_name.lower() + " module successfully.")
 
             # load class
             analysis_class = getattr(module, module_name)
