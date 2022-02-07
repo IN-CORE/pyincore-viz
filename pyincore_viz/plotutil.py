@@ -4,15 +4,10 @@
 # terms of the Mozilla Public License v2.0 which accompanies this distribution,
 # and is available at https://www.mozilla.org/en-US/MPL/2.0/
 
-import math
-
 import geopandas as gpd
 import matplotlib.pyplot as plt
 import numpy
 import pandas as pd
-# TODO need to add that to pyincore's __init__.py
-from pyincore.utils.expressioneval import Parser
-from scipy.stats import lognorm, norm
 
 
 class PlotUtil:
@@ -40,17 +35,18 @@ class PlotUtil:
             return PlotUtil.sample_normal_cdf(alpha, beta, 200)
 
     @staticmethod
-    def get_refactored_x_y(curve, demand_type_name, fragility_curve_parameters, custom_fragility_curve_parameters,
-                           start=0.001, end=10, sample_size: int = 200):
+    def get_x_y(curve, demand_type_name, curve_parameters, custom_curve_parameters,
+                start=0.001, end=10, sample_size: int = 200):
         """Get arrays of x and y values for plotting refactored fragility curves.
 
         Args:
             curve (obj): An individual fragility curve object.
-            fragility_curve_parameters (list): Default fragility curve parameters.
+            demand_type_name (str): Demand type name
+            curve_parameters (list): Default fragility curve parameters.
             start (float): A start value.
             end (float): An end value.
             sample_size (int): Number of points.
-            **custom_fragility_curve_parameters: Keyword arguments.
+            **custom_curve_parameters: Keyword arguments.
 
         Returns:
             ndarray: X sampling values.
@@ -60,22 +56,22 @@ class PlotUtil:
         x = numpy.linspace(start, end, sample_size)
         y = []
         for i in x:
-            y.append(curve.calculate_limit_state_probability(hazard_values={demand_type_name: i},
-                                                             fragility_curve_parameters=fragility_curve_parameters,
-                                                             **custom_fragility_curve_parameters))  # kwargs
+            y.append(curve.solve_curve_expression(hazard_values={demand_type_name: i},
+                                                  curve_parameters=curve_parameters, **custom_curve_parameters))
         y = numpy.asarray(y)
         return x, y
 
     @staticmethod
-    def get_refactored_x_y_z(curve, demand_type_names, fragility_curve_parameters,
-                             custom_fragility_curve_parameters, start=1, end=50, sample_size: int = 0.5):
+
+    def get_x_y_z(curve, demand_type_names, curve_parameters, custom_curve_parameters, start=1, end=50,
+                  sample_size: int = 0.5):
         """Get arrays of x, y and z values for plotting refactored fragility plots.
 
         Args:
             curve (obj): An individual fragility curve object.
             demand_type_names (dict): Valid demand type names.
-            fragility_curve_parameters (list): Default fragility curve parameters.
-            **custom_fragility_curve_parameters: Keyword arguments.
+            curve_parameters (list): Default fragility curve parameters.
+            **custom_curve_parameters: Keyword arguments.
             start (float): A start value.
             end (float): An end value.
             sample_size (int): Number of points.
@@ -89,10 +85,10 @@ class PlotUtil:
         x = y = numpy.arange(start, end, sample_size)
 
         def _f(curve, x, y):
-            return curve.calculate_limit_state_probability(hazard_values={demand_type_names[0]: x,
-                                                                          demand_type_names[1]: y},
-                                                           fragility_curve_parameters=fragility_curve_parameters,
-                                                           **custom_fragility_curve_parameters)  # kwargs
+            return curve.solve_curve_expression(hazard_values={demand_type_names[0]: x,
+                                                demand_type_names[1]: y},
+                                                curve_parameters=curve_parameters,
+                                                **custom_curve_parameters)  # kwargs
 
         X, Y = numpy.meshgrid(x, y)
         z = numpy.array([_f(curve, x, y) for x, y in zip(numpy.ravel(X), numpy.ravel(Y))])
@@ -103,7 +99,7 @@ class PlotUtil:
 
     @staticmethod
     def get_fragility_plot(fragility_set, title=None, dimension=2, limit_state="LS_0",
-                           custom_fragility_curve_parameters={}, **kwargs):
+                           custom_curve_parameters={}, **kwargs):
         """Get fragility plot.
 
         Args:
@@ -112,7 +108,7 @@ class PlotUtil:
             title (str): A title of the plot.
             dimension (int): 2d versus 3d.
             limit_state (str): A limit state name, such as LS_0, or insignific, etc.
-            custom_fragility_curve_parameters (dict): Custom fragility curve parameters.
+            custom_curve_parameters (dict): Custom fragility curve parameters.
                 If you wish to overwrite default curve parameters (expression field).
             **kwargs: Keyword arguments.
 
@@ -126,25 +122,21 @@ class PlotUtil:
             title = fragility_set.description
 
         if dimension == 2:
-            return PlotUtil.get_fragility_plot_2d_refactored(fragility_set, title,
-                                                             custom_fragility_curve_parameters,
-                                                             **kwargs)
+            return PlotUtil.get_fragility_plot_2d(fragility_set, title, custom_curve_parameters, **kwargs)
         if dimension == 3:
-            return PlotUtil.get_fragility_plot_3d_refactored(fragility_set, title, limit_state,
-                                                             custom_fragility_curve_parameters,
-                                                             **kwargs)
+            return PlotUtil.get_fragility_plot_3d(fragility_set, title, limit_state, custom_curve_parameters, **kwargs)
         else:
             raise ValueError("We do not support " + str(dimension) + "D fragility plotting")
 
     @staticmethod
-    def get_fragility_plot_2d_refactored(fragility_set, title=None, custom_fragility_curve_parameters={}, **kwargs):
+    def get_fragility_plot_2d(fragility_set, title=None, custom_curve_parameters={}, **kwargs):
         """Get 2d refactored fragility plot.
 
         Args:
             fragility_set (obj): A JSON like description of fragility assigned to the
                 infrastructure inventory.
             title (str): A title of the plot.
-            custom_fragility_curve_parameters (dict): Custom fragility curve parameters.
+            custom_curve_parameters (dict): Custom fragility curve parameters.
                 If you wish to overwrite default curve parameters (expression field).
             **kwargs: Keyword arguments.
 
@@ -154,7 +146,7 @@ class PlotUtil:
 
         """
         demand_type_names = []
-        for parameter in fragility_set.fragility_curve_parameters:
+        for parameter in fragility_set.curve_parameters:
             # for hazard
             if parameter.get("name") in fragility_set.demand_types:
                 demand_type_names.append(parameter["name"])
@@ -163,17 +155,15 @@ class PlotUtil:
             # check the rest of the parameters see if default or custom value has passed in
             else:
                 if parameter.get("expression") is None and parameter.get("name") not in \
-                        custom_fragility_curve_parameters:
+                        custom_curve_parameters:
                     raise ValueError("The required parameter: " + parameter.get("name")
                                      + " does not have a default or  custom value. Please check "
                                        "your fragility curve setting. Alternatively, you can include it in the "
-                                       "custom_fragility_curve_parameters variable and passed it in this method. ")
+                                       "custom_curve_parameters variable and passed it in this method. ")
 
         for curve in fragility_set.fragility_curves:
-            x, y = PlotUtil.get_refactored_x_y(curve, demand_type_names[0],
-                                               fragility_set.fragility_curve_parameters,
-                                               custom_fragility_curve_parameters,
-                                               **kwargs)
+            x, y = PlotUtil.get_x_y(curve, demand_type_names[0], fragility_set.curve_parameters,
+                                    custom_curve_parameters, **kwargs)
             plt.plot(x, y, label=curve.return_type["description"])
 
         plt.xlabel(fragility_set.demand_types[0] + " (" + fragility_set.demand_units[0] + ")")
@@ -183,8 +173,7 @@ class PlotUtil:
         return plt
 
     @staticmethod
-    def get_fragility_plot_3d_refactored(fragility_set, title=None, limit_state="LS_0",
-                                         custom_fragility_curve_parameters={}, **kwargs):
+    def get_fragility_plot_3d(fragility_set, title=None, limit_state="LS_0", custom_curve_parameters={}, **kwargs):
         """Get 3d refactored fragility plot.
 
         Args:
@@ -192,7 +181,7 @@ class PlotUtil:
                 infrastructure inventory.
             title (str): A title of the plot.
             limit_state (str): A limit state name, such as LS_0, or insignific, etc.
-            custom_fragility_curve_parameters (dict): Custom fragility curve parameters.
+            custom_curve_parameters (dict): Custom fragility curve parameters.
                 If you wish to overwrite default curve parameters (expression field).
             **kwargs: Keyword arguments.
 
@@ -202,7 +191,7 @@ class PlotUtil:
 
         """
         demand_type_names = []
-        for parameter in fragility_set.fragility_curve_parameters:
+        for parameter in fragility_set.curve_parameters:
             # for hazard
             if parameter.get("name") in fragility_set.demand_types:
                 demand_type_names.append(parameter["name"])
@@ -211,11 +200,11 @@ class PlotUtil:
             # check the rest of the parameters see if default or custom value has passed in
             else:
                 if parameter.get("expression") is None and parameter.get("name") not in \
-                        custom_fragility_curve_parameters:
+                        custom_curve_parameters:
                     raise ValueError("The required parameter: " + parameter.get("name")
                                      + " does not have a default or  custom value. Please check "
                                        "your fragility curve setting. Alternatively, you can include it in the "
-                                       "custom_fragility_curve_parameters variable and passed it in this method. ")
+                                       "custom_curve_parameters variable and passed it in this method. ")
 
         if len(demand_type_names) < 2:
             raise ValueError("This fragility curve set does not support 3D plot, please check if the number of demand "
@@ -226,11 +215,8 @@ class PlotUtil:
         for curve in fragility_set.fragility_curves:
             if limit_state == curve.return_type["description"]:
                 matched = True
-                x, y, z = PlotUtil.get_refactored_x_y_z(curve,
-                                                        demand_type_names[:2],
-                                                        fragility_set.fragility_curve_parameters,
-                                                        custom_fragility_curve_parameters,
-                                                        **kwargs)
+                x, y, z = PlotUtil.get_x_y_z(curve, demand_type_names[:2], fragility_set.curve_parameters,
+                                             custom_curve_parameters, **kwargs)
                 ax = plt.axes(projection='3d')
                 ax.plot_surface(x, y, z, rstride=1, cstride=1, cmap='viridis', edgecolor='none')
                 ax.set_xlabel(fragility_set.demand_types[0] + " (" + fragility_set.demand_units[0] + ")")

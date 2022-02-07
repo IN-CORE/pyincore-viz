@@ -390,7 +390,7 @@ class GeoUtil:
                 # and the further layer_check related operation should be stopped
                 layer_check = False
             except Exception:
-                raise("Geoserver failed to set WMS service.")
+                raise Exception("Geoserver failed to set WMS service.")
 
         for dataset in datasets:
             wms_layer_name = 'incore:' + dataset.id
@@ -1095,6 +1095,78 @@ class GeoUtil:
         return heatmap
 
     @staticmethod
+    def plot_multiple_vector_dataset(dataset_list, zoom_level=10):
+        geodata_dic_list = []
+        title_list = []
+        bbox = None
+        # check if the dataset is geodataset and convert dataset to geodataframe
+        for dataset in dataset_list:
+            try:
+                tmp_gpd = gpd.read_file(dataset.local_file_path)
+                tmp_min_x = tmp_gpd.bounds.minx.mean()
+                tmp_min_y = tmp_gpd.bounds.miny.mean()
+                tmp_max_x = tmp_gpd.bounds.maxx.mean()
+                tmp_max_y = tmp_gpd.bounds.maxy.mean()
+
+                if bbox is None:
+                    bbox = [tmp_min_x, tmp_min_y, tmp_max_x, tmp_max_y]
+                tmp_bbox = [tmp_min_x, tmp_min_y, tmp_max_x, tmp_max_y]
+
+                if bbox[0] >= tmp_bbox[0]:
+                    bbox[0] = tmp_bbox[0]
+                if bbox[1] >= tmp_bbox[1]:
+                    bbox[1] = tmp_bbox[1]
+                if bbox[2] <= tmp_bbox[2]:
+                    bbox[2] = tmp_bbox[2]
+                if bbox[3] <= tmp_bbox[3]:
+                    bbox[3] = tmp_bbox[3]
+
+                # skim geodataframe only for needed fields
+                tmp_fld_list = ['geometry']
+                tmp_gpd_skimmed = tmp_gpd[tmp_fld_list]
+                tmp_geo_data_dic = json.loads(tmp_gpd_skimmed.to_json())
+                geodata_dic_list.append(tmp_geo_data_dic)
+                title_list.append(dataset.metadata["title"])
+
+            except Exception:
+                raise ValueError("Given dataset might not be a geodataset or has an error in the attribute")
+
+        # calculate center point
+        center_x = ((bbox[2] - bbox[0]) / 2) + bbox[0]
+        center_y = ((bbox[3] - bbox[1]) / 2) + bbox[1]
+
+        out_map = ipylft.Map(center=(center_y, center_x), zoom=zoom_level,
+                             crs=projections.EPSG3857, scroll_wheel_zoom=True)
+
+        for geodata_dic, title in zip(geodata_dic_list, title_list):
+            # add data to  map
+            tmp_layer = ipylft.GeoJSON(
+                data=geodata_dic,
+                style={
+                    'opacity': 1, 'fillOpacity': 0.8, 'weight': 1
+                },
+                hover_style={
+                    'color': 'white', 'dashArray': '0', 'fillOpacity': 0.5
+                },
+                style_callback=GeoUtil.random_color,
+                name=title
+            )
+
+            out_map.add_layer(tmp_layer)
+
+        out_map.add_control(ipylft.LayersControl(position='topright'))
+        out_map.add_control(ipylft.FullScreenControl(position='topright'))
+
+        return out_map
+
+    @staticmethod
+    def random_color(feature):
+        return {
+            'color': 'black',
+            'fillColor': random.choice(['red', 'yellow', 'purple', 'green', 'orange', 'blue', 'magenta']),
+        }
+
+    @staticmethod
     def plot_choropleth_multiple_fields_from_single_dataset(dataset, field_list, zoom_level=10):
         in_gpd = None
         center_x = None
@@ -1105,8 +1177,9 @@ class GeoUtil:
             in_gpd = gpd.read_file(dataset.local_file_path)
             center_x = in_gpd.bounds.minx.mean()
             center_y = in_gpd.bounds.miny.mean()
+            title = dataset.metadata["title"]
         except Exception:
-            raise("Given dataset is not a geodataset")
+            raise ValueError("Given dataset might not be a geodataset or has an error in the attribute")
 
         # skim geodataframe only for needed fields
         field_list.append('geometry')
@@ -1140,17 +1213,19 @@ class GeoUtil:
     def plot_choropleth_multiple_dataset(dataset_list, field_list, zoom_level=10):
         geodata_dic_list = []
         choro_data_list = []
+        title_list = []
         bbox = None
 
         # check the size of dataset list and field list
-        if len(dataset_list) != len(dataset_list):
+        if len(dataset_list) != len(field_list):
             raise Exception("The dataset list size and field list size doesn't match")
 
         # check if the dataset is geodataset and convert dataset to geodataframe
         for dataset, fld in zip(dataset_list, field_list):
             try:
                 tmp_gpd = gpd.read_file(dataset.local_file_path)
-                tmp_fld_list = []
+                # the title should be unique otherwise ipyleaflet will not understand correctly
+                tmp_title = dataset.metadata["title"] + ": " + str(fld)
                 tmp_min_x = tmp_gpd.bounds.minx.mean()
                 tmp_min_y = tmp_gpd.bounds.miny.mean()
                 tmp_max_x = tmp_gpd.bounds.maxx.mean()
@@ -1176,9 +1251,10 @@ class GeoUtil:
                 tmp_choro_data = GeoUtil.create_choro_data_from_pd(tmp_gpd_skimmed, fld)
                 geodata_dic_list.append(tmp_geo_data_dic)
                 choro_data_list.append(tmp_choro_data)
+                title_list.append(tmp_title)
 
             except Exception:
-                raise("Not a geodataset")
+                raise Exception("Not a geodataset")
 
         # calculate center point
         center_x = ((bbox[2] - bbox[0]) / 2) + bbox[0]
@@ -1187,7 +1263,7 @@ class GeoUtil:
         out_map = ipylft.Map(center=(center_y, center_x), zoom=zoom_level,
                              crs=projections.EPSG3857, scroll_wheel_zoom=True)
 
-        for geodata_dic, choro_data, fld in zip(geodata_dic_list, choro_data_list, field_list):
+        for geodata_dic, choro_data, title in zip(geodata_dic_list, choro_data_list, title_list):
             # add choropleth data to  map
             tmp_layer = ipylft.Choropleth(
                 geo_data=geodata_dic,
@@ -1195,7 +1271,7 @@ class GeoUtil:
                 colormap=linear.YlOrRd_04,
                 border_color='black',
                 style={'fillOpacity': 0.8},
-                name=fld
+                name=title
             )
 
             out_map.add_layer(tmp_layer)

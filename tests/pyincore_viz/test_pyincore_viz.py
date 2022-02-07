@@ -133,23 +133,22 @@ def test_plot_fragility(client):
     # new format 2d
     fragility_set = FragilityCurveSet(FragilityService(client).get_dfr3_set("602f31f381bd2c09ad8efcb4"))
     # comment on and off to compare curves
-    # plt = plot.get_fragility_plot_2d_refactored(fragility_set, title="refactored fragility 2d curve")
-    plt = plot.get_fragility_plot_2d_refactored(fragility_set, title="refactored fragility 2d curve",
-                                                custom_fragility_curve_parameters={"ffe_elev": 3})
+    # plt = plot.get_fragility_plot_2d(fragility_set, title="refactored fragility 2d curve")
+    plt = plot.get_fragility_plot_2d(fragility_set, title="refactored fragility 2d curve",
+                                     custom_curve_parameters={"ffe_elev": 3})
     # you can now also plot refactored fragility curve using the main plot method
     # plt = plot.get_fragility_plot(fragility_set, title="refactored fragility 2d curve",
-    #                               custom_fragility_curve_parameters={"ffe_elev": 3})
+    #                               custom_curve_parameters={"ffe_elev": 3})
 
     plt.savefig('refactored_2d.png')
     plt.clf()
 
     # new format 3d
     fragility_set = FragilityCurveSet(FragilityService(client).get_dfr3_set("5f6ccf67de7b566bb71b202d"))
-    plt = plot.get_fragility_plot_3d_refactored(fragility_set, title="refactored fragility 3d curve",
-                                                limit_state="LS_0")
+    plt = plot.get_fragility_plot_3d(fragility_set, title="refactored fragility 3d curve", limit_state="LS_0")
     # you can now also plot refactored fragility curve using the main plot method
     # plt = plot.get_fragility_plot(fragility_set, title="refactored fragility 3d curve", limit_state="LS_0",
-    #                               dimension=3, custom_fragility_curve_parameters={"ffe_elev": 3})
+    #                               dimension=3, custom_curve_parameters={"ffe_elev": 3})
     plt.savefig('refactored_3d.png')
     plt.clf()
 
@@ -247,5 +246,16 @@ def test_choropleth_multiple_dataset(client):
     dataset1 = Dataset.from_data_service(social_vulnerability_census_block_group, DataService(client))
     dataset2 = Dataset.from_data_service(dislocation_census_block_group, DataService(client))
     viz.plot_choropleth_multiple_dataset([dataset1, dataset2], ['tot_hh', 'p_16pyr'])
+
+    assert True
+
+
+def test_multiple_vector_visualization(client):
+    centerville_model_tornado = '60c917b498a93232884f367d'
+    centerville_epn_link = '5b1fdc2db1cf3e336d7cecc9'
+    tornado_metadata = HazardService(client).get_tornado_hazard_metadata(centerville_model_tornado)
+    dataset1 = Dataset.from_data_service(centerville_epn_link, DataService(client))
+    dataset2 = Dataset.from_data_service(tornado_metadata["datasetId"], DataService(client))
+    viz.plot_multiple_vector_dataset([dataset1, dataset2])
 
     assert True

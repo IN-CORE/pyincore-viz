@@ -5,6 +5,18 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## [1.5.0] - 2022-02-07
+### Added
+- Multiple vector dataset visualization. [#19](https://github.com/IN-CORE/pyincore-viz/issues/19)
+
+### Changed
+- Rename master branch to main. [#37](https://github.com/IN-CORE/pyincore-viz/issues/37)
+- Rename housing unit allocation to population result table and updated. [#42](https://github.com/IN-CORE/pyincore-viz/issues/42)
+- Make viz methods compatible with the DFR3 naming changes done on pyincore (v1.3.0) [#40](https://github.com/IN-CORE/pyincore-viz/issues/40)
+
+### Fixed
+- Auto build of documentation container. [#34](https://github.com/IN-CORE/pyincore-viz/issues/34)
+
 ## [1.4.1] - 2021-12-08
 ### Added
 - Add *mplcursors* and *palettable* libraries needed for Retrofit notebook example. [#29](https://github.com/IN-CORE/pyincore-viz/issues/29)
