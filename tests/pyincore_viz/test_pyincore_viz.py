@@ -256,6 +256,6 @@ def test_multiple_vector_visualization(client):
     tornado_metadata = HazardService(client).get_tornado_hazard_metadata(centerville_model_tornado)
     dataset1 = Dataset.from_data_service(centerville_epn_link, DataService(client))
     dataset2 = Dataset.from_data_service(tornado_metadata["datasetId"], DataService(client))
-    viz.plot_mulitple_vector_dataset([dataset1, dataset2])
+    viz.plot_multiple_vector_dataset([dataset1, dataset2])
 
     assert True
