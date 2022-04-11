@@ -6,7 +6,7 @@ package:
   version: {{ version }}
  
 source:
-  path: c:/workspace-incore2/pyincore-viz/
+  path: ../
 
   # This should be come from a URL. May be from the build server?
   #url: {{ name }}-{{ version }}.tar.gz
