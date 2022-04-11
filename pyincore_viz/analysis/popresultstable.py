@@ -147,9 +147,9 @@ class PopResultsTable:
         df['Population Dislocation'] = "No Data"
         df['Population Dislocation'].notes = "Identify Population Dislocation."
 
-        if (df['dislocated'] is False) & (df['guid'].notnull()):
+        if (!df['dislocated']) & (df['guid'].notnull()):
             df.loc['Population Dislocation'] = "0 Does not dislocate"
-        if (df['dislocated'] is True) & (df['guid'].notnull()):
+        if (df['dislocated']) & (df['guid'].notnull()):
             df.loc['Population Dislocation'] = "1 Dislocates"
         # Set Tenure Status to missing if structure is vacant - makes tables look nicer
         df.loc[(df['Population Dislocation'] == "No Data"), 'Population Dislocation'] = np.nan
