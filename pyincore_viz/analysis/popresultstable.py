@@ -240,7 +240,7 @@ class PopResultsTable:
         return df
 
     @staticmethod
-    def pop_results_table(df, **kwargs):
+    def pop_results_table(input_df, **kwargs):
         """Explore and visualize population data with a formatted table.
         Args:
             df (obj): Pandas DataFrame object.
@@ -261,6 +261,11 @@ class PopResultsTable:
         Returns:
             object: Styled Table Pandas DataFrame object.
         """
+
+        # Create copy of input dataframe
+        # Copy prevents original dataframe from being altered
+        df = input_df.copy()
+
         who = ""
         what = ""
         when = ""
@@ -301,13 +306,17 @@ class PopResultsTable:
             df = PopResultsTable.add_family_to_pop_df(df)
         if 'IndustryCode' in current_col_list:
             df = PopResultsTable.add_industrycode_df(df)
+        if 'hhinc' in current_col_list:
+            df = PopResultsTable.add_hhinc_df(df)
+        if 'poverty' in current_col_list:
+            df = PopResultsTable.add_poverty_df(df)
 
         if who == "Total Households":
             variable = 'huid'
             function = 'count'
             renamecol = {'Total': who, 'sum': ''}
             num_format = "{:,.0f}"
-        elif who == "Total Population by Householder":
+        elif who == "Total Population by Households":
             variable = 'numprec'
             function = np.sum
             renamecol = {'Total': who, 'sum': ''}
@@ -345,8 +354,8 @@ class PopResultsTable:
         # Add percent row column
         if row_percent != '':
             numerator = table[row_percent]
-            denomenator = table[who]
-            table['row_pct'] = numerator/denomenator * 100
+            denominator = table[who]
+            table['row_pct'] = numerator/denominator * 100
             table['Percent Row ' + '\n' + row_percent] = \
                 table.agg('{0[row_pct]:.1f}%'.format, axis=1)
             table = table.drop(columns=['row_pct'])
@@ -376,3 +385,40 @@ class PopResultsTable:
             .format(varformat)
 
         return table
+
+    @staticmethod
+    def add_hhinc_df(df):
+        """add Household Income Group information to Pop dataframe.
+        Args:
+            df (obj): Pandas DataFrame object.
+        Returns:
+            object: Pandas DataFrame object.
+        """
+        df['Household Income Group'] = "No Data"
+        df['Household Income Group'].notes = "Identify Household Income Groups Housing Unit Characteristics."
+        df.loc[(df['hhinc'] == 1), 'Household Income Group'] = "1 Less than $15,000"
+        df.loc[(df['hhinc'] == 2), 'Household Income Group'] = "2 $15,000 to $24,999"
+        df.loc[(df['hhinc'] == 3), 'Household Income Group'] = "3 $25,000 to $74,999"
+        df.loc[(df['hhinc'] == 4), 'Household Income Group'] = "4 $75,000 to $99,999"
+        df.loc[(df['hhinc'] == 5), 'Household Income Group'] = "5 $100,000 or more"
+        # Set variable to missing if no data- makes tables look nicer
+        df.loc[(df['Household Income Group'] == "No Data"),
+               'Household Income Group'] = np.nan
+        return df
+
+    @staticmethod
+    def add_poverty_df(df):
+        """add poverty status information to Pop dataframe.
+        Args:
+            df (obj): Pandas DataFrame object.
+        Returns:
+            object: Pandas DataFrame object.
+        """
+        df['Poverty Status'] = "No Data"
+        df['Poverty Status'].notes = "Identify Poverty Status Housing Unit Characteristics."
+        df.loc[(df['poverty'] == 0), 'Poverty Status'] = "0 At or above poverty level"
+        df.loc[(df['poverty'] == 1), 'Poverty Status'] = "1 Below poverty level"
+        # Set variable to missing if no data- makes tables look nicer
+        df.loc[(df['Poverty Status'] == "No Data"),
+               'Poverty Status'] = np.nan
+        return df
