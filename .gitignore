@@ -62,6 +62,9 @@ original/
 *.shp
 *.shx
 
+# notebook file
+*.ipynb
+
 # related to test file
 *test.py
 *test.ipynb
@@ -72,3 +75,6 @@ original/
 
 # examples
 *examples
+
+# json
+*.json

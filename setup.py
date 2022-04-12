@@ -8,7 +8,7 @@ from setuptools import setup, find_packages
 
 setup(
     name='pyincore-viz',
-    version='1.5.0',
+    version='1.5.1',
     packages=find_packages(where=".", exclude=["*.tests", "*.tests.*", "tests.*", "tests"]),
     include_package_data=True,
     package_data={

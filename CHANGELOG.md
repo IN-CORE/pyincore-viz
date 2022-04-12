@@ -5,7 +5,7 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
-## [Unreleased]
+## [1.5.1] - 2022-04-12
 ### Fixed
 - Boolean comparison in adding dislocation dataframe. [#52](https://github.com/IN-CORE/pyincore-viz/issues/52)
 
