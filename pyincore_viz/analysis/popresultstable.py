@@ -150,7 +150,7 @@ class PopResultsTable:
         df.loc[(df['dislocated'] == False) & (df['guid'].notnull()), 'Population Dislocation'] = "0 Does not dislocate"
         df.loc[(df['dislocated'] == True) & (df['guid'].notnull()), 'Population Dislocation'] = "1 Dislocates"
 
-        # Set dislocates to missing if structure no building data- makes tables look nicer
+        # Set dislocates to missing if no building data- makes tables look nicer
         df.loc[(df['Population Dislocation'] == "No Data"), 'Population Dislocation'] = np.nan
 
         return df
