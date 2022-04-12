@@ -1,12 +1,12 @@
 {% set name = "pyincore-viz" %}
-{% set version = "1.5.0" %}
+{% set version = "1.5.1" %}
 
 package:
   name: {{ name|lower }}
   version: {{ version }}
  
 source:
-  path: c:/workspace-incore2/pyincore-viz/
+  path: ../
 
   # This should be come from a URL. May be from the build server?
   #url: {{ name }}-{{ version }}.tar.gz
