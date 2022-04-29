@@ -5,7 +5,7 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
-## [Unrelease]
+## [Unreleased]
 ### Changed
 - Made pyincore-viz build with legacy naming for pypi publish. [#57](https://github.com/IN-CORE/pyincore-viz/issues/57)
 
