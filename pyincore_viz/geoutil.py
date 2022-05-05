@@ -18,6 +18,7 @@ import PIL
 import numpy as np
 import random
 import json
+import contextily as ctx
 
 from deprecated.sphinx import deprecated
 from matplotlib import cm
@@ -62,6 +63,37 @@ class GeoUtil:
                       categorical=category, legend=True)
         if basemap:
             ctx.add_basemap(ax, source=source)
+
+    @staticmethod
+    def overlay_gdf_with_raster_hazard(gdf, column, raster, category=False, basemap=True,
+                                       source=ctx.providers.OpenStreetMap.Mapnik):
+        """Overlay Geopandas DataFrame with raster dataset such as earthquake or flood.
+
+        Args:
+            gdf (obj): Geopandas DataFrame object.
+            column (obj): A column name of gdf to be plot.
+            hazard_id (str): A raster hazard dataset id to overlay, such as tif or png dataset
+            category (bool): Turn on/off category option.
+            basemap (bool): Turn on/off base map (e.g. openstreetmap).
+            source(obj): source of the Map to be used. examples, ctx.providers.OpenStreetMap.Mapnik (default),
+                ctx.providers.Stamen.Terrain, ctx.providers.CartoDB.Positron etc.
+
+        """
+        file_path = Path(raster.local_file_path).joinpath(raster.metadata['fileDescriptors'][0]['filename'])
+
+        # check if the extension is either tif or png
+        filename, file_extension = os.path.splitext(file_path)
+        if file_extension.lower() != '.png' \
+                and file_extension.lower() != '.tiff' and\
+                file_extension.lower() != '.tif':
+            exit("Error! Given data set is not tif or png. Please check the dataset")
+
+        with rasterio.open(file_path) as r:
+            eq_crs = r.crs
+
+        ax = gdf.plot(figsize=(10, 10), column=column, categorical=False, legend=True)
+        ctx.add_basemap(ax, crs=eq_crs, source=ctx.providers.OpenStreetMap.Mapnik,)
+        ctx.add_basemap(ax, crs=eq_crs, source=file_path, alpha=0.5)
 
     @staticmethod
     def join_datasets(geodataset, dataset):
