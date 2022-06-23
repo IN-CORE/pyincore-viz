@@ -63,7 +63,7 @@ class PlotUtil:
 
     @staticmethod
     def get_x_y_z(curve, demand_type_names, curve_parameters, custom_curve_parameters, start=1, end=50,
-                  sample_size: int = 0.5):
+                  sample_interval: int = 0.5):
         """Get arrays of x, y and z values for plotting refactored fragility plots.
 
         Args:
@@ -73,7 +73,7 @@ class PlotUtil:
             **custom_curve_parameters: Keyword arguments.
             start (float): A start value.
             end (float): An end value.
-            sample_size (int): Number of points.
+            sample_interval (float): Sample interval.
 
         Returns:
             ndarray: X sampling values.
@@ -81,7 +81,7 @@ class PlotUtil:
             ndarray: Z cumulative density values.
 
         """
-        x = y = numpy.arange(start, end, sample_size)
+        x = y = numpy.arange(start, end, sample_interval)
 
         def _f(curve, x, y):
             return curve.solve_curve_expression(hazard_values={demand_type_names[0]: x,
