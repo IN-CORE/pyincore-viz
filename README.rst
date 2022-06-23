@@ -1,15 +1,14 @@
 pyincore-viz
 ============
 
-**pyincore-viz** is a Python project that provides visualization and other utilities for use with **pyincore**
-The development is a part of NIST sponsored IN-CORE (Interdependent Networked Community Resilience Modeling
-Environment) initiative. 
+**pyincore-viz** is a component of IN-CORE that provides visualization and other utilities for use with **pyincore**.
+ 
 
 Mac specific notes
 ------------------
 
-- We use `matplotlib` library to create graphs. There is a Mac specific installation issue addressed at `here1 <https://stackoverflow.com/questions/4130355/python-matplotlib-framework-under-macosx>`_ and 
-  `here2 <https://stackoverflow.com/questions/21784641/installation-issue-with-matplotlib-python>`_. 
+- We use `matplotlib` library to create graphs. There is a Mac specific installation issue addressed at `here (1) <https://stackoverflow.com/questions/4130355/python-matplotlib-framework-under-macosx>`_ and 
+  `here (2) <https://stackoverflow.com/questions/21784641/installation-issue-with-matplotlib-python>`_. 
   In a nutshell, insert line: `backend : Agg` into `~/.matplotlib/matplotlibrc` file.
 
 Installation with conda
@@ -30,7 +29,7 @@ To install **pyincore-viz** package, run
    conda install -c in-core pyincore-viz
 
 
-To update **pyIncore**, run
+To update **pyIncore-viz**, run
 
 .. code-block:: console
 
@@ -47,7 +46,7 @@ Please use pip for installing pyincore-viz at your discretion.
 
 **Prerequisite**
 
-* GDAL C library must be installed to install pyincore. (for Ubuntu, **gdal-bin** and **libgdal-dev**)
+* GDAL C library must be installed to install pyincore-viz. (for Ubuntu, **gdal-bin** and **libgdal-dev**)
 
 To install **pyincore-viz** package, run
 
