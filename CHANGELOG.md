@@ -6,6 +6,9 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
+### Added
+- Raster hazard overlay in gdf map visualization. [#58](https://github.com/IN-CORE/pyincore-viz/issues/58)
+
 ### Changed
 - Made pyincore-viz build with legacy naming for pypi publish. [#57](https://github.com/IN-CORE/pyincore-viz/issues/57)
 

@@ -5,6 +5,7 @@
 # and is available at https://www.mozilla.org/en-US/MPL/2.0/
 import pytest
 import matplotlib
+import geopandas as gpd
 
 from pyincore import Dataset
 from pyincore import NetworkDataset
@@ -224,10 +225,19 @@ def test_seaside_bridges(client):
     assert True
 
 
-def test_seaside_roadways(client):
-    trns_brdg_dataset_id = "5ee7af50772cf80008577ae3"
-    trns_brdg_dataset = Dataset.from_data_service(trns_brdg_dataset_id, DataService(client))
-    viz.plot_map(trns_brdg_dataset, column=None, category=False, basemap=True)
+def test_overay_gdf_with_raster(client):
+    shelby_hospital_inv_id = "5a284f0bc7d30d13bc081a28"
+    shelby_census_tract = "5a284f4cc7d30d13bc0822d4"
+    memphis_water_pipeline = "5a284f28c7d30d13bc081d14"
+    memphis_eq = "5b902cb273c3371e1236b36b"
+
+    eq_dataset_id = HazardService(client).get_earthquake_hazard_metadata(memphis_eq)['rasterDataset']['datasetId']
+    raster_dataset = Dataset.from_data_service(eq_dataset_id, DataService(client))
+
+    dataset = Dataset.from_data_service(shelby_hospital_inv_id, DataService(client))
+    gdf = gpd.read_file(dataset.local_file_path)
+
+    map = viz.overlay_gdf_with_raster_hazard(gdf, "struct_typ", raster_dataset)
 
     assert True
 
