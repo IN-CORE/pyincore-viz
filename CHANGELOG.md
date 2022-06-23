@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 ### Added
+- Household income and poverty visualization to pop result table. [#55](https://github.com/IN-CORE/pyincore-viz/issues/55)
 - Raster hazard overlay in gdf map visualization. [#58](https://github.com/IN-CORE/pyincore-viz/issues/58)
 
 ### Changed
