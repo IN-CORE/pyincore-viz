@@ -13,7 +13,7 @@ with open("README.rst", encoding="utf-8") as f:
 
 setup(
     name='pyincore-viz',
-    version='1.5.1',
+    version='1.5.2',
     packages=find_packages(where=".", exclude=["*.tests", "*.tests.*", "tests.*", "tests"]),
     include_package_data=True,
     package_data={
