@@ -1,6 +1,7 @@
 branca
 contextily
 deprecated
+gdal
 geopandas
 ipyleaflet
 ipywidgets
@@ -8,7 +9,6 @@ lxml
 matplotlib
 networkx
 numpy
-osgeo
 owslib
 pandas
 pillow

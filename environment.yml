@@ -33,6 +33,7 @@ dependencies:
   - fastjsonschema==2.15.3
   - fiona==1.8.21
   - fonttools==4.33.3
+  - gdal==3.5.0.3
   - geographiclib==1.52
   - geopandas==0.11.0
   - geopy==2.2.0
@@ -65,7 +66,6 @@ dependencies:
   - nest-asyncio==1.5.5
   - networkx==2.8.4
   - notebook==6.4.12
-  - osgeo==0.0.1
   - owslib==0.26.0
   - packaging==21.3
   - pandas==1.4.3
