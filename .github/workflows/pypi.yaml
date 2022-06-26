@@ -43,7 +43,7 @@ jobs:
 
       - name: Install dependencies
         run: |
-          apt-get install -y python3-gdal
+          sudo apt-get install -y python3-gdal
           python -m pip install --upgrade pip setuptools wheel
 
       - name: Install dependencies
