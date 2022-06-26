@@ -55,10 +55,10 @@ setup(
     },
 
     install_requires=[
+        'gdal',
         'branca==0.5.0',
         'contextily==1.2.0',
         'deprecated==1.2.13',
-        'gdal==3.5.0.3',
         'geopandas==0.11.0',
         'ipyleaflet==0.16.0',
         'ipywidgets==7.7.1',

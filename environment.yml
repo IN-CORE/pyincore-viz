@@ -5,6 +5,7 @@ channels:
 dependencies:
   - ipopt>=3.11
   - numpy>=1.16
+  - gdal
   - affine==2.3.1
   - appnope==0.1.3
   - argon2-cffi==21.3.0
@@ -33,7 +34,6 @@ dependencies:
   - fastjsonschema==2.15.3
   - fiona==1.8.21
   - fonttools==4.33.3
-  - gdal==3.5.0.3
   - geographiclib==1.52
   - geopandas==0.11.0
   - geopy==2.2.0

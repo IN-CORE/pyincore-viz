@@ -25,7 +25,7 @@ rm -f requirements.tmp
 for x in $IMPORTS; do
   python3 -c "import $x" 2>&1 | \
     awk '/ModuleNotFoundError/ { print $5 }' | \
-    sed -e 's/yaml/pyyaml/' -e 's/jose/python-jose/' -e 's/_pytest/pytest/' -e 's/PIL/pillow/' -e 's/osgeo/gdal/' -e "s/'//g" >> requirements.tmp
+    sed -e 's/yaml/pyyaml/' -e 's/jose/python-jose/' -e 's/_pytest/pytest/' -e 's/PIL/pillow/' -e 's/osgeo//' -e "s/'//g" >> requirements.tmp
 done
 sort -u requirements.tmp > requirements.pyincore_viz
 
@@ -42,7 +42,7 @@ rm -f requirements.tmp
 for x in $IMPORTS; do
     MISSING=$(python3 -c "import $x" 2>&1 | \
       awk '/ModuleNotFoundError/ { print $5 }' | \
-      sed -e 's/yaml/pyyaml/' -e 's/jose/python-jose/' -e 's/_pytest/pytest/' -e 's/PIL/pillow/' -e 's/osgeo/gdal/' -e "s/'//g")
+      sed -e 's/yaml/pyyaml/' -e 's/jose/python-jose/' -e 's/_pytest/pytest/' -e 's/PIL/pillow/' -e 's/osgeo//' -e "s/'//g")
     if ! grep "${MISSING}" requirements.pyincore_viz &>/dev/null ; then
       echo ${MISSING} >> requirements.tmp
     fi
@@ -67,6 +67,7 @@ channels:
 dependencies:
   - ipopt>=3.11
   - numpy>=1.16
+  - gdal
 EOF
 cat requirements.ver | egrep -v '^(numpy|ipopt)==' | sed 's/^/  - /' >> environment.yml
 
