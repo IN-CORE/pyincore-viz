@@ -5,15 +5,13 @@
 # and is available at https://www.mozilla.org/en-US/MPL/2.0/
 
 from setuptools import setup, find_packages
-import pkg_resources
-pkg_resources.extern.packaging.version.Version = pkg_resources.SetuptoolsLegacyVersion
 
 with open("README.rst", encoding="utf-8") as f:
     readme = f.read()
 
 setup(
     name='pyincore-viz',
-    version='1.5.2',
+    version='1.6.0',
     packages=find_packages(where=".", exclude=["*.tests", "*.tests.*", "tests.*", "tests"]),
     include_package_data=True,
     package_data={
