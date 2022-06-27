@@ -54,28 +54,28 @@ setup(
 
     install_requires=[
         'gdal',
-        'branca==0.5.0',
-        'contextily==1.2.0',
-        'deprecated==1.2.13',
-        'geopandas==0.11.0',
-        'ipyleaflet==0.16.0',
-        'ipywidgets==7.7.1',
-        'lxml==4.9.0',
-        'matplotlib==3.5.2',
-        'networkx==2.8.4',
-        'numpy==1.23.0',
-        'owslib==0.26.0',
-        'pandas==1.4.3',
-        'pillow==9.1.1',
-        'pyincore==1.4.2rc5',
-        'rasterio==1.2.10'
+        'branca>=0.3.0',
+        'contextily>=1.0.0',
+        'deprecated',
+        'geopandas>=0.6.1',
+        'ipyleaflet>=0.13.4,<0.13.7',
+        'ipywidgets>=7.6.0,<8',
+        'lxml>=4.6.3',
+        'matplotlib>=2.1.0',
+        'networkx>=2.2',
+        'numpy>=1.16.1',
+        'owslib>=0.17.1',
+        'pandas>=0.24.1',
+        'pillow',
+        'pyincore>=1.0.0',
+        'rasterio>=1.1.3'
     ],
 
     extras_require={
         'test': [
-            'pycodestyle==2.8.0',
-            'pytest==7.1.2',
-            'python-jose==3.3.0',
+            'pycodestyle>=2.6.0',
+            'pytest>=3.9.0',
+            'python-jose>=3.0',
         ]
     },
 
