@@ -53,7 +53,6 @@ setup(
     },
 
     install_requires=[
-        'gdal',
         'branca>=0.3.0',
         'contextily>=1.0.0',
         'deprecated',

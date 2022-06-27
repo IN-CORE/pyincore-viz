@@ -45,17 +45,13 @@ for x in ${MODULE} tests notebooks; do
       sed -e 's/yaml/pyyaml/' -e 's/jose/python-jose/' -e 's/_pytest/pytest/' -e 's/PIL/pillow/' -e 's/osgeo/gdal/' -e "s/'//g")
     if [ "$MISSING" == "gdal" ]; then
       echo "'$MISSING' needs to be installed"
-    elif ! grep "${MISSING}" requirements.in &>/dev/null ; then
+    elif ! grep "${MISSING}" requirements.imports &>/dev/null ; then
       echo ${MISSING} >> requirements.tmp
     fi
   done
   sort -u requirements.tmp > requirements.${x}
   cat requirements.${x} >> requirements.imports
 done
-
-# sort requirments.in
-grep -v '^$' requirements.imports > requirements.tmp
-sort requirements.tmp > requirements.imports
 
 # find latest version of all packages needed to install
 rm -f requirements.in
@@ -96,7 +92,8 @@ cat << EOF > requirements.txt
 EOF
 
 # all dependencies found
-for p in $(cat requirements.imports ); do
+for p in $(cat requirements.imports | sort -u ); do
+  if [ "$p" == "" ]; then continue; fi
   PACKAGE="$p"
   LATEST=$(grep "^${PACKAGE}" 2>/dev/null requirements.ver | sed "s/^${PACKAGE}//")
   VERSION=$(grep "^${PACKAGE}" 2>/dev/null requirements.min | sed -e "s/^${PACKAGE}//")
