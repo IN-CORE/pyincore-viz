@@ -53,7 +53,7 @@ requirements:
 test:
   # Python imports
   imports:
-    - ipyleaflet>=0.13.4,<0.13.7
+    - pyincore-viz
    
   requires:
     # Put any additional test requirements here.  For example
