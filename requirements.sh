@@ -122,7 +122,7 @@ for p in $(cat requirements.imports | sort -u ); do
 
   echo "  - ${p}${VERSION}" >> environment.yml
   echo "${p}${VERSION}" >> requirements.txt
-  sed -i~ "s/    - ${p}.*/    - ${p}${VERSION}/" recipes/meta.yaml
+  sed -i~ -e "s/    - ${p}$/    - ${p}${VERSION}/" -e "s/    - ${p}>.*/    - ${p}${VERSION}/" recipes/meta.yaml
   sed -i~ "s/^\(  *\)'$p.*'/\1'${p}${VERSION}'/" setup.py
 done
 
