@@ -3,15 +3,14 @@
 # ----------------------------------------------------------------------
 FROM mambaorg/micromamba AS builder
 
-user root
+USER root
 
 # install packages
 WORKDIR /src
-COPY requirements.txt .
+COPY environment.yml ./
 ENV PATH "$MAMBA_ROOT_PREFIX/bin:$PATH"
 RUN micromamba install -y -n base -c conda-forge -c in-core \
-    sphinx sphinx_rtd_theme \
-    -f requirements.txt
+    sphinx sphinx_rtd_theme -f environment.yml
 
 # copy code and generate documentation
 COPY . ./

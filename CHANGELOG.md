@@ -5,6 +5,15 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## [1.6.0] - 2022-06-29
+### Added
+- Household income and poverty visualization to pop result table. [#55](https://github.com/IN-CORE/pyincore-viz/issues/55)
+- Raster hazard overlay in gdf map visualization. [#58](https://github.com/IN-CORE/pyincore-viz/issues/58)
+
+### Changed
+- Made pyincore-viz build with legacy naming for pypi publish. [#57](https://github.com/IN-CORE/pyincore-viz/issues/57)
+- Revised README for pypi publication. [#63](https://github.com/IN-CORE/pyincore-viz/issues/63)
+
 ## [1.5.1] - 2022-04-12
 ### Fixed
 - Boolean comparison in adding dislocation dataframe. [#52](https://github.com/IN-CORE/pyincore-viz/issues/52)
