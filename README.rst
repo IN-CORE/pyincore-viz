@@ -66,4 +66,3 @@ To build the container with the documentation you can use:
 
 
 Then check the documentation at `http://localhost:8000/doc/pyincore_viz/ <http://localhost:8000/doc/pyincore_viz/>`_.
-
