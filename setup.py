@@ -13,7 +13,7 @@ with open("README.rst", encoding="utf-8") as f:
     readme = f.read()
 
 setup(
-    name='pyincore-viz',
+    name='pyincore_viz',
     version=version,
     description='IN-CORE visualization python package',
     long_description=readme,

@@ -1,5 +1,5 @@
 {% set name = "pyincore-viz" %}
-{% set version = "1.6.0" %}
+{% set version = "1.6.0.rc.2" %}
 
 package:
   name: {{ name|lower }}
@@ -53,7 +53,7 @@ requirements:
 test:
   # Python imports
   imports:
-    - pyincore-viz
+    - pyincore_viz
    
   requires:
     # Put any additional test requirements here.  For example
