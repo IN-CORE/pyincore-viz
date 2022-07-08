@@ -521,11 +521,11 @@ class GeoUtil:
 
         """
         # get node file name path
-        link_path = network_dataset.link.file_path
+        link_path = network_dataset.links.local_file_path
         link_file_name = os.path.basename(link_path)
 
         # get node file name path
-        node_path = network_dataset.node.file_path
+        node_path = network_dataset.nodes.local_file_path
         node_file_name = os.path.basename(node_path)
 
         # read file using geopandas
