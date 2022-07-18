@@ -7,7 +7,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 ### Changed
-- Gdf map visualization accepts both dataset and gdf. [#55](https://github.com/IN-CORE/pyincore-viz/issues/55)
+- Gdf map visualization accepts both dataset and gdf. [#72](https://github.com/IN-CORE/pyincore-viz/issues/72)
 ## [1.6.0] - 2022-06-29
 ### Added
 - Household income and poverty visualization to pop result table. [#55](https://github.com/IN-CORE/pyincore-viz/issues/55)
