@@ -373,7 +373,7 @@ class GeoUtil:
 
         for i, dataset in enumerate(datasets):
             if isinstance(dataset, Dataset):
-                gdf = gpd.read_file(dataset.local_file_path)
+                gdf = dataset.get_dataframe_from_shapefile()
                 geo_data = ipylft.GeoData(
                     geo_dataframe=gdf, name=dataset.metadata['title'])
             else:
