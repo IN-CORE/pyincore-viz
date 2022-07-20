@@ -371,11 +371,15 @@ class GeoUtil:
         # (min_lat, min_lon, max_lat, max_lon)
         bbox_all = [9999, 9999, -9999, -9999]
 
-        for dataset in datasets:
-            # maybe this part should be moved to Dataset Class
-            gdf = gpd.read_file(dataset.local_file_path)
-            geo_data = ipylft.GeoData(
-                geo_dataframe=gdf, name=dataset.metadata['title'])
+        for i, dataset in enumerate(datasets):
+            if isinstance(dataset, Dataset):
+                gdf = dataset.get_dataframe_from_shapefile()
+                geo_data = ipylft.GeoData(
+                    geo_dataframe=gdf, name=dataset.metadata['title'])
+            else:
+                gdf = dataset
+                geo_data = ipylft.GeoData(
+                    geo_dataframe=gdf, name="GeoDataFrame_" + str(i))
             geo_data_list.append(geo_data)
 
             bbox = gdf.total_bounds
