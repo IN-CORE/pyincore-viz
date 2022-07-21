@@ -56,7 +56,7 @@ jobs:
           python-version: 3.8
           use-mamba: true
           mamba-version: "*"
-          channels: conda-forge
+          channels: conda-forge,in-core
           use-only-tar-bz2: true
           conda-build-version: "*"
 
