@@ -31,9 +31,9 @@ project = 'pyIncore-viz'
 author = 'Yong Wook Kim'
 
 # The short X.Y version
-version = '1.6'
+version = '1.7'
 # The full version, including alpha/beta/rc tags
-release = '1.6.0'
+release = '1.7.0'
 
 # -- General configuration ---------------------------------------------------
 
