@@ -5,7 +5,7 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
-## [Unreleased]
+## [1.7.0] - 2022-07-27
 ### Changed
 - Gdf map visualization accepts both dataset and gdf. [#72](https://github.com/IN-CORE/pyincore-viz/issues/72)
 - Updated network visualization. [#68](https://github.com/IN-CORE/pyincore-viz/issues/68)
