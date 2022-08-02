@@ -958,7 +958,7 @@ class GeoUtil:
                 obj: An ipyleaflet map.
 
         """
-        map = ipylft.Map(basemap=ipylft.basemaps.Stamen.Toner, zoom=4,
+        map = ipylft.Map(basemap=ipylft.basemaps.Stamen.Toner, zoom=10,
                          crs=projections.EPSG3857, scroll_wheel_zoom=True)
 
         if bbox is not None:
