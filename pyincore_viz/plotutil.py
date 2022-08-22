@@ -9,11 +9,13 @@ import matplotlib.pyplot as plt
 import numpy
 import pandas as pd
 
+from deprecated.sphinx import deprecated
+
 
 class PlotUtil:
     """Plotting utility."""
 
-    @staticmethod
+    @deprecated(version="1.8.0", reason="It is not being used anymore. Check get_x_y or get_x_y_z")
     def get_standard_x_y(disttype: str, alpha: float, beta: float):
         """Get arrays of x and y values for standard fragility or period standard fragility.
 

@@ -1132,6 +1132,16 @@ class GeoUtil:
 
     @staticmethod
     def plot_multiple_vector_dataset(dataset_list, zoom_level=10):
+        """Plot multiple vector based dataset on the single map.
+
+            Args:
+                dataset_list (list): A list of dataset to be mapped.
+                zoom_level (int): Zoom level of the map
+
+            Returns:
+                obj: An ipyleaflet map.
+
+        """
         geodata_dic_list = []
         title_list = []
         bbox = None
@@ -1197,6 +1207,15 @@ class GeoUtil:
 
     @staticmethod
     def random_color(feature):
+        """Creates random color for ipyleaflet map feature
+
+            Args:
+                feature (obj): geodataframe feature
+
+            Returns:
+                obj: dictionary for color
+
+        """
         return {
             'color': 'black',
             'fillColor': random.choice(['red', 'yellow', 'purple', 'green', 'orange', 'blue', 'magenta']),
@@ -1204,6 +1223,17 @@ class GeoUtil:
 
     @staticmethod
     def plot_choropleth_multiple_fields_from_single_dataset(dataset, field_list, zoom_level=10):
+        """Plot choropleth map of single dataset with multiple fields.
+
+            Args:
+                dataset (obj): An input dataset to be mapped.
+                field_list (list): A list of fields from the dataset to be used as the values for choropleth map.
+                zoom_level (int): Zoom level of the map
+
+            Returns:
+                obj: An ipyleaflet map.
+
+        """
         in_gpd = None
         center_x = None
         center_y = None
@@ -1247,6 +1277,18 @@ class GeoUtil:
 
     @staticmethod
     def plot_choropleth_multiple_dataset(dataset_list, field_list, zoom_level=10):
+        """Plot choropleth map of multiple datasets.
+
+            Args:
+                dataset_list (list): A list of datasets to be mapped.
+                field_list (list): A list of fields from the datasets to become the values for choropleth.
+                The field list should be one to one match to dataset_list.
+                zoom_level (int): Zoom level of the map
+
+            Returns:
+                obj: An ipyleaflet map.
+
+        """
         geodata_dic_list = []
         choro_data_list = []
         title_list = []
