@@ -457,8 +457,6 @@ class GeoUtil:
         for layer in wms_layers:
             m.add_layer(layer)
 
-        m.add_control(ipylft.LayersControl())
-
         return m
 
     @staticmethod
@@ -960,13 +958,16 @@ class GeoUtil:
                 obj: An ipyleaflet map.
 
         """
-        map = ipylft.Map(basemap=ipylft.basemaps.Stamen.Toner,
+        map = ipylft.Map(basemap=ipylft.basemaps.Stamen.Toner, zoom=10,
                          crs=projections.EPSG3857, scroll_wheel_zoom=True)
 
-        if bbox:
+        if bbox is not None:
             # the boundary information should be converted to ipyleaflet code boundary
             bounds = GeoUtil.convert_bound_to_ipylft_format(bbox)
             map.fit_bounds(bounds)
+
+        map.add_control(ipylft.LayersControl(position='topright'))
+        map.add_control(ipylft.FullScreenControl(position='topright'))
 
         return map
 
@@ -1131,7 +1132,16 @@ class GeoUtil:
         return heatmap
 
     @staticmethod
-    def plot_multiple_vector_dataset(dataset_list, zoom_level=10):
+    def plot_multiple_vector_dataset(dataset_list):
+        """Plot multiple vector datasets on the same map.
+
+            Args:
+                dataset_list (list): A list of datasets
+
+            Returns:
+                obj: An ipyleaflet map.
+
+        """
         geodata_dic_list = []
         title_list = []
         bbox = None
@@ -1167,12 +1177,7 @@ class GeoUtil:
             except Exception:
                 raise ValueError("Given dataset might not be a geodataset or has an error in the attribute")
 
-        # calculate center point
-        center_x = ((bbox[2] - bbox[0]) / 2) + bbox[0]
-        center_y = ((bbox[3] - bbox[1]) / 2) + bbox[1]
-
-        out_map = ipylft.Map(center=(center_y, center_x), zoom=zoom_level,
-                             crs=projections.EPSG3857, scroll_wheel_zoom=True)
+        out_map = GeoUtil.get_ipyleaflet_map(bbox)
 
         for geodata_dic, title in zip(geodata_dic_list, title_list):
             # add data to  map
@@ -1190,23 +1195,40 @@ class GeoUtil:
 
             out_map.add_layer(tmp_layer)
 
-        out_map.add_control(ipylft.LayersControl(position='topright'))
-        out_map.add_control(ipylft.FullScreenControl(position='topright'))
-
         return out_map
 
     @staticmethod
     def random_color(feature):
+        """add random color based on the color list.
+
+            Args:
+                feature (obj): A geodata feature
+
+            Returns:
+                obj: color style json
+
+        """
         return {
             'color': 'black',
             'fillColor': random.choice(['red', 'yellow', 'purple', 'green', 'orange', 'blue', 'magenta']),
         }
 
     @staticmethod
-    def plot_choropleth_multiple_fields_from_single_dataset(dataset, field_list, zoom_level=10):
+    def plot_choropleth_multiple_fields_from_single_dataset(dataset, field_list):
+        """Make choropleth map using multiple fields from single dataset.
+
+            Args:
+                dataset (list): A dataset to be mapped
+                field_list (list): A list of fields in the dataset
+
+            Returns:
+                obj: An ipyleaflet map.
+
+        """
         in_gpd = None
         center_x = None
         center_y = None
+        bbox = None
 
         # check if the dataset is geodataset and convert dataset to geodataframe
         try:
@@ -1214,6 +1236,8 @@ class GeoUtil:
             center_x = in_gpd.bounds.minx.mean()
             center_y = in_gpd.bounds.miny.mean()
             title = dataset.metadata["title"]
+            bbox = in_gpd.total_bounds
+
         except Exception:
             raise ValueError("Given dataset might not be a geodataset or has an error in the attribute")
 
@@ -1222,8 +1246,7 @@ class GeoUtil:
         in_gpd_tmp = in_gpd[field_list]
         geo_data_dic = json.loads(in_gpd_tmp.to_json())
 
-        out_map = ipylft.Map(center=(center_y, center_x), zoom=zoom_level,
-                             crs=projections.EPSG3857, scroll_wheel_zoom=True)
+        out_map = GeoUtil.get_ipyleaflet_map(bbox)
 
         for fld in field_list:
             if fld != 'geometry':
@@ -1240,13 +1263,22 @@ class GeoUtil:
 
                 out_map.add_layer(tmp_layer)
 
-        out_map.add_control(ipylft.LayersControl(position='topright'))
-        out_map.add_control(ipylft.FullScreenControl(position='topright'))
-
         return out_map
 
     @staticmethod
     def plot_choropleth_multiple_dataset(dataset_list, field_list, zoom_level=10):
+        """Make choropleth map using multiple dataset.
+
+            Args:
+                dataset_list (list): A list of dataset to be mapped
+                field_list (list): A list of fields in the dataset.
+                        The order of the list should be matched with the order of dataset list
+                zoom_level (int): Zoom level
+
+            Returns:
+                obj: An ipyleaflet map.
+
+        """
         geodata_dic_list = []
         choro_data_list = []
         title_list = []
@@ -1296,8 +1328,7 @@ class GeoUtil:
         center_x = ((bbox[2] - bbox[0]) / 2) + bbox[0]
         center_y = ((bbox[3] - bbox[1]) / 2) + bbox[1]
 
-        out_map = ipylft.Map(center=(center_y, center_x), zoom=zoom_level,
-                             crs=projections.EPSG3857, scroll_wheel_zoom=True)
+        out_map = GeoUtil.get_ipyleaflet_map(bbox)
 
         for geodata_dic, choro_data, title in zip(geodata_dic_list, choro_data_list, title_list):
             # add choropleth data to  map
@@ -1311,9 +1342,6 @@ class GeoUtil:
             )
 
             out_map.add_layer(tmp_layer)
-
-        out_map.add_control(ipylft.LayersControl(position='topright'))
-        out_map.add_control(ipylft.FullScreenControl(position='topright'))
 
         return out_map
 
