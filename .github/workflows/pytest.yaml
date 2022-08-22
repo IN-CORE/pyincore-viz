@@ -45,6 +45,6 @@ jobs:
           $CONDA/bin/pytest --cache-clear -s tests/pyincore_viz/test_pyincore_viz.py --junitxml=test-reports/viz_results.xml
 
       - name: Run analysis viz tests with pytest
-          run: |
-            echo "${{secrets.PYTEST_USER_TOKEN}}" > tests/pyincore_viz/.incorepw
-            $CONDA/bin/pytest --cache-clear -s tests/pyincore_viz/test_analysis_viz.py --junitxml=test-reports/analysis_results.xml
+        run: |
+          echo "${{secrets.PYTEST_USER_TOKEN}}" > tests/pyincore_viz/.incorepw
+          $CONDA/bin/pytest --cache-clear -s tests/pyincore_viz/test_analysis_viz.py --junitxml=test-reports/analysis_results.xml
