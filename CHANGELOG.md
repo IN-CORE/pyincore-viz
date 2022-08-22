@@ -7,7 +7,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 ### Added
-- Missing docstrings from GeoUtil. [#82](https://github.com/IN-CORE/pyincore-viz/issues/82)
+- Missing docstrings in GeoUtil. [#82](https://github.com/IN-CORE/pyincore-viz/issues/82)
 
 ### Changed
 - Deprecated get_standard_x_y method from plotutil. [#62](https://github.com/IN-CORE/pyincore-viz/issues/62)
