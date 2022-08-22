@@ -36,7 +36,7 @@ jobs:
           use-mamba: true
           python-version: 3.8
           activate-environment: base
-          environment-file: environment.yaml
+          environment-file: environment.yml
           use-only-tar-bz2: true
 
       - name: Run pyincore viz tests with pytest
