@@ -35,9 +35,10 @@ jobs:
           mamba-version: "*"
           use-mamba: true
           python-version: 3.8
-          activate-environment: base
+          channels: conda-forge,in-core
           environment-file: environment.yml
           use-only-tar-bz2: true
+          conda-build-version: "*"
 
       - name: Run pyincore viz tests with pytest
         run: |
