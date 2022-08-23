@@ -1,0 +1,52 @@
+name: PYTEST
+
+on:
+  push:
+
+env:
+  MAIN_REPO: IN-CORE/pyincore-viz
+
+jobs:
+
+  #-----------------------------------------------------------------------
+  # UNIT TEST
+  # ----------------------------------------------------------------------
+  unit-test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout source code
+        uses: actions/checkout@v2
+
+      - name: Cache conda
+        uses: actions/cache@v2
+        env:
+          # Increase this value to reset cache if environment.yml has not changed
+          CACHE_NUMBER: 0
+        with:
+          path: ~/conda_pkgs_dir
+          key:
+            ${{ runner.os }}-conda-${{ env.CACHE_NUMBER }}-${{
+            hashFiles('environment.yml') }}
+
+      - name: Install miniconda
+        uses: conda-incubator/setup-miniconda@v2
+        with:
+          miniconda-version: "latest"
+          mamba-version: "*"
+          use-mamba: true
+          python-version: 3.8
+          activate-environment: base
+          channels: conda-forge,in-core
+          environment-file: environment.yml
+          use-only-tar-bz2: true
+          conda-build-version: "*"
+
+      - name: Run pyincore viz tests with pytest
+        run: |
+          echo "${{secrets.PYTEST_USER_TOKEN}}" > tests/pyincore_viz/.incorepw
+          $CONDA/bin/pytest --cache-clear -s tests/pyincore_viz/test_pyincore_viz.py --junitxml=test-reports/viz_results.xml
+
+      - name: Run analysis viz tests with pytest
+        run: |
+          echo "${{secrets.PYTEST_USER_TOKEN}}" > tests/pyincore_viz/.incorepw
+          $CONDA/bin/pytest --cache-clear -s tests/pyincore_viz/test_analysis_viz.py --junitxml=test-reports/analysis_results.xml
