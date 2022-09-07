@@ -1199,13 +1199,13 @@ class GeoUtil:
 
     @staticmethod
     def random_color(feature):
-        """add random color based on the color list.
+        """Creates random color for ipyleaflet map feature
 
             Args:
-                feature (obj): A geodata feature
+                feature (obj): geodataframe feature
 
             Returns:
-                obj: color style json
+                obj: dictionary for color
 
         """
         return {
@@ -1274,7 +1274,7 @@ class GeoUtil:
                 field_list (list): A list of fields in the dataset.
                         The order of the list should be matched with the order of dataset list
                 zoom_level (int): Zoom level
-
+                
             Returns:
                 obj: An ipyleaflet map.
 

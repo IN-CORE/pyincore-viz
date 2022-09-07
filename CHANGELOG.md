@@ -8,10 +8,12 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ## [Unreleased]
 
 ### Added
+- Missing docstrings in GeoUtil. [#82](https://github.com/IN-CORE/pyincore-viz/issues/82)
 - Doc strings to the methods that are missing them. [#82](https://github.com/IN-CORE/pyincore-viz/issues/82)
 - Pytest github action. [#16](https://github.com/IN-CORE/pyincore-viz/issues/16)
 
 ### Changed
+- Deprecated get_standard_x_y method from plotutil. [#62](https://github.com/IN-CORE/pyincore-viz/issues/62)
 - Updated ipyleaflet and codes were refactored. [#81](https://github.com/IN-CORE/pyincore-viz/issues/81)
 
 ## [1.7.0] - 2022-07-27
