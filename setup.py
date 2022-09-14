@@ -7,7 +7,7 @@
 from setuptools import setup, find_packages
 
 # version number of pyincore
-version = '1.7.0'
+version = '1.8.0'
 
 with open("README.rst", encoding="utf-8") as f:
     readme = f.read()
@@ -57,8 +57,8 @@ setup(
         'contextily>=1.0.0',
         'deprecated',
         'geopandas>=0.6.1',
-        'ipyleaflet>=0.13.4,<0.13.7',
-        'ipywidgets>=7.6.0,<8',
+        'ipyleaflet>=0.16.0',
+        'ipywidgets>=7.6.0',
         'lxml>=4.6.3',
         'matplotlib>=2.1.0',
         'networkx>=2.2',
@@ -66,7 +66,7 @@ setup(
         'owslib>=0.17.1',
         'pandas>=0.24.1',
         'pillow',
-        'pyincore>=1.0.0',
+        'pyincore>=1.6.0',
         'rasterio>=1.1.3'
     ],
 

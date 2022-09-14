@@ -5,12 +5,25 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## [1.8.0] - 2022-09-14
+
+### Added
+- Missing docstrings in GeoUtil. [#82](https://github.com/IN-CORE/pyincore-viz/issues/82)
+- Doc strings to the methods that are missing them. [#82](https://github.com/IN-CORE/pyincore-viz/issues/82)
+- Pytest github action. [#16](https://github.com/IN-CORE/pyincore-viz/issues/16)
+
+### Changed
+- Deprecated get_standard_x_y method from plotutil. [#62](https://github.com/IN-CORE/pyincore-viz/issues/62)
+- Updated ipyleaflet and codes were refactored. [#81](https://github.com/IN-CORE/pyincore-viz/issues/81)
+
 ## [1.7.0] - 2022-07-27
+
 ### Changed
 - Gdf map visualization accepts both dataset and gdf. [#72](https://github.com/IN-CORE/pyincore-viz/issues/72)
 - Updated network visualization. [#68](https://github.com/IN-CORE/pyincore-viz/issues/68)
 
 ## [1.6.0] - 2022-06-29
+
 ### Added
 - Household income and poverty visualization to pop result table. [#55](https://github.com/IN-CORE/pyincore-viz/issues/55)
 - Raster hazard overlay in gdf map visualization. [#58](https://github.com/IN-CORE/pyincore-viz/issues/58)
@@ -20,10 +33,12 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Revised README for pypi publication. [#63](https://github.com/IN-CORE/pyincore-viz/issues/63)
 
 ## [1.5.1] - 2022-04-12
+
 ### Fixed
 - Boolean comparison in adding dislocation dataframe. [#52](https://github.com/IN-CORE/pyincore-viz/issues/52)
 
 ## [1.5.0] - 2022-02-07
+
 ### Added
 - Multiple vector dataset visualization. [#19](https://github.com/IN-CORE/pyincore-viz/issues/19)
 
@@ -36,10 +51,12 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Auto build of documentation container. [#34](https://github.com/IN-CORE/pyincore-viz/issues/34)
 
 ## [1.4.1] - 2021-12-08
+
 ### Added
 - Add *mplcursors* and *palettable* libraries needed for Retrofit notebook example. [#29](https://github.com/IN-CORE/pyincore-viz/issues/29)
 
 ## [1.4.0] - 2021-10-27
+
 ### Added
 - Conda build recipe for publishing the pyincore-data to conda channel. [#7](https://github.com/IN-CORE/pyincore-viz/issues/7)
 - Choropleth map using single dataset with multiple field. [#2](https://github.com/IN-CORE/pyincore-viz/issues/2)
@@ -54,6 +71,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Bug in getting gdf map from the geoserver. [#14](https://github.com/IN-CORE/pyincore-viz/issues/14)
 
 ## [1.3.0] - 2021-07-28
+
 ### Added
 - pyincore-data reference link to pyincore-viz doc [INCORE1-1299](https://opensource.ncsa.illinois.edu/jira/browse/INCORE1-1299)
 
@@ -64,6 +82,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Changed default map provider to "OpenStreetMaps.Mapnik" from "Stamen.Terrain" to avoid issues loading points that are not on land (bridges). User can configure map provider if needed. [INCORE1-1268](https://opensource.ncsa.illinois.edu/jira/browse/INCORE1-1268)
 
 ## [1.2.0] - 2021-06-16
+
 ### Added
 - Legend for earthquake visualization [INCORE1-1214](https://opensource.ncsa.illinois.edu/jira/browse/INCORE1-1214)
 - Ability to plot Raster dataset [INCORE1-1222](https://opensource.ncsa.illinois.edu/jira/browse/INCORE1-1222)
@@ -75,15 +94,18 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Combine refactored and legacy fragility plotting into the main function "get_fragility_plot" for backward compatibility [INCORE1-1228](https://opensource.ncsa.illinois.edu/jira/browse/INCORE1-1228)
 
 ## [1.1.1] - 2021-05-21
+
 ### Added
 - Ability to visualize dataset based earthquakes for a specific demand type [INCORE1-1202](https://opensource.ncsa.illinois.edu/jira/browse/INCORE1-1202)
 
 ## [1.1.0] - 2021-05-19
+
 ### Added
 - Geodataframe based heatmap [INCORE1-1128](https://opensource.ncsa.illinois.edu/jira/browse/INCORE1-1128)
 - Visualize refactored (equation) based 2d and 3d fragility curves [INCORE1-1144](https://opensource.ncsa.illinois.edu/jira/browse/INCORE1-1144)
 
 ## [1.0.0] - 2021-04-14
+
 ### Added
 - Heatmap for point, line, and polygon dataset [INCORE1-1081](https://opensource.ncsa.illinois.edu/jira/browse/INCORE1-1081)
 
@@ -92,6 +114,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - pyincore-viz documentation [INCORE1-1103](https://opensource.ncsa.illinois.edu/jira/browse/INCORE1-1103)
 
 ## [0.3.0] - 2021-02-15
+
 ### Added
 - Fit ipyleaflet map boundaries using bounding box [INCORE1-597](https://opensource.ncsa.illinois.edu/jira/browse/INCORE1-597)
 
@@ -99,10 +122,12 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Update demand_types and demand_units when plotting fragility curves [INCORE1-998](https://opensource.ncsa.illinois.edu/jira/browse/INCORE1-998)
 
 ## [0.2.5] - 2020-12-10
+
 ### Changed
 - updated ipyleaflet to 0.13 [INCORE1-866](https://opensource.ncsa.illinois.edu/jira/browse/INCORE1-866)
 
 ## [0.2.4] - 2020-10-28
+
 ### Added
 - Method to plot fragilities [INCORE1-777](https://opensource.ncsa.illinois.edu/jira/browse/INCORE1-777)
 - Plot map for table datasets. [INCORE1-821](https://opensource.ncsa.illinois.edu/jira/browse/INCORE1-821)
@@ -120,12 +145,14 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 -  cleaning layer when map layer selection changed. [INCORE1-808](https://opensource.ncsa.illinois.edu/jira/browse/INCORE1-808)
 
 ## [0.2.3] - 2020-09-03
+
 ### Added
 - documentation, links, docker script [INCORE1-654](https://opensource.ncsa.illinois.edu/jira/browse/INCORE1-654)
 - Network dataset mapping method. [INCORE1-602](https://opensource.ncsa.illinois.edu/jira/browse/INCORE1-602) 
 - Logger for log reporting. [INCORE1-748](https://opensource.ncsa.illinois.edu/jira/browse/INCORE1-748)
 
 ## [0.2.2] - 2020-07-31
+
 ### Added
 - PEP-8 format test to the library.  [INCORE1-706](https://opensource.ncsa.illinois.edu/jira/browse/INCORE1-706)
 - wms layer availability checking [INCORE1-609](https://opensource.ncsa.illinois.edu/jira/browse/INCORE1-609)
