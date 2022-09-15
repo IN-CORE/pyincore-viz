@@ -5,6 +5,10 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## [Unreleased]
+
+### Fixed
+- Pypi build error caused from missing Azure site [#93](https://github.com/IN-CORE/pyincore-viz/issues/93)
 ## [1.8.0] - 2022-09-14
 
 ### Added
