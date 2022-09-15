@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Fixed
 - Pypi build error caused from missing Azure site [#93](https://github.com/IN-CORE/pyincore-viz/issues/93)
+
 ## [1.8.0] - 2022-09-14
 
 ### Added
