@@ -3,6 +3,8 @@
 # This program and the accompanying materials are made available under the
 # terms of the Mozilla Public License v2.0 which accompanies this distribution,
 # and is available at https://www.mozilla.org/en-US/MPL/2.0/
+import json
+
 import pytest
 import matplotlib
 import geopandas as gpd
@@ -151,6 +153,12 @@ def test_plot_fragility(client):
     # plt = plot.get_fragility_plot(fragility_set, title="refactored fragility 3d curve", limit_state="LS_0",
     #                               dimension=3, custom_curve_parameters={"ffe_elev": 3})
     plt.savefig('refactored_3d.png')
+    plt.clf()
+
+    # test case sensitivity of demand types
+    fragility_set = FragilityCurveSet.from_json_file("./data/StandardFragilityCurveDemandType.json")
+    plt = plot.get_fragility_plot_2d(fragility_set, title="demand type case insensitive fragility 2d curve")
+    plt.savefig('case_insensitive_2d.png')
     plt.clf()
 
     assert True
