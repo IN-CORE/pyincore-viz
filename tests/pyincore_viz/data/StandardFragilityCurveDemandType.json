@@ -1,0 +1,98 @@
+{
+    "id": "5b47b2d7337d4a36187c61c9",
+    "description": "Mid-Rise Steel Moment Frame",
+    "authors": [
+        "Elnashai and Jeong"
+    ],
+    "paperReference": null,
+    "resultUnit": null,
+    "resultType": "Limit State",
+    "hazardType": "earthquake",
+    "inventoryType": "building",
+    "creator": "incore",
+    "curveParameters": [
+        {
+            "name": "zero_point_two_sec_Sa",
+            "unit": "g",
+            "description": "0.2 sec Sa value from hazard service",
+            "fullName": "0.2 SEC SA",
+            "expression": null
+        },
+        {
+            "name": "num_stories",
+            "unit": "",
+            "description": "number of stories in building inventory",
+            "fullName": null,
+            "expression": "1"
+        },
+        {
+            "name": "period",
+            "unit": "",
+            "description": "default building period",
+            "fullName": null,
+            "expression": "1.08"
+        }
+    ],
+    "spaces": [
+        "coe"
+    ],
+    "demandTypes": [
+        "0.2 sec Sa"
+    ],
+    "demandUnits": [
+        "g"
+    ],
+    "fragilityCurves": [
+        {
+            "description": "legacy - PeriodStandardFragilityCurve - Moderate",
+            "rules": [
+                {
+                    "condition": [
+                        "zero_point_two_sec_Sa > 0"
+                    ],
+                    "expression": "scipy.stats.norm.cdf((math.log(zero_point_two_sec_Sa) - (-0.576))/(0.836))"
+                }
+            ],
+            "returnType": {
+                "type": "Limit State",
+                "unit": "",
+                "description": "LS_0"
+            },
+            "curveParameters": null
+        },
+        {
+            "description": "legacy - PeriodStandardFragilityCurve - Extensive",
+            "rules": [
+                {
+                    "condition": [
+                        "zero_point_two_sec_Sa > 0"
+                    ],
+                    "expression": "scipy.stats.norm.cdf((math.log(zero_point_two_sec_Sa) - (0.23))/(0.911))"
+                }
+            ],
+            "returnType": {
+                "type": "Limit State",
+                "unit": "",
+                "description": "LS_1"
+            },
+            "curveParameters": null
+        },
+        {
+            "description": "legacy - PeriodStandardFragilityCurve - Complete",
+            "rules": [
+                {
+                    "condition": [
+                        "zero_point_two_sec_Sa > 0"
+                    ],
+                    "expression": "scipy.stats.norm.cdf((math.log(zero_point_two_sec_Sa) - (1.197))/(1.05))"
+                }
+            ],
+            "returnType": {
+                "type": "Limit State",
+                "unit": "",
+                "description": "LS_2"
+            },
+            "curveParameters": null
+        }
+    ]
+}
