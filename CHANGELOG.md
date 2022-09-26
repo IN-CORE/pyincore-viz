@@ -5,6 +5,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## [Unreleased]
+
+### Changed
+- Allow case insensitive matching between fragility curve parameter and demand types [#28](https://github.com/IN-CORE/pyincore-viz/issues/28)
+
+
 ## [1.8.0] - 2022-09-14
 
 ### Added
