@@ -5,6 +5,11 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## [Unreleased]
+
+### Fixed
+- CRS error caused by rasterio. [#86](https://github.com/IN-CORE/pyincore-viz/issues/86)
+
 ## [1.8.0] - 2022-09-14
 
 ### Added
