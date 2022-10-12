@@ -92,8 +92,13 @@ class GeoUtil:
             eq_crs = r.crs
 
         ax = gdf.plot(figsize=(10, 10), column=column, categorical=False, legend=True)
-        ctx.add_basemap(ax, crs=eq_crs, source=ctx.providers.OpenStreetMap.Mapnik,)
-        ctx.add_basemap(ax, crs=eq_crs, source=file_path, alpha=0.5)
+        # TODO there is a problem in crs in following lines.
+        #  It should be better to add crs to ctx.add_basemap like following
+        #  ctx.add_basemap(ax, crs=eq_crs, source=ctx.providers.OpenStreetMap.Mapnik)
+        #  However there is an error in rasterio so the crs part has been omitted.
+        #  Since incore only use WGS84 for whole dataset, this should be safe
+        ctx.add_basemap(ax, source=ctx.providers.OpenStreetMap.Mapnik)
+        ctx.add_basemap(ax, source=file_path, alpha=0.5)
 
     @staticmethod
     def join_datasets(geodataset, dataset):
