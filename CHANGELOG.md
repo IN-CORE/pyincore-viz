@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ## [Unreleased]
 
 ### Fixed
+- Pypi build error caused from missing Azure site [#93](https://github.com/IN-CORE/pyincore-viz/issues/93)
 - CRS error caused by rasterio. [#86](https://github.com/IN-CORE/pyincore-viz/issues/86)
 
 ## [1.8.0] - 2022-09-14
