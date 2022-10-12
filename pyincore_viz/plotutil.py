@@ -232,6 +232,8 @@ class PlotUtil:
         return plt
 
     @staticmethod
+    @deprecated(version="1.9.0",
+                reason="It is not being used anymore. Check pyincore's Dataset.get_dataframe_from_shapefile")
     def inventory_to_geodataframe(inventory_dataset):
         """Convert inventory_dataset to GeoDataFrame.
 

@@ -10,6 +10,11 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Fixed
 - CRS error caused by rasterio. [#86](https://github.com/IN-CORE/pyincore-viz/issues/86)
 
+## [Unreleased]
+
+### Changed
+- Deprecated inventory_to_geodataframe method from plotutil. [#89](https://github.com/IN-CORE/pyincore-viz/issues/89)
+ 
 ## [1.8.0] - 2022-09-14
 
 ### Added
