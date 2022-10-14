@@ -156,7 +156,7 @@ def test_plot_fragility(client):
     plt.clf()
 
     # test case sensitivity of demand types
-    fragility_set = FragilityCurveSet.from_json_file("./data/StandardFragilityCurveDemandType.json")
+    fragility_set = FragilityCurveSet.from_json_file("data/StandardFragilityCurveDemandType.json")
     plt = plot.get_fragility_plot_2d(fragility_set, title="demand type case insensitive fragility 2d curve")
     plt.savefig('case_insensitive_2d.png')
     plt.clf()
