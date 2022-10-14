@@ -147,11 +147,17 @@ class PlotUtil:
 
         """
         demand_type_names = []
+        demand_types = fragility_set.demand_types
         for parameter in fragility_set.curve_parameters:
+            # add case insensitive
             # for hazard
-            if parameter.get("name") in fragility_set.demand_types:
+            if parameter.get("name") is not None \
+                    and parameter.get("name").lower() \
+                    in [demand_type.lower() for demand_type in demand_types]:
                 demand_type_names.append(parameter["name"])
-            elif parameter.get("fullName") in fragility_set.demand_types:
+            elif parameter.get("fullName") is not None \
+                    and parameter.get("fullName").lower() \
+                    in [demand_type.lower() for demand_type in demand_types]:
                 demand_type_names.append(parameter["fullName"])
             # check the rest of the parameters see if default or custom value has passed in
             else:
@@ -192,11 +198,17 @@ class PlotUtil:
 
         """
         demand_type_names = []
+        demand_types = fragility_set.demand_types
         for parameter in fragility_set.curve_parameters:
             # for hazard
-            if parameter.get("name") in fragility_set.demand_types:
+            # add case insensitive
+            if parameter.get("name") is not None \
+                    and parameter.get("name").lower() \
+                    in [demand_type.lower() for demand_type in demand_types]:
                 demand_type_names.append(parameter["name"])
-            elif parameter.get("fullName") in fragility_set.demand_types:
+            elif parameter.get("fullName") is not None \
+                    and parameter.get("fullName").lower() \
+                    in [demand_type.lower() for demand_type in demand_types]:
                 demand_type_names.append(parameter["fullName"])
             # check the rest of the parameters see if default or custom value has passed in
             else:
