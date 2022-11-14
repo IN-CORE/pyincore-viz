@@ -399,7 +399,7 @@ class GeoUtil:
         return m
 
     @staticmethod
-    def get_wms_map(datasets: list, wms_url=globals.INCORE_GEOSERVER_WMS_URL, layer_check=True):
+    def get_wms_map(datasets: list, wms_url=globals.INCORE_GEOSERVER_WMS_URL, layer_check=False):
         """Get a map with WMS layers from list of datasets.
 
         Args:
