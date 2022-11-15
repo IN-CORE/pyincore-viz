@@ -21,4 +21,4 @@ dependencies:
   - pyincore>=1.7.0
   - pytest>=3.9.0
   - python-jose>=3.0
-  - rasterio>=1.1.3
+  - rasterio>=1.3.3
