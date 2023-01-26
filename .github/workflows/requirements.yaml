@@ -8,7 +8,7 @@ on:
       - main
 
   schedule:
-    - cron: '0 0 * * *'
+    - cron: '0 0 1 * *'
 
 # Certain actions will only run when this is the main repo.
 env:
