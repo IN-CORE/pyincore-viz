@@ -5,6 +5,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## [Unreleased]
+
+### Fixed
+- Documentation docker build process [#119](https://github.com/IN-CORE/pyincore-viz/issues/119)
+
+
 ## [1.8.1] - 2022-11-16
 
 ### Changed
