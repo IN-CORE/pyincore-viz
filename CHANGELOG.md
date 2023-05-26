@@ -7,9 +7,11 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+### Changed
+- Updated ipyleaflet to 0.17.2 [#117](https://github.com/IN-CORE/pyincore-viz/issues/117)
+
 ### Fixed
 - Documentation docker build process [#119](https://github.com/IN-CORE/pyincore-viz/issues/119)
-
 
 ## [1.8.1] - 2022-11-16
 
