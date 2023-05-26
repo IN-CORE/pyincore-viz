@@ -21,7 +21,7 @@ jobs:
           if [ "${{ github.event.release.tag_name }}" != "" ]; then
             version=$(echo ${{ github.event.release.tag_name }} | sed 's/^v//')
           else
-            version="$(awk -F= '/^PACKAGE_VERSION/ { print $2}' pyincore-viz/globals.py | sed 's/[ "]//g').${{ github.run_number }}"
+            version="$(awk -F= '/^PACKAGE_VERSION/ { print $2}' pyincore_viz/globals.py | sed 's/[ "]//g').${{ github.run_number }}"
           fi
           echo "VERSION=${version}" >> $GITHUB_ENV
           echo "VERSION=${version}"
