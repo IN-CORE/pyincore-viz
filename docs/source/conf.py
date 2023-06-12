@@ -33,7 +33,7 @@ author = 'Yong Wook Kim'
 # The short X.Y version
 version = '1.8'
 # The full version, including alpha/beta/rc tags
-release = '1.8.1'
+release = '1.8.2'
 
 # -- General configuration ---------------------------------------------------
 
