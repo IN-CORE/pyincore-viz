@@ -10,7 +10,7 @@ WORKDIR /src
 COPY environment.yml ./
 ENV PATH "$MAMBA_ROOT_PREFIX/bin:$PATH"
 RUN micromamba install -y -n base -c conda-forge -c in-core \
-    sphinx sphinx_rtd_theme -f environment.yml
+    sphinx=6.2.1 sphinx_rtd_theme -f environment.yml
 
 # copy code and generate documentation
 COPY . ./
