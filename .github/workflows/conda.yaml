@@ -53,24 +53,23 @@ jobs:
         uses: mamba-org/setup-micromamba@v1
         with:
           create-args: >-
-            python=${{ matrix.vars.python-version }}
-            pytest
+            python=3.8
+            conda
           environment-file: environment.yml
           generate-run-shell: true
 
       - name: Build conda package
         run: |
-          mamba install boa -c conda-forge
+          conda install conda-build
           mkdir dist
-          conda mambabuild --output-folder dist \
+          conda build --output-folder dist \
                       --label ${{ env.LABEL }} \
                       recipes
-        shell: micromamba-shell {0}
 
       - name: Upload conda package
         if: github.event_name == 'release'
         run: |
-          mamba install -y anaconda-client
+          conda install -y anaconda-client
           anaconda --token ${{ secrets.CONDA_INCORE_TOKEN }} upload \
                           --user IN-CORE \
                           --label ${{ env.LABEL }} \
