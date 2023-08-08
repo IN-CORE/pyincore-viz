@@ -60,6 +60,7 @@ jobs:
 
       - name: Build conda package
         run: |
+          mamba install boa -c conda-forge
           mkdir dist
           conda mambabuild --output-folder dist \
                       --label ${{ env.LABEL }} \
