@@ -39,8 +39,8 @@ jobs:
           create-args: >-
             python=${{ matrix.vars.python-version }}
             pytest
-            environment-file: environment.yml
-            generate-run-shell: true
+          environment-file: environment.yml
+          generate-run-shell: true
 #          miniconda-version: "latest"
 #          mamba-version: "*"
 #          use-mamba: true
