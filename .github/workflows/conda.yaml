@@ -61,18 +61,20 @@ jobs:
       - name: Build conda package
         run: |
           mkdir dist
-          mamba build --output-folder dist \
+          python -m build --output-folder dist \
                       --label ${{ env.LABEL }} \
                       recipes
+        shell: micromamba-shell {0}
 
       - name: Upload conda package
         if: github.event_name == 'release'
         run: |
-          mamba install -y anaconda-client
+          python -m install -y anaconda-client
           anaconda --token ${{ secrets.CONDA_INCORE_TOKEN }} upload \
                           --user IN-CORE \
                           --label ${{ env.LABEL }} \
                           dist/*/pyincore-viz-${{ env.VERSION }}-*.tar.bz2
+        shell: micromamba-shell {0}
 
       - name: Upload binaries to release
         if: github.event_name == 'release'
