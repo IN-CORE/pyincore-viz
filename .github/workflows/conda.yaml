@@ -49,28 +49,26 @@ jobs:
           key:
             ${{ runner.os }}-conda-${{ env.CACHE_NUMBER }}-${{ hashFiles('environment.yml') }}
 
-      - name: Install miniconda
-        uses: conda-incubator/setup-miniconda@v2
+      - name: Install micromamba
+        uses: mamba-org/setup-micromamba@v1
         with:
-          miniconda-version: "latest"
-          python-version: 3.8
-          use-mamba: true
-          mamba-version: "*"
-          channels: conda-forge,in-core
-          use-only-tar-bz2: true
-          conda-build-version: "*"
+          create-args: >-
+            python=${{ matrix.vars.python-version }}
+            pytest
+          environment-file: environment.yml
+          generate-run-shell: true
 
       - name: Build conda package
         run: |
           mkdir dist
-          conda build --output-folder dist \
+          mamba build --output-folder dist \
                       --label ${{ env.LABEL }} \
                       recipes
 
       - name: Upload conda package
         if: github.event_name == 'release'
         run: |
-          conda install -y anaconda-client
+          mamba install -y anaconda-client
           anaconda --token ${{ secrets.CONDA_INCORE_TOKEN }} upload \
                           --user IN-CORE \
                           --label ${{ env.LABEL }} \
