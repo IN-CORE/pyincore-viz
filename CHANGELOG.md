@@ -5,6 +5,9 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## [Unreleased]
+### Changed
+- Pytest changed to use micromamba [#128](https://github.com/IN-CORE/pyincore-viz/issues/128)
 ## [1.8.2] - 2023-06-14
 
 ### Changed
