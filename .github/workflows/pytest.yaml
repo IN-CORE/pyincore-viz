@@ -60,7 +60,7 @@ jobs:
         run: |
           echo "${{secrets.PYTEST_USER_TOKEN}}" > tests/pyincore_viz/.incorepw
           python -m pytest tests/pyincore_viz/test_pyincore_viz.py
-          shell: micromamba-shell {0}
+        shell: micromamba-shell {0}
 #        run: |
 #          echo "${{secrets.PYTEST_USER_TOKEN}}" > tests/pyincore_viz/.incorepw
 #          $CONDA/bin/pytest --cache-clear -s tests/pyincore_viz/test_pyincore_viz.py --junitxml=test-reports/viz_results.xml
@@ -69,7 +69,7 @@ jobs:
         run: |
           echo "${{secrets.PYTEST_USER_TOKEN}}" > tests/pyincore_viz/.incorepw
           python -m pytest tests/pyincore_viz/test_analysis_viz.py
-          shell: micromamba-shell {0}
+        shell: micromamba-shell {0}
 #        run: |
 #          echo "${{secrets.PYTEST_USER_TOKEN}}" > tests/pyincore_viz/.incorepw
 #          $CONDA/bin/pytest --cache-clear -s tests/pyincore_viz/test_analysis_viz.py --junitxml=test-reports/analysis_results.xml
