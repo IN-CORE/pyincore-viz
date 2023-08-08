@@ -65,6 +65,7 @@ jobs:
           conda mambabuild --output-folder dist \
                       --label ${{ env.LABEL }} \
                       recipes
+        shell: micromamba-shell {0}
 
       - name: Upload conda package
         if: github.event_name == 'release'
