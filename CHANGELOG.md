@@ -8,6 +8,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ## [Unreleased]
 ### Changed
 - Pytest changed to use micromamba [#128](https://github.com/IN-CORE/pyincore-viz/issues/128)
+
+### Fixed
+- Conda package building and uploading github action [#131](https://github.com/IN-CORE/pyincore-viz/issues/131)
+
 ## [1.8.2] - 2023-06-14
 
 ### Changed
