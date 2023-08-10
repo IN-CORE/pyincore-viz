@@ -66,9 +66,9 @@ jobs:
 
       - name: Build conda package
         run: |
-          conda install boa -c conda-forge
+          conda install conda-build
           mkdir dist
-          boa build --output-folder dist \
+          conda build --output-folder dist \
                       --label ${{ env.LABEL }} \
                       recipes
 
