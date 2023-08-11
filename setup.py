@@ -66,7 +66,7 @@ setup(
         'owslib>=0.17.1',
         'pandas>=0.24.1',
         'pillow',
-        'pyincore>=1.7.0',
+        'pyincore>=1.11.0',
         'rasterio>=1.3.3'
     ],
 
