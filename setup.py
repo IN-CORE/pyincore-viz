@@ -7,7 +7,7 @@
 from setuptools import setup, find_packages
 
 # version number of pyincore
-version = '1.8.2'
+version = '1.8.3'
 
 with open("README.rst", encoding="utf-8") as f:
     readme = f.read()
@@ -66,7 +66,7 @@ setup(
         'owslib>=0.17.1',
         'pandas>=0.24.1',
         'pillow',
-        'pyincore>=1.7.0',
+        'pyincore>=1.11.0',
         'rasterio>=1.3.3'
     ],
 

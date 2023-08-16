@@ -26,7 +26,7 @@ jobs:
           if [ "${{ github.event.release.tag_name }}" != "" ]; then
             version=$(echo ${{ github.event.release.tag_name }} | sed 's/^v//')
           else
-            version="$(awk -F= '/^PACKAGE_VERSION/ { print $2}' pyincore-viz/globals.py | sed 's/[ "]//g').${{ github.run_number }}"
+            version="$(awk -F= '/^PACKAGE_VERSION/ { print $2}' pyincore_viz/globals.py | sed 's/[ "]//g').${{ github.run_number }}"
           fi
           echo "VERSION=${version}" >> $GITHUB_ENV
           echo "VERSION=${version}"
@@ -49,23 +49,28 @@ jobs:
           key:
             ${{ runner.os }}-conda-${{ env.CACHE_NUMBER }}-${{ hashFiles('environment.yml') }}
 
-      - name: Install miniconda
-        uses: conda-incubator/setup-miniconda@v2
+      - name: Install micromamba
+        uses: mamba-org/setup-micromamba@v1
         with:
-          miniconda-version: "latest"
-          python-version: 3.8
-          use-mamba: true
-          mamba-version: "*"
-          channels: conda-forge,in-core
-          use-only-tar-bz2: true
-          conda-build-version: "*"
+          create-args: >-
+            python=3.9
+            conda
+          environment-file: environment.yml
+          generate-run-shell: true
+          condarc: |
+            channels:
+              - IN-CORE
+              - conda-forge
+              - defaults
 
       - name: Build conda package
         run: |
+          conda install conda-build
           mkdir dist
           conda build --output-folder dist \
                       --label ${{ env.LABEL }} \
                       recipes
+        shell: micromamba-shell {0}
 
       - name: Upload conda package
         if: github.event_name == 'release'
@@ -75,6 +80,7 @@ jobs:
                           --user IN-CORE \
                           --label ${{ env.LABEL }} \
                           dist/*/pyincore-viz-${{ env.VERSION }}-*.tar.bz2
+        shell: micromamba-shell {0}
 
       - name: Upload binaries to release
         if: github.event_name == 'release'
