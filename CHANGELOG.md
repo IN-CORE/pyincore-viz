@@ -5,6 +5,10 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## [Unreleased]
+### Updated
+- Basemap api has been updated to Stadia.Stametoner [#138](https://github.com/IN-CORE/pyincore-viz/issues/138)
+
 ## [1.8.3] - 2023-08-16
 ### Changed
 - Pytest changed to use micromamba [#128](https://github.com/IN-CORE/pyincore-viz/issues/128)
