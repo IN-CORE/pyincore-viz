@@ -7,7 +7,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 ### Updated
-- Basemap api has been updated to Stadia.Stametoner [#138](https://github.com/IN-CORE/pyincore-viz/issues/138)
+- Basemap api updated to use open street map [#138](https://github.com/IN-CORE/pyincore-viz/issues/138)
 
 ## [1.8.3] - 2023-08-16
 ### Changed
