@@ -9,6 +9,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Updated
 - Basemap api updated to use open street map [#138](https://github.com/IN-CORE/pyincore-viz/issues/138)
 
+### Fixed
+- Ipyleaflet map centering problem when map is called [#140](https://github.com/IN-CORE/pyincore-viz/issues/140)
+
 ## [1.8.3] - 2023-08-16
 ### Changed
 - Pytest changed to use micromamba [#128](https://github.com/IN-CORE/pyincore-viz/issues/128)
