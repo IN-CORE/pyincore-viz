@@ -61,6 +61,7 @@ class GeoUtil:
         gdf = gdf.to_crs(epsg=3857)
         ax = gdf.plot(figsize=(10, 10), column=column,
                       categorical=category, legend=True)
+        print("printing gdf map")
         if basemap:
             ctx.add_basemap(ax, source=source)
 
@@ -969,6 +970,7 @@ class GeoUtil:
         if bbox is not None:
             # the boundary information should be converted to ipyleaflet code boundary
             bounds = GeoUtil.convert_bound_to_ipylft_format(bbox)
+            print(bounds)
             map.fit_bounds(bounds)
 
         map.add_control(ipylft.LayersControl(position='topright'))
