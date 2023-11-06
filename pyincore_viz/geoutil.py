@@ -61,7 +61,6 @@ class GeoUtil:
         gdf = gdf.to_crs(epsg=3857)
         ax = gdf.plot(figsize=(10, 10), column=column,
                       categorical=category, legend=True)
-        print("printing gdf map")
         if basemap:
             ctx.add_basemap(ax, source=source)
 
@@ -971,8 +970,10 @@ class GeoUtil:
             # the boundary information should be converted to ipyleaflet code boundary
             bounds = GeoUtil.convert_bound_to_ipylft_format(bbox)
             map.fit_bounds(bounds)
-            map.center = GeoUtil.calc_center_from_bbox(bbox)
-            print(map.center)
+            # get center for different jupyter versions
+            center = GeoUtil.calc_center_from_bbox(bbox)
+            # need to reverse x and y
+            map.center = [center[1], center[0]]
 
         map.add_control(ipylft.LayersControl(position='topright'))
         map.add_control(ipylft.FullScreenControl(position='topright'))
