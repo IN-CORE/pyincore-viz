@@ -970,8 +970,9 @@ class GeoUtil:
         if bbox is not None:
             # the boundary information should be converted to ipyleaflet code boundary
             bounds = GeoUtil.convert_bound_to_ipylft_format(bbox)
-            print(bounds)
             map.fit_bounds(bounds)
+            map.center = GeoUtil.calc_center_from_bbox(bbox)
+            print(map.center)
 
         map.add_control(ipylft.LayersControl(position='topright'))
         map.add_control(ipylft.FullScreenControl(position='topright'))
