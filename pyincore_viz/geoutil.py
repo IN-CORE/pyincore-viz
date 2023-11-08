@@ -947,7 +947,7 @@ class GeoUtil:
                 obj: An ipyleaflet map.
 
         """
-        map = ipylft.Map(center=(cen_lon, cen_lat), zoom=zoom_level, basemap=ipylft.basemaps.Stamen.Toner,
+        map = ipylft.Map(center=(cen_lon, cen_lat), zoom=zoom_level, basemap=ipylft.basemaps.OpenStreetMap.Mapnik,
                          crs=projections.EPSG3857, scroll_wheel_zoom=True)
 
         return map
@@ -963,13 +963,17 @@ class GeoUtil:
                 obj: An ipyleaflet map.
 
         """
-        map = ipylft.Map(basemap=ipylft.basemaps.Stamen.Toner, zoom=10,
+        map = ipylft.Map(basemap=ipylft.basemaps.OpenStreetMap.Mapnik, zoom=10,
                          crs=projections.EPSG3857, scroll_wheel_zoom=True)
 
         if bbox is not None:
             # the boundary information should be converted to ipyleaflet code boundary
             bounds = GeoUtil.convert_bound_to_ipylft_format(bbox)
             map.fit_bounds(bounds)
+            # get center for different jupyter versions
+            center = GeoUtil.calc_center_from_bbox(bbox)
+            # need to reverse x and y
+            map.center = [center[1], center[0]]
 
         map.add_control(ipylft.LayersControl(position='topright'))
         map.add_control(ipylft.FullScreenControl(position='topright'))

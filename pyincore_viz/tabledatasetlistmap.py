@@ -18,7 +18,8 @@ class TableDatasetListMap:
     """Mapping class for visualizing list of Table Dataset"""
 
     def __init__(self):
-        self.map = ipylft.Map(center=(0, 0), zoom=12, basemap=ipylft.basemaps.Stamen.Toner, scroll_wheel_zoom=True)
+        self.map = ipylft.Map(center=(0, 0), zoom=12, basemap=ipylft.basemaps.OpenStreetMap.Mapnik,
+                              scroll_wheel_zoom=True)
 
     def create_basemap_ipylft(self, geo_dataframe, title_list):
         """Creates map window with given inventory with multiple table dataset file using folder location.
@@ -36,7 +37,7 @@ class TableDatasetListMap:
 
         # create base ipyleaflet map
         self.map = ipylft.Map(center=(cen_x, cen_y), zoom=12,
-                              basemap=ipylft.basemaps.Stamen.Toner, scroll_wheel_zoom=True)
+                              basemap=ipylft.basemaps.OpenStreetMap.Mapnik, scroll_wheel_zoom=True)
 
         # add map widgets
         self.map = self.create_map_widgets(title_list, self.map, geo_dataframe)
