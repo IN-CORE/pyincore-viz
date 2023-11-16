@@ -1141,6 +1141,78 @@ class GeoUtil:
         return heatmap
 
     @staticmethod
+    def plot_local_earthquake(eq_dataset):
+        """
+        Plot local earthquake data on the map
+        """
+        demand_type = eq_dataset.demand_type
+        period = eq_dataset.period
+        title = "Demand Type: " + demand_type.upper() + ", Period: " + str(period)
+        raster_file_path = eq_dataset.dataset.local_file_path
+
+        GeoUtil.plot_raster_file_with_legend(raster_file_path, title)
+
+    @staticmethod
+    def plot_local_tsunami(tsu_dataset):
+        """
+        Plot local tsunami data on the map
+
+        args:
+            tsu_dataset (obj): pyincore TsunamiDataset object
+
+        returns:
+            none
+        """
+        demand_type = tsu_dataset.demand_type
+        demand_units = tsu_dataset.demand_units
+        hazard_type = tsu_dataset.hazard_type
+        title = "Demand Type: " + demand_type.upper() + ", Demand Units: " + str(demand_units) + \
+                ", Hazard Type: " + hazard_type
+        raster_file_path = tsu_dataset.dataset.local_file_path
+
+        GeoUtil.plot_raster_file_with_legend(raster_file_path, title)
+
+    @staticmethod
+    def plot_local_flood(flood_dataset):
+        """
+        Plot local tsunami data on the map
+
+        args:
+            tsu_dataset (obj): pyincore TsunamiDataset object
+
+        returns:
+            none
+        """
+        demand_type = flood_dataset.demand_type
+        demand_units = flood_dataset.demand_units
+        hazard_type = flood_dataset.hazard_type
+        title = "Demand Type: " + demand_type.upper() + ", Demand Units: " + str(demand_units) + \
+                ", Hazard Type: " + hazard_type
+        raster_file_path = flood_dataset.dataset.local_file_path
+
+        GeoUtil.plot_raster_file_with_legend(raster_file_path, title)
+
+    @staticmethod
+    def plot_local_hurricane(hur_dataset):
+        """
+        Plot local hurricane data on the map
+
+        args:
+            hur_dataset (obj): pyincore HurricaneDataset object
+
+        returns:
+            none
+        """
+        demand_type = hur_dataset.demand_type
+        demand_units = hur_dataset.demand_units
+        hazard_type = hur_dataset.hazard_type
+        title = "Demand Type: " + demand_type.upper() + ", Demand Units: " + str(demand_units) + \
+                ", Hazard Type: " + hazard_type
+        raster_file_path = hur_dataset.dataset.local_file_path
+
+        GeoUtil.plot_raster_file_with_legend(raster_file_path, title)
+
+    @staticmethod
     def plot_multiple_vector_dataset(dataset_list):
         """Plot multiple vector datasets on the same map.
 
