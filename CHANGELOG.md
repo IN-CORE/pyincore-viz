@@ -5,6 +5,10 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## [Unreleased]
+### Changed
+- Clean dependencies [#145](https://github.com/IN-CORE/pyincore-viz/issues/145)
+
 ## [1.8.4] - 2023-11-08
 ### Updated
 - Basemap api updated to use open street map [#138](https://github.com/IN-CORE/pyincore-viz/issues/138)
