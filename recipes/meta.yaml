@@ -22,17 +22,17 @@ build:
  
 requirements:
   build:
-    - python>=3.6
+    - python>=3.9
     - pip
     - numpy>=1.16.1
  
   host:
-    - python>=3.6
+    - python>=3.9
     - pip
     - numpy>=1.16.1
      
   run:
-    - python>=3.6
+    - python>=3.9
     - {{ pin_compatible('numpy') }}
     - gdal
     - branca>=0.3.0
