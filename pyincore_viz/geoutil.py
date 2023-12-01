@@ -1216,7 +1216,7 @@ class GeoUtil:
         GeoUtil.plot_raster_file_with_legend(raster_file_path, title)
 
     @staticmethod
-    def plot_local_torando(dataset):
+    def plot_local_tornado(tornado):
         """
         Plot local tornado data on the map
 
@@ -1226,11 +1226,12 @@ class GeoUtil:
         returns:
             outmap (obj): ipyleaflet map object
         """
-        dataset_list = [dataset]
-        outmap = GeoUtil.plot_multiple_vector_dataset(dataset_list)
+        gdf = tornado.hazardDatasets[0].dataset.get_dataframe_from_shapefile()
+        id_field = tornado.EF_RATING_FIELD
+
+        outmap = GeoUtil.plot_gdf_map(gdf, id_field)
 
         return outmap
-
 
     @staticmethod
     def plot_multiple_vector_dataset(dataset_list):
