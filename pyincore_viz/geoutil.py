@@ -1146,8 +1146,11 @@ class GeoUtil:
         Plot local earthquake data on the map
         """
         demand_type = eq_dataset.demand_type
+        demand_units = eq_dataset.demand_units
+        hazard_type = eq_dataset.hazard_type
         period = eq_dataset.period
-        title = "Demand Type: " + demand_type.upper() + ", Period: " + str(period)
+        title = "Demand Type: " + demand_type.upper() + ", Demand Units: " + demand_units + ", Period: " + \
+                str(period) + ", Hazard Type: " + hazard_type
         raster_file_path = eq_dataset.dataset.local_file_path
 
         GeoUtil.plot_raster_file_with_legend(raster_file_path, title)
@@ -1211,6 +1214,23 @@ class GeoUtil:
         raster_file_path = hur_dataset.dataset.local_file_path
 
         GeoUtil.plot_raster_file_with_legend(raster_file_path, title)
+
+    @staticmethod
+    def plot_local_torando(dataset):
+        """
+        Plot local tornado data on the map
+
+        args:
+            dataset (obj): pyincore TornadoDataset object
+
+        returns:
+            outmap (obj): ipyleaflet map object
+        """
+        dataset_list = [dataset]
+        outmap = GeoUtil.plot_multiple_vector_dataset(dataset_list)
+
+        return outmap
+
 
     @staticmethod
     def plot_multiple_vector_dataset(dataset_list):
