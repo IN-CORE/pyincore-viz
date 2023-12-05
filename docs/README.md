@@ -40,7 +40,7 @@ In case of `conda`, the package management and deployment tool
 is called `anaconda`. Create the environment from the terminal at the project 
 folder (called `pyincore_viz` here) and activate it:
     ```
-    conda create -n pyincore_viz python=3.7
+    conda create -n pyincore_viz python=3.9
     conda activate pyincore_viz
     ```
     or  
