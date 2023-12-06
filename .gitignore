@@ -40,6 +40,7 @@ tests/.incorepw
 
 # incore download data or test data
 tests/data/
+tests/pyincore_viz/data/
 cache_data/
 original/
 

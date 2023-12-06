@@ -6,6 +6,9 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
+### Added
+- Local hazard visualization [#143](https://github.com/IN-CORE/pyincore-viz/issues/143)
+
 ### Changed
 - Clean dependencies [#145](https://github.com/IN-CORE/pyincore-viz/issues/145)
 
