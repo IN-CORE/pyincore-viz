@@ -49,7 +49,8 @@ def test_visualize_joplin_tornado_building(client):
 
     viz.plot_tornado(tornado_hazard_id, client, basemap=False)
 
-    tornado_dataset_id = HazardService(client).get_tornado_hazard_metadata(tornado_hazard_id)['datasetId']
+    tornado_dataset_id = HazardService(client).get_tornado_hazard_metadata(tornado_hazard_id)[
+        'hazardDatasets'][0].get('datasetId')
     tornado_dataset = Dataset.from_data_service(tornado_dataset_id, DataService(client))
 
     viz.get_gdf_map([tornado_dataset])
@@ -242,7 +243,7 @@ def test_overay_gdf_with_raster(client):
     memphis_water_pipeline = "5a284f28c7d30d13bc081d14"
     memphis_eq = "5b902cb273c3371e1236b36b"
 
-    eq_dataset_id = HazardService(client).get_earthquake_hazard_metadata(memphis_eq)['rasterDataset']['datasetId']
+    eq_dataset_id = HazardService(client).get_earthquake_hazard_metadata(memphis_eq)['hazardDatasets'][0].get('datasetId')
     raster_dataset = Dataset.from_data_service(eq_dataset_id, DataService(client))
 
     dataset = Dataset.from_data_service(shelby_hospital_inv_id, DataService(client))
@@ -276,7 +277,8 @@ def test_multiple_vector_visualization(client):
     centerville_epn_link = '5b1fdc2db1cf3e336d7cecc9'
     tornado_metadata = HazardService(client).get_tornado_hazard_metadata(centerville_model_tornado)
     dataset1 = Dataset.from_data_service(centerville_epn_link, DataService(client))
-    dataset2 = Dataset.from_data_service(tornado_metadata["datasetId"], DataService(client))
+    dataset2 = Dataset.from_data_service(tornado_metadata["hazardDatasets"][0].get("datasetId"),
+                                         DataService(client))
     viz.plot_multiple_vector_dataset([dataset1, dataset2])
 
     assert True
