@@ -171,7 +171,7 @@ class GeoUtil:
         # it needs descartes package for polygon plotting
         # getting tornado dataset should be part of Tornado Hazard code
         tornado_dataset_id = HazardService(
-            client).get_tornado_hazard_metadata(tornado_id)['datasetId']
+            client).get_tornado_hazard_metadata(tornado_id)["hazardDatasets"][0].get('datasetId')
         tornado_dataset = Dataset.from_data_service(
             tornado_dataset_id, DataService(client))
         tornado_gdf = gpd.read_file(tornado_dataset.local_file_path)
@@ -195,9 +195,9 @@ class GeoUtil:
         eq_dataset_id = None
 
         if eq_metadata['eqType'] == 'model':
-            eq_dataset_id = eq_metadata['rasterDataset']['datasetId']
-            demand_type = eq_metadata['rasterDataset']['demandType']
-            period = eq_metadata['rasterDataset']['period']
+            eq_dataset_id = eq_metadata['hazardDatasets'][0].get('datasetId')
+            demand_type = eq_metadata['hazardDatasets'][0].get('demandType')
+            period = eq_metadata['hazardDatasets'][0].get('period', "NA")
         else:
             if demand is None:  # get first dataset
                 if len(eq_metadata['hazardDatasets']) > 0 and eq_metadata['hazardDatasets'][0]['datasetId']:
