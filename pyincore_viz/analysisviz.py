@@ -7,6 +7,7 @@ import importlib
 
 
 class AnalysisViz:
+    """Analysis Visualisation."""
 
     @staticmethod
     def visualize(dataset, **kwargs):
