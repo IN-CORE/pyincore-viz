@@ -7,8 +7,8 @@ plotutil
     :members:
 
 gistutil
-=======
-..  autoclass:: gisutil.GistUtil
+========
+..  autoclass:: gistutil.GistUtil
     :members:
 
 tabledatasetlistmap
