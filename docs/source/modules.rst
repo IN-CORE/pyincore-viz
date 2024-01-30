@@ -1,7 +1,7 @@
 pyincore_viz
 ^^^^^^^^^^^^
 
-geoutil
+geotuil
 =======
 ..  autoclass:: geoutil.GeoUtil
     :members:
