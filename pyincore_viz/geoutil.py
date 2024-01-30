@@ -49,13 +49,13 @@ class GeoUtil:
     def plot_gdf_map(gdf, column, category=False, basemap=True, source=ctx.providers.OpenStreetMap.Mapnik):
         """Plot Geopandas DataFrame.
 
-        Args:
-            gdf (obj): Geopandas DataFrame object.
-            column (str): A column name to be plot.
-            category (bool): Turn on/off category option.
-            basemap (bool): Turn on/off base map (e.g. openstreetmap).
-            source(obj): source of the Map to be used. examples, ctx.providers.OpenStreetMap.Mapnik (default),
-                ctx.providers.Stamen.Terrain, ctx.providers.CartoDB.Positron etc.
+            Args:
+                gdf (obj): Geopandas DataFrame object.
+                column (str): A column name to be plot.
+                category (bool): Turn on/off category option.
+                basemap (bool): Turn on/off base map (e.g. openstreetmap).
+                source(obj): source of the Map to be used. examples, ctx.providers.OpenStreetMap.Mapnik (default),
+                    ctx.providers.Stamen.Terrain, ctx.providers.CartoDB.Positron etc.
 
         """
         gdf = gdf.to_crs(epsg=3857)
