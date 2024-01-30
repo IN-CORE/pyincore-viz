@@ -38,6 +38,7 @@ from pyincore_viz.plotutil import PlotUtil
 from pyincore_viz.tabledatasetlistmap import TableDatasetListMap as table_list_map
 from pyincore_viz.helpers.common import get_period_and_demand_from_str, get_demands_for_dataset_hazards
 from branca.colormap import linear
+import importlib
 
 logger = globals.LOGGER
 
@@ -46,23 +47,40 @@ class GeoUtil:
     """Utility methods for Geospatial Visualization"""
 
     @staticmethod
-    def plot_gdf_map(gdf, column, category=False, basemap=True, source=ctx.providers.OpenStreetMap.Mapnik):
-        """Plot Geopandas DataFrame.
+    def visualize(dataset, **kwargs):
+        """Base visualize method that dynamically imports the necessary modules.
 
             Args:
-                gdf (obj): Geopandas DataFrame object.
-                column (str): A column name to be plot.
-                category (bool): Turn on/off category option.
-                basemap (bool): Turn on/off base map (e.g. openstreetmap).
-                source(obj): source of the Map to be used. examples, ctx.providers.OpenStreetMap.Mapnik (default),
-                    ctx.providers.Stamen.Terrain, ctx.providers.CartoDB.Positron etc.
+                dataset (obj): pyincore dataset without geospatial data.
 
             Returns:
                 None
 
         """
-        gdf = gdf.to_crs(epsg=3857)
-        ax = gdf.plot(figsize=(10, 10), column=column,
-                      categorical=category, legend=True)
-        if basemap:
-            ctx.add_basemap(ax, source=source)
+        # data types that needs to use pop_results_table visualization
+        pop_result_table_data_types = ['incorehousingunitallocation']
+
+        try:
+            module_name = ""
+            # split by namespace, capitalize then join
+            for item in dataset.data_type.split(":"):
+                module_name += item.capitalize()
+
+            # load module
+            # e.g. module_name = IncoreHousingUnitAllocation
+            # this is a special case for using popresultstable
+            if module_name.lower() in pop_result_table_data_types:
+                module_name = "PopResultsTable"
+
+            module = importlib.import_module("pyincore_viz.analysis." + module_name.lower())
+            print("Loaded pyincore_viz.analysis." + module_name.lower() + " module successfully.")
+
+            # load class
+            analysis_class = getattr(module, module_name)
+
+            # run vis
+            return analysis_class.visualize(dataset, **kwargs)
+
+        except Exception:
+            raise ValueError("Fail to dynamically import dataset to its corresponding class. Please double "
+                             "check the data_type of the dataset!")
