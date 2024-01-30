@@ -1,14 +1,14 @@
 pyincore_viz
 ^^^^^^^^^^^^
 
+geoutil
+=======
+..  autoclass:: geoutil.GeoUtil
+    :members:
+
 plotutil
 ========
 ..  autoclass:: plotutil.PlotUtil
-    :members:
-
-gistutil
-========
-..  autoclass:: gistutil.GistUtil
     :members:
 
 tabledatasetlistmap

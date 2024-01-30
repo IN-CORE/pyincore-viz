@@ -42,7 +42,7 @@ from branca.colormap import linear
 logger = globals.LOGGER
 
 
-class GistUtil:
+class GeoUtil:
     """Utility methods for Geospatial Visualization"""
 
     @staticmethod

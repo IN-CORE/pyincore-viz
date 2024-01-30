@@ -15,7 +15,7 @@ from pyincore.dataservice import DataService
 from pyincore.fragilityservice import FragilityService
 from pyincore.hazardservice import HazardService
 from pyincore.models.fragilitycurveset import FragilityCurveSet
-from pyincore_viz.gistutil import GeoUtil as viz
+from pyincore_viz.geoutil import GeoUtil as viz
 from pyincore_viz.plotutil import PlotUtil as plot
 
 

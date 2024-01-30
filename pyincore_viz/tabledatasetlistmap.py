@@ -11,7 +11,7 @@ import json
 from pyincore_viz import globals
 from branca.colormap import linear
 
-logger = globals.LOGGER
+# logger = globals.LOGGER
 
 
 class TableDatasetListMap:
@@ -50,6 +50,8 @@ class TableDatasetListMap:
         Args:
             title_list (list): A list of the file names in the folder.
 
+        Returns:
+
         """
         map_dropdown = ipywgt.Dropdown(description='Outputfile - 1', options=title_list, width=500)
         file_control1 = ipylft.WidgetControl(widget=map_dropdown, position='bottomleft')
@@ -81,6 +83,8 @@ class TableDatasetListMap:
         Args:
             b (action): A button click action for tablemap.
 
+        Returns:
+
         """
         print('Loading: ', self.map_dropdown.value)
         key = self.map_dropdown.value
@@ -92,6 +96,8 @@ class TableDatasetListMap:
 
         Args:
             key (str): A selected value from tablemap's layer selection drop down menu.
+
+        Returns:
 
         """
 
