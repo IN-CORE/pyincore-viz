@@ -6,9 +6,9 @@ plotutil
 ..  autoclass:: plotutil.PlotUtil
     :members:
 
-geoutil
+gistutil
 =======
-..  autoclass:: geoutil.GeoUtil
+..  autoclass:: gisutil.GistUtil
     :members:
 
 tabledatasetlistmap
