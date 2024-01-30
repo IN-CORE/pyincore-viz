@@ -11,7 +11,7 @@ import json
 from pyincore_viz import globals
 from branca.colormap import linear
 
-# logger = globals.LOGGER
+logger = globals.LOGGER
 
 
 class TableDatasetListMap:
