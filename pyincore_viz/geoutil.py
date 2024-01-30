@@ -38,7 +38,7 @@ from pyincore_viz import globals
 # from pyincore_viz.helpers.common import get_period_and_demand_from_str, get_demands_for_dataset_hazards
 # from branca.colormap import linear
 
-logger = globals.LOGGER
+# logger = globals.LOGGER
 
 
 class GeoUtil:
