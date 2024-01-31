@@ -53,10 +53,10 @@ setup(
     },
 
     install_requires=[
-        'branca>=0.3.0',
+        'branca<=0.7.0',
         'contextily>=1.0.0',
         'deprecated',
-        'geopandas>=0.14.0',
+        'geopandas<=0.14.2',
         'ipyleaflet>=0.16.0',
         'ipywidgets>=7.6.0',
         'lxml>=4.6.3',
