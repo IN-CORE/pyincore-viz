@@ -73,7 +73,7 @@ setup(
     extras_require={
         'test': [
             'pycodestyle>=2.6.0',
-            'pytest>=3.9.0',
+            'pytest<8',
             'python-jose>=3.0',
         ]
     },
