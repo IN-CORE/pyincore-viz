@@ -1216,22 +1216,16 @@ class GeoUtil:
         GeoUtil.plot_raster_file_with_legend(raster_file_path, title)
 
     @staticmethod
-    def plot_local_tornado(tornado):
+    def plot_local_tornado(tornado, id_field):
         """
         Plot local tornado data on the map
 
         args:
-            dataset (obj): pyincore TornadoDataset object
+            tornado (obj): pyincore TornadoDataset object
+            id_field (str): id field name
 
-        returns:
-            outmap (obj): ipyleaflet map object
         """
-        gdf = tornado.hazardDatasets[0].dataset.get_dataframe_from_shapefile()
-        id_field = tornado.EF_RATING_FIELD
-
-        outmap = GeoUtil.plot_gdf_map(gdf, id_field)
-
-        return outmap
+        GeoUtil.plot_map(tornado, id_field)
 
     @staticmethod
     def plot_multiple_vector_dataset(dataset_list):
@@ -1473,3 +1467,47 @@ class GeoUtil:
         # # fill empty value as blank
 
         return choro_data
+
+    @staticmethod
+    def plot_local_hazard(dataset):
+        """Plot hazard dataset on the map
+
+        args:
+            dataset (obj): pyincore HazardDataset object
+
+        returns:
+            none
+        """
+        hazard_type = dataset.hazard_type
+
+        if hazard_type.lower() == "earthquake":
+            if len(dataset.hazardDatasets) > 1:
+                for earthquake in dataset.hazardDatasets:
+                    GeoUtil.plot_local_earthquake(earthquake)
+            else:
+                GeoUtil.plot_local_earthquake(dataset.hazardDatasets[0])
+        elif hazard_type.lower() == "tsunami":
+            if len(dataset.hazardDatasets) > 1:
+                for tsunami in dataset.hazardDatasets:
+                    GeoUtil.plot_local_tsunami(tsunami)
+            else:
+                GeoUtil.plot_local_tsunami(dataset.hazardDataset[0])
+        elif hazard_type.lower() == "flood":
+            if len(dataset.hazardDatasets) > 1:
+                for flood in dataset.hazardDatasets:
+                    GeoUtil.plot_local_flood(flood)
+            else:
+                GeoUtil.plot_local_flood(dataset.hazardDatasets[0])
+        elif hazard_type.lower() == "hurricane":
+            if len(dataset.hazardDatasets) > 1:
+                for hurricane in dataset.hazardDatasets:
+                    GeoUtil.plot_local_hurricane(hurricane)
+            else:
+               GeoUtil.plot_local_hurricane(dataset.hazardDatasets[0])
+        elif hazard_type.lower() == "tornado":
+            id_field = dataset.EF_RATING_FIELD
+            if len(dataset.hazardDatasets) > 1:
+                for tornado in dataset.hazardDatasets:
+                    GeoUtil.plot_local_tornado(tornado.dataset, id_field)
+            else:
+                GeoUtil.plot_local_tornado(dataset.hazardDatasets[0].dataset, id_field)
