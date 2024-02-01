@@ -57,7 +57,7 @@ test:
    
   requires:
     # Put any additional test requirements here.  For example
-    - pytest<8
+    - pytest>=3.9.0
     - pycodestyle>=2.6.0
     - python-jose>=3.0
 

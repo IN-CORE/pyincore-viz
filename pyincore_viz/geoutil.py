@@ -34,7 +34,7 @@ from pyincore_viz import globals as pyincore_viz_globals
 from base64 import b64encode
 from io import BytesIO
 from pyincore_viz.plotutil import PlotUtil
-from pyincore_viz.tabledatasetlistmap import TableDatasetListMap as tableListMap
+from pyincore_viz.tabledatasetlistmap import TableDatasetListMap as table_list_map
 from pyincore_viz.helpers.common import get_period_and_demand_from_str, get_demands_for_dataset_hazards
 from branca.colormap import linear
 
@@ -657,7 +657,7 @@ class GeoUtil:
         inventory_df = inventory_df[keep_list]
 
         # create base map
-        map = tableListMap()
+        map = table_list_map()
         map.create_basemap_ipylft(inventory_df, dataset_id_list)
 
         return map.map
