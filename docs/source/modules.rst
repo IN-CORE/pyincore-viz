@@ -16,3 +16,7 @@ tabledatasetlistmap
 ..  autoclass:: tabledatasetlistmap.TableDatasetListMap
     :members:
 
+analysisviz
+===========
+..  autoclass:: analysisviz.AnalysisViz
+    :members:

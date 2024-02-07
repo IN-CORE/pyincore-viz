@@ -18,7 +18,6 @@ import PIL
 import numpy as np
 import random
 import json
-import contextily as ctx
 
 from deprecated.sphinx import deprecated
 from matplotlib import cm
@@ -31,7 +30,7 @@ from pyincore.dataservice import DataService
 from pyincore.hazardservice import HazardService
 from pyincore import Dataset
 from pyincore import NetworkDataset
-from pyincore_viz import globals
+from pyincore_viz import globals as pyincore_viz_globals
 from base64 import b64encode
 from io import BytesIO
 from pyincore_viz.plotutil import PlotUtil
@@ -39,7 +38,7 @@ from pyincore_viz.tabledatasetlistmap import TableDatasetListMap as table_list_m
 from pyincore_viz.helpers.common import get_period_and_demand_from_str, get_demands_for_dataset_hazards
 from branca.colormap import linear
 
-logger = globals.LOGGER
+logger = pyincore_viz_globals.LOGGER
 
 
 class GeoUtil:
@@ -72,7 +71,7 @@ class GeoUtil:
         Args:
             gdf (obj): Geopandas DataFrame object.
             column (obj): A column name of gdf to be plot.
-            hazard_id (str): A raster hazard dataset id to overlay, such as tif or png dataset
+            raster (str): A raster hazard dataset id to overlay, such as tif or png dataset
             category (bool): Turn on/off category option.
             basemap (bool): Turn on/off base map (e.g. openstreetmap).
             source(obj): source of the Map to be used. examples, ctx.providers.OpenStreetMap.Mapnik (default),
@@ -171,7 +170,7 @@ class GeoUtil:
         # it needs descartes package for polygon plotting
         # getting tornado dataset should be part of Tornado Hazard code
         tornado_dataset_id = HazardService(
-            client).get_tornado_hazard_metadata(tornado_id)['datasetId']
+            client).get_tornado_hazard_metadata(tornado_id)["hazardDatasets"][0].get('datasetId')
         tornado_dataset = Dataset.from_data_service(
             tornado_dataset_id, DataService(client))
         tornado_gdf = gpd.read_file(tornado_dataset.local_file_path)
@@ -195,9 +194,9 @@ class GeoUtil:
         eq_dataset_id = None
 
         if eq_metadata['eqType'] == 'model':
-            eq_dataset_id = eq_metadata['rasterDataset']['datasetId']
-            demand_type = eq_metadata['rasterDataset']['demandType']
-            period = eq_metadata['rasterDataset']['period']
+            eq_dataset_id = eq_metadata['hazardDatasets'][0].get('datasetId')
+            demand_type = eq_metadata['hazardDatasets'][0].get('demandType')
+            period = eq_metadata['hazardDatasets'][0].get('period', "NA")
         else:
             if demand is None:  # get first dataset
                 if len(eq_metadata['hazardDatasets']) > 0 and eq_metadata['hazardDatasets'][0]['datasetId']:
@@ -399,7 +398,7 @@ class GeoUtil:
         return m
 
     @staticmethod
-    def get_wms_map(datasets: list, wms_url=globals.INCORE_GEOSERVER_WMS_URL, layer_check=False):
+    def get_wms_map(datasets: list, wms_url=pyincore_viz_globals.INCORE_GEOSERVER_WMS_URL, layer_check=False):
         """Get a map with WMS layers from list of datasets.
 
         Args:
@@ -465,7 +464,7 @@ class GeoUtil:
         return m
 
     @staticmethod
-    def get_gdf_wms_map(datasets, wms_datasets, wms_url=globals.INCORE_GEOSERVER_WMS_URL):
+    def get_gdf_wms_map(datasets, wms_datasets, wms_url=pyincore_viz_globals.INCORE_GEOSERVER_WMS_URL):
         """Get a map with WMS layers from list of datasets for geopandas and list of datasets for WMS.
 
         Args:
@@ -477,7 +476,6 @@ class GeoUtil:
             obj: An ipyleaflet Map.
 
         """
-
         # TODO: how to add a style for each WMS layers (pre-defined styules on WMS server) and gdf layers
 
         # (min_lat, min_lon, max_lat, max_lon)
@@ -620,14 +618,14 @@ class GeoUtil:
         return joined_gdf
 
     @staticmethod
-    def plot_table_dataset_list_from_single_source(client, dataset_list=list, column=str, in_source_dataset_id=None):
+    def plot_table_dataset_list_from_single_source(client, dataset_list, column, in_source_dataset_id=None):
         """Creates map window with a list of table dataset and source dataset.
 
             Args:
                 client (obj): pyincore service Client Object.
                 dataset_list (list): list of table dataset.
                 column (str): column name to be plot.
-                in_source_dataset_id (str): source dataset id, the dafault is None.
+                in_source_dataset_id (str): source dataset id, the default is None.
 
             Returns:
                 obj: An ipyleaflet Map, GeoUtil.map (ipyleaflet.Map).
@@ -671,7 +669,7 @@ class GeoUtil:
         Args:
             dataset_list (list): list of table dataset.
             column (str): column name to be plot.
-            source_dataset (str): source dataset id, default is None.
+            in_source_dataset_id (str): source dataset id, default is None.
 
         Returns:
             obj: Pandas dataframe with all dataset joined together with guid.
@@ -1216,22 +1214,16 @@ class GeoUtil:
         GeoUtil.plot_raster_file_with_legend(raster_file_path, title)
 
     @staticmethod
-    def plot_local_tornado(tornado):
+    def plot_local_tornado(tornado, id_field):
         """
         Plot local tornado data on the map
 
         args:
-            dataset (obj): pyincore TornadoDataset object
+            tornado (obj): pyincore TornadoDataset object
+            id_field (str): id field name
 
-        returns:
-            outmap (obj): ipyleaflet map object
         """
-        gdf = tornado.hazardDatasets[0].dataset.get_dataframe_from_shapefile()
-        id_field = tornado.EF_RATING_FIELD
-
-        outmap = GeoUtil.plot_gdf_map(gdf, id_field)
-
-        return outmap
+        GeoUtil.plot_map(tornado, id_field)
 
     @staticmethod
     def plot_multiple_vector_dataset(dataset_list):
@@ -1376,7 +1368,7 @@ class GeoUtil:
                 field_list (list): A list of fields in the dataset.
                         The order of the list should be matched with the order of dataset list
                 zoom_level (int): Zoom level
-                
+
             Returns:
                 obj: An ipyleaflet map.
 
@@ -1473,3 +1465,47 @@ class GeoUtil:
         # # fill empty value as blank
 
         return choro_data
+
+    @staticmethod
+    def plot_local_hazard(dataset):
+        """Plot hazard dataset on the map
+
+        args:
+            dataset (obj): pyincore HazardDataset object
+
+        returns:
+            none
+        """
+        hazard_type = dataset.hazard_type
+
+        if hazard_type.lower() == "earthquake":
+            if len(dataset.hazardDatasets) > 1:
+                for earthquake in dataset.hazardDatasets:
+                    GeoUtil.plot_local_earthquake(earthquake)
+            else:
+                GeoUtil.plot_local_earthquake(dataset.hazardDatasets[0])
+        elif hazard_type.lower() == "tsunami":
+            if len(dataset.hazardDatasets) > 1:
+                for tsunami in dataset.hazardDatasets:
+                    GeoUtil.plot_local_tsunami(tsunami)
+            else:
+                GeoUtil.plot_local_tsunami(dataset.hazardDataset[0])
+        elif hazard_type.lower() == "flood":
+            if len(dataset.hazardDatasets) > 1:
+                for flood in dataset.hazardDatasets:
+                    GeoUtil.plot_local_flood(flood)
+            else:
+                GeoUtil.plot_local_flood(dataset.hazardDatasets[0])
+        elif hazard_type.lower() == "hurricane":
+            if len(dataset.hazardDatasets) > 1:
+                for hurricane in dataset.hazardDatasets:
+                    GeoUtil.plot_local_hurricane(hurricane)
+            else:
+               GeoUtil.plot_local_hurricane(dataset.hazardDatasets[0])
+        elif hazard_type.lower() == "tornado":
+            id_field = dataset.EF_RATING_FIELD
+            if len(dataset.hazardDatasets) > 1:
+                for tornado in dataset.hazardDatasets:
+                    GeoUtil.plot_local_tornado(tornado.dataset, id_field)
+            else:
+                GeoUtil.plot_local_tornado(dataset.hazardDatasets[0].dataset, id_field)

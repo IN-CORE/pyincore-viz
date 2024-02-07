@@ -5,6 +5,16 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## [1.10.0] - 2023-02-07
+### Added
+- Plot method for local hazard [#153](https://github.com/IN-CORE/pyincore-viz/issues/153)
+
+### Changed
+- Refactor tornado and eq visualization due to hazard datasets added to model [#154](https://github.com/IN-CORE/pyincore-viz/issues/154)
+
+### Fixed
+- Incorrect documentation rendering has been fixed [#158](https://github.com/IN-CORE/pyincore-viz/issues/158)
+
 ## [1.9.0] - 2023-12-13
 ### Added
 - Local hazard visualization [#143](https://github.com/IN-CORE/pyincore-viz/issues/143)

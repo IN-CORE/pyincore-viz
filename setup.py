@@ -7,7 +7,7 @@
 from setuptools import setup, find_packages
 
 # version number of pyincore
-version = '1.9.0'
+version = '1.10.0'
 
 with open("README.rst", encoding="utf-8") as f:
     readme = f.read()
@@ -67,7 +67,8 @@ setup(
         'pandas>=2.1.2',
         'pillow',
         'pyincore>=1.11.0',
-        'rasterio>=1.3.9'
+        'rasterio>=1.3.9',
+        'openssl<=3.2.0'
     ],
 
     extras_require={
