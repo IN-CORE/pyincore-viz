@@ -2,7 +2,6 @@ name: pyincore_viz
 channels:
   - conda-forge
   - defaults
-  - in-core
 dependencies:
   - gdal
   - branca>=0.3.0
@@ -23,4 +22,3 @@ dependencies:
   - pytest>=3.9.0
   - python-jose>=3.0
   - rasterio>=1.3.9
-  - openssl<=3.2.0
