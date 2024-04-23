@@ -9,6 +9,9 @@ USER root
 ARG GA_KEY
 ENV GA_KEY=$GA_KEY
 
+# Print out the value of GA_KEY
+RUN echo "GA_KEY value is: $GA_KEY"
+
 # install packages
 WORKDIR /src
 COPY environment.yml ./
