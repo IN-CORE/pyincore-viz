@@ -52,11 +52,11 @@ jobs:
             done
             echo "VERSION=${version}" >> $GITHUB_ENV
             echo "TAGS=${tags}" >> $GITHUB_ENV
-            GA_KEY="${{ secrets.GA_KEY_DEV }}"
+            GA_KEY="${{ secrets.GA_KEY }}"
           elif [ "$BRANCH" == "develop" ]; then
             echo "VERSION=develop" >> $GITHUB_ENV
             echo "TAGS=develop" >> $GITHUB_ENV
-            GA_KEY="${{ secrets.GA_KEY }}"
+            GA_KEY="${{ secrets.GA_KEY_DEV }}"
           else
             echo "VERSION=testing" >> $GITHUB_ENV
             echo "TAGS=${BRANCH}" >> $GITHUB_ENV
