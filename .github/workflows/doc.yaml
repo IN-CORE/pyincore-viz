@@ -70,8 +70,8 @@ jobs:
         with:
           name: incore/doc/pyincore-viz
           no_push: true
-          build_args: |
-            --build-arg GA_KEY=${{ env.GA_KEY }}
+          build-args: |
+            GA_KEY: ${{ env.GA_KEY }}
 
       # this will publish to NCSA
       - name: Publish to NCSA Hub
