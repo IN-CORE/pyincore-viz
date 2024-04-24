@@ -69,6 +69,11 @@ jobs:
           echo "GA_KEY in process is: $GA_KEY"
           echo "GA_KEY in env is: ${{ env.GA_KEY }}"
 
+      # print out env.GA_KEY
+      - name: Print out env.GA_KEY
+        run: |
+          echo "GA_KEY is: ${{ env.GA_KEY }}"
+
       # build image
       - name: Build image
         uses: elgohr/Publish-Docker-Github-Action@3.04
