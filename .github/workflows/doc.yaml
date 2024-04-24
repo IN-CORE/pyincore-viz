@@ -63,6 +63,11 @@ jobs:
             GA_KEY="${{ secrets.GA_KEY_DEV }}"
           fi
           echo "GA_KEY=${GA_KEY}" >> $GITHUB_ENV
+          echo "GA_KEY is: $GA_KEY"
+          echo "GA_KEY_DEV in secret is: ${{ secrets.GA_KEY_DEV }}"
+          echo "GA_KEY in secret is: ${{ secrets.GA_KEY }}"
+          echo "GA_KEY in process is: $GA_KEY"
+          echo "GA_KEY in env is: ${{ env.GA_KEY }}"
 
       # build image
       - name: Build image
