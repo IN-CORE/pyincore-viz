@@ -63,6 +63,7 @@ jobs:
             GA_KEY="${{ secrets.GA_KEY }}"
           fi
           echo "GA_KEY=${GA_KEY}" >> $GITHUB_ENV
+          echo "GA_KEY is: ${{ env.GA_KEY }}"
 
       # build image
       - name: Build image
