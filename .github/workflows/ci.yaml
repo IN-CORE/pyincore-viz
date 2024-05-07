@@ -58,7 +58,7 @@ jobs:
             echo "VERSION=testing" >> $GITHUB_ENV
             echo "TAGS=${BRANCH}" >> $GITHUB_ENV
           fi
-          echo "GA_KEY=${GA_KEY}" >> $GITHUB_ENV
+          echo "GA_KEY=$GA_KEY" >> $GITHUB_ENV
 
       # build image
       - name: Build image

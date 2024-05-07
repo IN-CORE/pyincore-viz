@@ -62,7 +62,7 @@ jobs:
             echo "TAGS=${BRANCH}" >> $GITHUB_ENV
             GA_KEY="${{ secrets.GA_KEY_DEV }}"
           fi
-          echo "GA_KEY=${GA_KEY}" >> $GITHUB_ENV
+          echo "GA_KEY=$GA_KEY" >> $GITHUB_ENV
           echo "GA_KEY is: $GA_KEY"
           echo "GA_KEY_DEV in secret is: ${{ secrets.GA_KEY_DEV }}"
           echo "GA_KEY in secret is: ${{ secrets.GA_KEY }}"
