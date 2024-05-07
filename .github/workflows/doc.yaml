@@ -77,11 +77,12 @@ jobs:
       # build image
       - name: Build image
         uses: elgohr/Publish-Docker-Github-Action@3.04
+        env:
+          GA_KEY: ${{ env.GA_KEY }}
         with:
           name: incore/doc/pyincore-viz
           no_push: true
-          build-args: |
-            GA_KEY:${{ env.GA_KEY }}
+          buildargs: GA_KEY
 
       # this will publish to NCSA
       - name: Publish to NCSA Hub
