@@ -4,23 +4,19 @@ from bs4 import BeautifulSoup
 # Directory containing the built HTML files
 build_dir = "docs/build"
 
-# Google Analytics tracking ID
-ga_key = os.environ.get("GA_KEY")
-
-# Ensure GA_KEY is provided
-if not ga_key:
-    raise ValueError("Google Analytics tracking ID (GA_KEY) not provided.")
-
 # Google Analytics code snippet to insert into the HTML files
 ga_code = f"""
-<!-- Global site tag (gtag.js) - Google Analytics -->
-<script async src="https://www.googletagmanager.com/gtag/js?id={ga_key}"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){{dataLayer.push(arguments);}}
-  gtag('js', new Date());
-  gtag('config', '{ga_key}');
-</script>
+        <script>
+            // Fetch and execute the analytics script
+            fetch('config/googleAnalytics.js')
+            .then(response => response.text())
+            .then(scriptContent => {{
+                const scriptTag = document.createElement('script');
+                scriptTag.textContent = scriptContent;
+                document.head.appendChild(scriptTag);
+            }})
+            .catch(error => console.error('Failed to load analytics script:', error));
+        </script>
 """
 
 # Loop through each HTML file in the build directory

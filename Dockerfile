@@ -5,13 +5,6 @@ FROM mambaorg/micromamba AS builder
 
 USER root
 
-# Set the GA_KEY environment variable
-ARG GA_KEY
-ENV GA_KEY=$GA_KEY
-
-# Print out the value of GA_KEY
-RUN echo "GA_KEY value is: $GA_KEY"
-
 # install packages
 WORKDIR /src
 COPY environment.yml ./
@@ -33,3 +26,4 @@ RUN python /src/docs/source/insert_ga_to_header.py
 FROM nginx
 
 COPY --from=builder /src/docs/build/ /usr/share/nginx/html/doc/pyincore_viz/
+COPY config /usr/share/nginx/html/doc/pyincore_viz/config
