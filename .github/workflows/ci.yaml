@@ -49,17 +49,13 @@ jobs:
             done
             echo "VERSION=${version}" >> $GITHUB_ENV
             echo "TAGS=${tags}" >> $GITHUB_ENV
-            GA_KEY="${{ secrets.GA_KEY }}"
           elif [ "$BRANCH" == "develop" ]; then
             echo "VERSION=develop" >> $GITHUB_ENV
             echo "TAGS=develop" >> $GITHUB_ENV
-            GA_KEY="${{ secrets.GA_KEY_DEV }}"
           else
             echo "VERSION=testing" >> $GITHUB_ENV
             echo "TAGS=${BRANCH}" >> $GITHUB_ENV
-            GA_KEY="${{ secrets.GA_KEY_DEV }}"
           fi
-          echo "GA_KEY=$GA_KEY" >> $GITHUB_ENV
 
       # build image
       - name: Build image
@@ -69,14 +65,13 @@ jobs:
           VERSION: ${{ env.VERSION }}
           BUILDNUMBER: ${{ github.run_number }}
           GITSHA1: ${{ github.sha }}
-          GA_KEY: ${{ env.GA_KEY }}
         with:
           registry: hub.ncsa.illinois.edu
           name: incore/doc/pyincore-viz
           #username: ${{ secrets.HUB_USERNAME }}
           #password: ${{ secrets.HUB_PASSWORD }}
           tags: "${{ env.TAGS }}"
-          buildargs: BRANCH,VERSION,BUILDNUMBER,GITSHA1,GA_KEY
+          buildargs: BRANCH,VERSION,BUILDNUMBER,GITSHA1
           no_push: true
 
       # this will publish to NCSA
@@ -89,11 +84,10 @@ jobs:
           VERSION: ${{ env.VERSION }}
           BUILDNUMBER: ${{ github.run_number }}
           GITSHA1: ${{ github.sha  }}
-          GA_KEY: ${{ env.GA_KEY }}
         with:
           registry: hub.ncsa.illinois.edu
           name: incore/doc/pyincore-viz
           username: ${{ secrets.HUB_USERNAME }}
           password: ${{ secrets.HUB_PASSWORD }}
           tags: "${{ env.TAGS }}"
-          buildargs: BRANCH,VERSION,BUILDNUMBER,GITSHA1,GA_KEY
+          buildargs: BRANCH,VERSION,BUILDNUMBER,GITSHA1
