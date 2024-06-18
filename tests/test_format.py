@@ -9,8 +9,8 @@ import os
 from pyincore_viz.globals import PYINCORE_VIZ_ROOT_FOLDER
 
 paths = [
-    os.path.join(PYINCORE_VIZ_ROOT_FOLDER, 'pyincore_viz'),
-    os.path.join(PYINCORE_VIZ_ROOT_FOLDER, 'tests/pyincore_viz/'),
+    os.path.join(PYINCORE_VIZ_ROOT_FOLDER, "pyincore_viz"),
+    os.path.join(PYINCORE_VIZ_ROOT_FOLDER, "tests/pyincore_viz/"),
 ]
 
 
