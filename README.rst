@@ -47,6 +47,7 @@ Please use pip for installing pyincore-viz at your discretion.
 **Prerequisite**
 
 * GDAL C library must be installed to install pyincore-viz. (for Ubuntu, **gdal-bin** and **libgdal-dev**)
+* For developers, pre-install must be installed. If not, run `brew install pre-commit` or `pip install pre-commit`.
 
 To install **pyincore-viz** package, run
 
