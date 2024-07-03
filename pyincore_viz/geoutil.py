@@ -107,9 +107,6 @@ class GeoUtil:
         ):
             exit("Error! Given data set is not tif or png. Please check the dataset")
 
-        with rasterio.open(file_path) as r:
-            eq_crs = r.crs
-
         ax = gdf.plot(figsize=(10, 10), column=column, categorical=False, legend=True)
         # TODO there is a problem in crs in following lines.
         #  It should be better to add crs to ctx.add_basemap like following
@@ -815,7 +812,7 @@ class GeoUtil:
                     temp_df[dataset_id] = temp_df[column].astype(float)
                     temp_df = temp_df[["guid", dataset_id]]
                     join_df = join_df.join(temp_df.set_index("guid"), on="guid")
-            except KeyError as err:
+            except KeyError:
                 logger.debug(
                     "Skipping "
                     + dataset_id
@@ -899,7 +896,6 @@ class GeoUtil:
         data = gdal.Open(input_path, GA_ReadOnly)
         cols = data.RasterXSize
         rows = data.RasterYSize
-        bands = data.RasterCount
         band = data.GetRasterBand(1)
         tiff_array = band.ReadAsArray(0, 0, cols, rows)
         tiff_norm = tiff_array - np.amin(tiff_array)
@@ -1523,17 +1519,10 @@ class GeoUtil:
             obj: An ipyleaflet map.
 
         """
-        in_gpd = None
-        center_x = None
-        center_y = None
-        bbox = None
 
         # check if the dataset is geodataset and convert dataset to geodataframe
         try:
             in_gpd = gpd.read_file(dataset.local_file_path)
-            center_x = in_gpd.bounds.minx.mean()
-            center_y = in_gpd.bounds.miny.mean()
-            title = dataset.metadata["title"]
             bbox = in_gpd.total_bounds
 
         except Exception:
@@ -1623,10 +1612,6 @@ class GeoUtil:
 
             except Exception:
                 raise Exception("Not a geodataset")
-
-        # calculate center point
-        center_x = ((bbox[2] - bbox[0]) / 2) + bbox[0]
-        center_y = ((bbox[3] - bbox[1]) / 2) + bbox[1]
 
         out_map = GeoUtil.get_ipyleaflet_map(bbox)
 

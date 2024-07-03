@@ -173,11 +173,11 @@ class PopResultsTable:
         df["Population Dislocation"].notes = "Identify Population Dislocation."
 
         df.loc[
-            (df["dislocated"] == False) & (df["guid"].notnull()),
+            (df["dislocated"] is False) & (df["guid"].notnull()),
             "Population Dislocation",
         ] = "0 Does not dislocate"
         df.loc[
-            (df["dislocated"] == True) & (df["guid"].notnull()),
+            (df["dislocated"] is True) & (df["guid"].notnull()),
             "Population Dislocation",
         ] = "1 Dislocates"
 

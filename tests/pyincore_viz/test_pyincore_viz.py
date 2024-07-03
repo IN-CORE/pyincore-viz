@@ -211,7 +211,7 @@ def test_plot_raster_dataset(client):
 def test_visualize_raster_file(client):
     galvaston_wave_height_id = "5f11e503feef2d758c4df6db"
     dataset = Dataset.from_data_service(galvaston_wave_height_id, DataService(client))
-    map = viz.map_raster_overlay_from_file(dataset.get_file_path("tif"))
+    _ = viz.map_raster_overlay_from_file(dataset.get_file_path("tif"))
 
     assert True
 
@@ -231,7 +231,7 @@ def test_plot_map_dataset_list(client):
         dataset_list.append(Dataset.from_data_service(dataset_id, DataService(client)))
 
     # table dataset plot map
-    map = viz.plot_maps_dataset_list(dataset_list, client)
+    _ = viz.plot_maps_dataset_list(dataset_list, client)
 
     assert True
 
@@ -239,7 +239,7 @@ def test_plot_map_dataset_list(client):
 def test_plot_map_table_dataset(client):
     building_damage_id = "5a296b53c7d30d4af5378cd5"
     dataset = Dataset.from_data_service(building_damage_id, DataService(client))
-    map = viz.plot_table_dataset(dataset, client, "meandamage")
+    _ = viz.plot_table_dataset(dataset, client, "meandamage")
 
     assert True
 
@@ -252,7 +252,7 @@ def test_plot_table_dataset_list_from_single_source(client):
     for dataset_id in dataset_id_list:
         dataset_list.append(Dataset.from_data_service(dataset_id, DataService(client)))
 
-    map = viz.plot_table_dataset_list_from_single_source(
+    _ = viz.plot_table_dataset_list_from_single_source(
         client, dataset_list, "failure_probability", seaside_building_polygon_id
     )
 
@@ -262,7 +262,7 @@ def test_plot_table_dataset_list_from_single_source(client):
 def test_heatmap(client):
     shelby_hospital_inv_id = "5a284f0bc7d30d13bc081a28"
     dataset = Dataset.from_data_service(shelby_hospital_inv_id, DataService(client))
-    map = viz.plot_heatmap(dataset, "str_prob")
+    _ = viz.plot_heatmap(dataset, "str_prob")
 
     assert True
 
@@ -279,8 +279,6 @@ def test_seaside_bridges(client):
 
 def test_overay_gdf_with_raster(client):
     shelby_hospital_inv_id = "5a284f0bc7d30d13bc081a28"
-    shelby_census_tract = "5a284f4cc7d30d13bc0822d4"
-    memphis_water_pipeline = "5a284f28c7d30d13bc081d14"
     memphis_eq = "5b902cb273c3371e1236b36b"
 
     eq_dataset_id = (
@@ -293,7 +291,7 @@ def test_overay_gdf_with_raster(client):
     dataset = Dataset.from_data_service(shelby_hospital_inv_id, DataService(client))
     gdf = gpd.read_file(dataset.local_file_path)
 
-    map = viz.overlay_gdf_with_raster_hazard(gdf, "struct_typ", raster_dataset)
+    _ = viz.overlay_gdf_with_raster_hazard(gdf, "struct_typ", raster_dataset)
 
     assert True
 
