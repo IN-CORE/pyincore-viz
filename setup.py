@@ -68,7 +68,6 @@ setup(
         'pillow',
         'pyincore>=1.11.0',
         'rasterio>=1.3.9',
-        'openssl<=3.2.0'
     ],
 
     extras_require={
