@@ -319,7 +319,7 @@ class GeoUtil:
         max = earthquake_nd.max()
 
         # Define the default viridis colormap for viz
-        viz_cmap = cm.get_cmap("viridis", 256)
+        viz_cmap = plt.get_cmap('viridis', 256)
 
         earthquake_nd = np.flip(earthquake_nd, axis=0)
 
