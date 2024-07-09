@@ -60,7 +60,7 @@ setup(
         'ipyleaflet>=0.16.0',
         'ipywidgets>=7.6.0',
         'lxml>=4.6.3',
-        'matplotlib>=3.8.0',
+        'matplotlib>=3.8.3',
         'networkx>=3.2.1',
         'numpy>=1.26.0,<2.0a0',
         'owslib>=0.17.1',
