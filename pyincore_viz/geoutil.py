@@ -20,7 +20,6 @@ import random
 import json
 
 from deprecated.sphinx import deprecated
-from matplotlib import cm
 from pathlib import Path
 from osgeo import gdal
 from osgeo.gdalconst import GA_ReadOnly
@@ -319,7 +318,7 @@ class GeoUtil:
         max = earthquake_nd.max()
 
         # Define the default viridis colormap for viz
-        viz_cmap = plt.get_cmap('viridis', 256)
+        viz_cmap = plt.get_cmap("viridis", 256)
 
         earthquake_nd = np.flip(earthquake_nd, axis=0)
 
