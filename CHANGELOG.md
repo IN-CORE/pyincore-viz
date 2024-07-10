@@ -6,6 +6,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
+### Added
+- Apply Black formatter [#169](https://github.com/IN-CORE/pyincore-viz/issues/169)
 
 ### Fixed
 - Unnecessary dependency in setup.py [#171](https://github.com/IN-CORE/pyincore-viz/issues/171)

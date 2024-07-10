@@ -7,22 +7,19 @@
 from setuptools import setup, find_packages
 
 # version number of pyincore
-version = '1.10.1'
+version = "1.10.1"
 
 with open("README.rst", encoding="utf-8") as f:
     readme = f.read()
 
 setup(
-    name='pyincore_viz',
+    name="pyincore_viz",
     version=version,
-    description='IN-CORE visualization python package',
+    description="IN-CORE visualization python package",
     long_description=readme,
-    long_description_content_type='text/x-rst',
-
-    url='https://incore.ncsa.illinois.edu',
-
+    long_description_content_type="text/x-rst",
+    url="https://incore.ncsa.illinois.edu",
     license="Mozilla Public License v2.0",
-
     classifiers=[
         "Development Status :: 4 - Beta",
         "Intended Audience :: Science/Research",
@@ -30,9 +27,8 @@ setup(
         "Natural Language :: English",
         "Operating System :: OS Independent",
         "Programming Language :: Python :: 3",
-        "Topic :: Scientific/Engineering"
+        "Topic :: Scientific/Engineering",
     ],
-
     keywords=[
         "infrastructure",
         "resilience",
@@ -43,43 +39,39 @@ setup(
         "tsunami",
         "tornado",
         "hurricane",
-        "dislocation"
+        "dislocation",
     ],
-
-    packages=find_packages(where=".", exclude=["*.tests", "*.tests.*", "tests.*", "tests"]),
+    packages=find_packages(
+        where=".", exclude=["*.tests", "*.tests.*", "tests.*", "tests"]
+    ),
     include_package_data=True,
-    package_data={
-        '': ['*.ini']
-    },
-
+    package_data={"": ["*.ini"]},
     install_requires=[
-        'branca>=0.3.0',
-        'contextily>=1.0.0',
-        'deprecated',
-        'geopandas>=0.14.0',
-        'ipyleaflet>=0.16.0',
-        'ipywidgets>=7.6.0',
-        'lxml>=4.6.3',
-        'matplotlib>=3.8.3',
-        'networkx>=3.2.1',
-        'numpy>=1.26.0,<2.0a0',
-        'owslib>=0.17.1',
-        'pandas>=2.1.2',
-        'pillow',
-        'pyincore>=1.11.0',
-        'rasterio>=1.3.9',
+        "branca>=0.3.0",
+        "contextily>=1.0.0",
+        "deprecated",
+        "geopandas>=0.14.0",
+        "ipyleaflet>=0.16.0",
+        "ipywidgets>=7.6.0",
+        "lxml>=4.6.3",
+        "matplotlib>=3.8.3",
+        "networkx>=3.2.1",
+        "numpy>=1.26.0,<2.0a0",
+        "owslib>=0.17.1",
+        "pandas>=2.1.2",
+        "pillow",
+        "pyincore>=1.11.0",
+        "rasterio>=1.3.9",
     ],
-
     extras_require={
-        'test': [
-            'pycodestyle>=2.6.0',
-            'pytest>=3.9.0',
-            'python-jose>=3.0',
+        "test": [
+            "pycodestyle>=2.6.0",
+            "pytest>=3.9.0",
+            "python-jose>=3.0",
         ]
     },
-
     project_urls={
-        'Bug Reports': 'https://github.com/IN-CORE/pyincor-vize/issues',
-        'Source': 'https://github.com/IN-CORE/pyincor-vize',
+        "Bug Reports": "https://github.com/IN-CORE/pyincor-vize/issues",
+        "Source": "https://github.com/IN-CORE/pyincor-vize",
     },
 )
