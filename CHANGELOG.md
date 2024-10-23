@@ -12,6 +12,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Fixed
 - Unnecessary dependency in setup.py [#171](https://github.com/IN-CORE/pyincore-viz/issues/171)
 - Matplotlib version incompatibility by upgrade in geoutil [#173](https://github.com/IN-CORE/pyincore-viz/issues/173)
+- Fixed the pypi publish of the package [#177](https://github.com/IN-CORE/pyincore-viz/issues/177)
 
 ## [1.10.1] - 2023-06-12
 ### Added
