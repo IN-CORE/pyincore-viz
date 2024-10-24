@@ -5,6 +5,15 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## [1.11.0] - 2024-10-23
+### Added
+- Apply Black formatter [#169](https://github.com/IN-CORE/pyincore-viz/issues/169)
+
+### Fixed
+- Unnecessary dependency in setup.py [#171](https://github.com/IN-CORE/pyincore-viz/issues/171)
+- Matplotlib version incompatibility by upgrade in geoutil [#173](https://github.com/IN-CORE/pyincore-viz/issues/173)
+- Fixed the pypi publish of the package [#177](https://github.com/IN-CORE/pyincore-viz/issues/177)
+
 ## [1.10.1] - 2023-06-12
 ### Added
 - Google Analytics to the documentation site [#164](https://github.com/IN-CORE/pyincore-viz/issues/164)

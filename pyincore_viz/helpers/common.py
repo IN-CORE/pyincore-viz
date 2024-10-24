@@ -36,6 +36,9 @@ def get_demands_for_dataset_hazards(datasets: List) -> List[str]:
     """
     available_demands = []
     for dataset in datasets:
-        available_demands.append(dataset['demandType'] if dataset['period'] == 0 else
-                                 str(dataset['period']) + " " + dataset['demandType'])
+        available_demands.append(
+            dataset["demandType"]
+            if dataset["period"] == 0
+            else str(dataset["period"]) + " " + dataset["demandType"]
+        )
     return available_demands

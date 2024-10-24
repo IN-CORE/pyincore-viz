@@ -1,5 +1,5 @@
 {% set name = "pyincore-viz" %}
-{% set version = "1.10.1" %}
+{% set version = "1.11.0" %}
 
 package:
   name: {{ name|lower }}
@@ -42,7 +42,7 @@ requirements:
     - ipyleaflet>=0.16.0
     - ipywidgets>=7.6.0
     - lxml>=4.6.3
-    - matplotlib>=3.8.0
+    - matplotlib>=3.8.3
     - networkx>=3.2.1
     - owslib>=0.17.1
     - pandas>=2.1.2
