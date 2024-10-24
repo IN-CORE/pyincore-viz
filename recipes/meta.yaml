@@ -1,5 +1,5 @@
 {% set name = "pyincore-viz" %}
-{% set version = "1.10.1" %}
+{% set version = "1.11.0" %}
 
 package:
   name: {{ name|lower }}
