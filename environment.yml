@@ -2,6 +2,7 @@ name: pyincore_viz
 channels:
   - conda-forge
   - defaults
+  - in-core
 dependencies:
   - gdal
   - branca>=0.3.0
