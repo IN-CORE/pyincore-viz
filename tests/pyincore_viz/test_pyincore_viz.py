@@ -29,13 +29,13 @@ def test_visualize_model_earthquake(client):
 
 
 def test_visualize_dataset_earthquake(client):
-    eq_hazard_id = "5ba8ed5cec23090435209069"
+    eq_hazard_id = "5b902cb273c3371e1236b36b"
     viz.plot_earthquake(eq_hazard_id, client)
     assert True
 
 
 def test_visualize_dataset_earthquake_with_demand(client):
-    eq_hazard_id = "5ba8ed5cec23090435209069"
+    eq_hazard_id = "5b902cb273c3371e1236b36b"
     viz.plot_earthquake(eq_hazard_id, client, "0.4 SA")
     assert True
 
