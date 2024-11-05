@@ -6,6 +6,7 @@ on:
       - main
       - develop
       - 'release/*'
+      - test-main
 
     tags:
       - '*'
@@ -38,7 +39,7 @@ jobs:
             BRANCH=${GITHUB_REF##*/}
           fi
           echo "GITHUB_BRANCH=${BRANCH}" >> $GITHUB_ENV
-          if [ "$BRANCH" == "main" ]; then
+          if [ "$BRANCH" == "test-main" ]; then
             version=$(cat package.json | grep \"version\" | head -1 | awk -F= "{ print $2 }" | sed 's/[version:,",]//g' | tr -d '[[:space:]]')
             tags="latest"
             oldversion=""
@@ -70,7 +71,7 @@ jobs:
           name: incore/doc/pyincore-viz
           #username: ${{ secrets.HUB_USERNAME }}
           #password: ${{ secrets.HUB_PASSWORD }}
-          tags: "${{ env.TAGS }}"
+          tags: ${{ env.TAGS }}
           buildargs: BRANCH,VERSION,BUILDNUMBER,GITSHA1
           no_push: true
 
