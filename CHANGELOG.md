@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 ### Fixed
+- Documentation container tagging error by github action [#181](https://github.com/IN-CORE/pyincore-viz/issues/181)
 - Pytest error caused by removed hazard dataset [#182](https://github.com/IN-CORE/pyincore-viz/issues/182)
 
 ## [1.11.0] - 2024-10-23

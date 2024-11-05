@@ -57,10 +57,6 @@ jobs:
             echo "TAGS=${BRANCH}" >> $GITHUB_ENV
           fi
 
-      # debug TAGS
-      - name: Debug TAGS
-        run: echo "TAGS=${{ env.TAGS }}"
-
       # build image
       - name: Build image
         uses: elgohr/Publish-Docker-Github-Action@3.04
