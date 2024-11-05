@@ -43,17 +43,25 @@ jobs:
             BRANCH=${GITHUB_REF##*/}
           fi
           echo "GITHUB_BRANCH=${BRANCH}" >> $GITHUB_ENV
+
           if [ "$BRANCH" == "test-main" ]; then
+            # Extract version from conf.py and generate tags without quotes
             version=$(awk -F= '/^release/ { print $2}' docs/source/conf.py | sed "s/[ ']//g")
             tags="latest"
             oldversion=""
+
             while [ "${oldversion}" != "${version}" ]; do
               oldversion="${version}"
               tags="${tags},${version}"
               version=${version%.*}
             done
+
+            # Remove any unwanted double quotes from tags
+            tags=$(echo $tags | sed 's/"//g')
+
             echo "VERSION=${version}" >> $GITHUB_ENV
             echo "TAGS=${tags}" >> $GITHUB_ENV
+
           elif [ "$BRANCH" == "develop" ]; then
             echo "VERSION=develop" >> $GITHUB_ENV
             echo "TAGS=develop" >> $GITHUB_ENV
@@ -61,6 +69,10 @@ jobs:
             echo "VERSION=testing" >> $GITHUB_ENV
             echo "TAGS=${BRANCH}" >> $GITHUB_ENV
           fi
+
+      # debug TAGS
+      - name: Debug TAGS
+        run: echo "TAGS=${{ env.TAGS }}"
 
       # debug TAGS
       - name: Debug TAGS
