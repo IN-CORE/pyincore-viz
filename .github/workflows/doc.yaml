@@ -43,24 +43,21 @@ jobs:
             BRANCH=${GITHUB_REF##*/}
           fi
           echo "GITHUB_BRANCH=${BRANCH}" >> $GITHUB_ENV
-      
+
           if [ "$BRANCH" == "test-main" ]; then
             version=$(awk -F= '/^release/ { print $2}' docs/source/conf.py | sed "s/[ ']//g")
             tags="latest"
             oldversion=""
-      
             while [ "${oldversion}" != "${version}" ]; do
               oldversion="${version}"
               tags="${tags},${version}"
               version=${version%.*}
             done
-      
             # remove double quotes from tags when it gets merged to main
             tags=$(echo $tags | sed 's/"//g')
             
             echo "VERSION=${version}" >> $GITHUB_ENV
             echo "TAGS=${tags}" >> $GITHUB_ENV
-      
           elif [ "$BRANCH" == "develop" ]; then
             echo "VERSION=develop" >> $GITHUB_ENV
             echo "TAGS=develop" >> $GITHUB_ENV
