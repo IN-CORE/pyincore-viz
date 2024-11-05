@@ -6,6 +6,7 @@ on:
       - main
       - develop
       - 'release/*'
+      - test-main
 
     tags:
       - '*'
