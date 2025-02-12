@@ -6,6 +6,10 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
+
+### Changed
+- Conda build to include package format argument [#195](https://github.com/IN-CORE/pyincore-viz/issues/195)
+
 ### Fixed
 - Documentation container tagging error by github action [#181](https://github.com/IN-CORE/pyincore-viz/issues/181)
 - Pytest error caused by removed hazard dataset [#182](https://github.com/IN-CORE/pyincore-viz/issues/182)
