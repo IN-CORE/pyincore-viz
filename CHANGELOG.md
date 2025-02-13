@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Changed
 - Conda build to include package format argument [#195](https://github.com/IN-CORE/pyincore-viz/issues/195)
+- Update production URL references to tools.in-core.org and dev to dev.in-core.org [#197](https://github.com/IN-CORE/pyincore-viz/issues/197)
 
 ### Fixed
 - Documentation container tagging error by github action [#181](https://github.com/IN-CORE/pyincore-viz/issues/181)
