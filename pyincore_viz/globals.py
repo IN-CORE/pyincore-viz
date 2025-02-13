@@ -10,7 +10,7 @@ from logging import config as logging_config
 
 PACKAGE_VERSION = "1.10.0"
 
-INCORE_GEOSERVER_WMS_URL = "https://incore.ncsa.illinois.edu/geoserver/incore/wms"
+INCORE_GEOSERVER_WMS_URL = "https://tools.in-core.org/geoserver/incore/wms"
 INCORE_GEOSERVER_DEV_WMS_URL = (
     "https://incore-dev.ncsa.illinois.edu/geoserver/incore/wms"
 )
