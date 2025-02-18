@@ -5,6 +5,16 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## [1.11.1] - 2025-02-20
+
+### Changed
+- Conda build to include package format argument [#195](https://github.com/IN-CORE/pyincore-viz/issues/195)
+- Update production URL references to tools.in-core.org and dev to dev.in-core.org [#197](https://github.com/IN-CORE/pyincore-viz/issues/197)
+
+### Fixed
+- Documentation container tagging error by github action [#181](https://github.com/IN-CORE/pyincore-viz/issues/181)
+- Pytest error caused by removed hazard dataset [#182](https://github.com/IN-CORE/pyincore-viz/issues/182)
+
 ## [1.11.0] - 2024-10-23
 ### Added
 - Apply Black formatter [#169](https://github.com/IN-CORE/pyincore-viz/issues/169)

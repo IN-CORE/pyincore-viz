@@ -7,7 +7,7 @@
 from setuptools import setup, find_packages
 
 # version number of pyincore
-version = "1.11.0"
+version = "1.11.1"
 
 with open("README.rst", encoding="utf-8") as f:
     readme = f.read()
@@ -18,7 +18,7 @@ setup(
     description="IN-CORE visualization python package",
     long_description=readme,
     long_description_content_type="text/x-rst",
-    url="https://incore.ncsa.illinois.edu",
+    url="https://tools.in-core.org",
     license="Mozilla Public License v2.0",
     classifiers=[
         "Development Status :: 4 - Beta",
@@ -60,7 +60,7 @@ setup(
         "owslib>=0.17.1",
         "pandas>=2.1.2",
         "pillow",
-        "pyincore>=1.11.0",
+        "pyincore>=1.20.0",
         "rasterio>=1.3.9",
     ],
     extras_require={
