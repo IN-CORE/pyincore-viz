@@ -12,10 +12,16 @@ PACKAGE_VERSION = "1.10.0"
 
 INCORE_GEOSERVER_WMS_URL = "https://tools.in-core.org/geoserver/incore/wms"
 INCORE_GEOSERVER_DEV_WMS_URL = (
-    "https://incore-dev.ncsa.illinois.edu/geoserver/incore/wms"
+    "https://dev.in-core.org/geoserver/incore/wms"
 )
 
+INCORE_API_DEV_URL = "https://dev.in-core.org"
+INCORE_API_URL = "https://tools.in-core.org"
+
 PYINCORE_VIZ_ROOT_FOLDER = os.path.dirname(os.path.dirname(__file__))
+USER_HOME = os.path.expanduser("~")
+USER_CACHE_DIR = ".incore"
+PYINCORE_USER_CACHE = os.path.join(USER_HOME, USER_CACHE_DIR)
 
 LOGGING_CONFIG = os.path.abspath(
     os.path.join(os.path.abspath(os.path.dirname(__file__)), "logging.ini")

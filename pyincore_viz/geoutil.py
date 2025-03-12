@@ -18,6 +18,7 @@ import PIL
 import numpy as np
 import random
 import json
+import hashlib
 
 from deprecated.sphinx import deprecated
 from pathlib import Path
@@ -461,71 +462,67 @@ class GeoUtil:
         return m
 
     @staticmethod
+    def get_token():
+        """Retrieve the authentication token from the local cache."""
+        token_file_name = "." + hashlib.sha256(
+            str.encode(pyincore_viz_globals.INCORE_API_DEV_URL)).hexdigest() + "_token"
+        token_file = os.path.join(pyincore_viz_globals.PYINCORE_USER_CACHE, token_file_name)
+
+        if os.path.exists(token_file):
+            with open(token_file, "r") as f:
+                auth = f.read().splitlines()
+            return auth[0]
+        return None
+
+    @staticmethod
     def get_wms_map(
-        datasets: list,
-        wms_url=pyincore_viz_globals.INCORE_GEOSERVER_WMS_URL,
-        layer_check=False,
+            datasets: list,
+            wms_url="https://dev.in-core.org/geoserver",
+            # wms_url=pyincore_viz_globals.INCORE_GEOSERVER_WMS_URL,
+            layer_check=False,
     ):
-        """Get a map with WMS layers from list of datasets.
+        """Get a map with WMS layers from a list of datasets using authentication.
 
         Args:
             datasets (list): list of pyincore Dataset objects.
             wms_url (str): URL of WMS server.
-            layer_check (bool): boolean for checking the layer availability in wms server.
+            layer_check (bool): boolean for checking the layer availability in WMS server.
 
         Returns:
             obj: An ipyleaflet Map.
-
         """
-        # TODO: how to add a style for each WMS layers (pre-defined styles on WMS server)
+        token = GeoUtil.get_token()
+        if not token:
+            raise Exception("Authentication token not found. Please login to obtain a token.")
+
+        headers = {"Authorization": f"{token}"}
         wms_layers = []
-        # (min_lat, min_lon, max_lat, max_lon)
         bbox_all = [9999, 9999, -9999, -9999]
-        # the reason for checking this layer_check on/off is that
-        # the process could take very long time based on the number of layers in geoserver.
-        # the process could be relatively faster if there are not many layers in the geoserver
-        # but the processing time could increase based upon the increase of the layers in the server
-        # by putting on/off for this layer checking, it could make the process faster.
+
         if layer_check:
             try:
-                wms = WebMapService(wms_url + "?", version="1.1.1")
+                wms = WebMapService(wms_url + "?", version="1.1.1", headers=headers)
             except lxml.etree.XMLSyntaxError:
-                # The error is caused because it failed to parse the geoserver's return xml.
-                # This error will happen in geoserver when there is not complete dataset ingested,
-                # and it is very hard to avoid due to current operation setting.
-                # It should be passed because this is a proof of the geoserver service is working,
-                # and the further layer_check related operation should be stopped
                 layer_check = False
             except Exception:
-                raise Exception("Geoserver failed to set WMS service.")
+                raise Exception("GeoServer failed to set WMS service.")
 
         for dataset in datasets:
             wms_layer_name = "incore:" + dataset.id
-            # check availability of the wms layer
-            # TODO in here, the question is the, should this error quit whole process
-            # or just keep going and show the error message for only the layer with error
-            # if it needs to throw an error and exit the process, use following code block
-            # if layer_check:
-            #     wms[dataset.id].boundingBox
-            # else:
-            #     raise KeyError(
-            #         "Error: The layer " + str(dataset.id) + " does not exist in the wms server")
-            # if it needs to keep going with showing all the layers, use following code block
+
             if layer_check:
                 try:
                     wms[dataset.id].boundingBox
                 except KeyError:
-                    print(
-                        "Error: The layer "
-                        + str(dataset.id)
-                        + " does not exist in the wms server"
-                    )
+                    print(f"Error: The layer {dataset.id} does not exist in the WMS server")
+
             wms_layer = ipylft.WMSLayer(
                 url=wms_url,
                 layers=wms_layer_name,
                 format="image/png",
                 transparent=True,
                 name=dataset.metadata["title"],
+                headers=headers,  # Pass auth headers to the WMS layer
             )
             wms_layers.append(wms_layer)
 
@@ -538,6 +535,85 @@ class GeoUtil:
             m.add_layer(layer)
 
         return m
+
+    # @staticmethod
+    # def get_wms_map(
+    #     datasets: list,
+    #     wms_url=pyincore_viz_globals.INCORE_GEOSERVER_WMS_URL,
+    #     layer_check=False,
+    # ):
+    #     """Get a map with WMS layers from list of datasets.
+    #
+    #     Args:
+    #         datasets (list): list of pyincore Dataset objects.
+    #         wms_url (str): URL of WMS server.
+    #         layer_check (bool): boolean for checking the layer availability in wms server.
+    #
+    #     Returns:
+    #         obj: An ipyleaflet Map.
+    #
+    #     """
+    #     # TODO: how to add a style for each WMS layers (pre-defined styles on WMS server)
+    #     wms_layers = []
+    #     # (min_lat, min_lon, max_lat, max_lon)
+    #     bbox_all = [9999, 9999, -9999, -9999]
+    #     # the reason for checking this layer_check on/off is that
+    #     # the process could take very long time based on the number of layers in geoserver.
+    #     # the process could be relatively faster if there are not many layers in the geoserver
+    #     # but the processing time could increase based upon the increase of the layers in the server
+    #     # by putting on/off for this layer checking, it could make the process faster.
+    #     if layer_check:
+    #         try:
+    #             wms = WebMapService(wms_url + "?", version="1.1.1")
+    #         except lxml.etree.XMLSyntaxError:
+    #             # The error is caused because it failed to parse the geoserver's return xml.
+    #             # This error will happen in geoserver when there is not complete dataset ingested,
+    #             # and it is very hard to avoid due to current operation setting.
+    #             # It should be passed because this is a proof of the geoserver service is working,
+    #             # and the further layer_check related operation should be stopped
+    #             layer_check = False
+    #         except Exception:
+    #             raise Exception("Geoserver failed to set WMS service.")
+    #
+    #     for dataset in datasets:
+    #         wms_layer_name = "incore:" + dataset.id
+    #         # check availability of the wms layer
+    #         # TODO in here, the question is the, should this error quit whole process
+    #         # or just keep going and show the error message for only the layer with error
+    #         # if it needs to throw an error and exit the process, use following code block
+    #         # if layer_check:
+    #         #     wms[dataset.id].boundingBox
+    #         # else:
+    #         #     raise KeyError(
+    #         #         "Error: The layer " + str(dataset.id) + " does not exist in the wms server")
+    #         # if it needs to keep going with showing all the layers, use following code block
+    #         if layer_check:
+    #             try:
+    #                 wms[dataset.id].boundingBox
+    #             except KeyError:
+    #                 print(
+    #                     "Error: The layer "
+    #                     + str(dataset.id)
+    #                     + " does not exist in the wms server"
+    #                 )
+    #         wms_layer = ipylft.WMSLayer(
+    #             url=wms_url,
+    #             layers=wms_layer_name,
+    #             format="image/png",
+    #             transparent=True,
+    #             name=dataset.metadata["title"],
+    #         )
+    #         wms_layers.append(wms_layer)
+    #
+    #         bbox = dataset.metadata["boundingBox"]
+    #         bbox_all = GeoUtil.merge_bbox(bbox_all, bbox)
+    #
+    #     m = GeoUtil.get_ipyleaflet_map(bbox_all)
+    #
+    #     for layer in wms_layers:
+    #         m.add_layer(layer)
+    #
+    #     return m
 
     @staticmethod
     def get_gdf_wms_map(
