@@ -62,8 +62,8 @@ setup(
         "pillow",
         "pyincore>=1.20.0",
         "rasterio>=1.3.9",
-        "requests">=2.31.0,
-        "flask">=3.1.0
+        "requests>=2.31.0",
+        "flask>=3.1.0"
     ],
     extras_require={
         "test": [
