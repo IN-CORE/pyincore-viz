@@ -10,13 +10,16 @@ from logging import config as logging_config
 
 PACKAGE_VERSION = "1.10.0"
 
-INCORE_GEOSERVER_WMS_URL = "https://tools.in-core.org/geoserver/incore/wms"
+INCORE_GEOSERVER_WMS_URL = "https://dev.in-core.org/geoserver/incore/wms"
+# INCORE_GEOSERVER_WMS_URL = "https://tools.in-core.org/geoserver/incore/wms"
 INCORE_GEOSERVER_DEV_WMS_URL = (
     "https://dev.in-core.org/geoserver/incore/wms"
 )
 
 INCORE_API_DEV_URL = "https://dev.in-core.org"
 INCORE_API_URL = "https://tools.in-core.org"
+
+LOCAL_PROXY_URL = "http://localhost:3000/proxy_wms"
 
 PYINCORE_VIZ_ROOT_FOLDER = os.path.dirname(os.path.dirname(__file__))
 USER_HOME = os.path.expanduser("~")

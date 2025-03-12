@@ -19,12 +19,16 @@ import numpy as np
 import random
 import json
 import hashlib
+import requests
+import threading
+import logging
 
+from flask import Flask, request, Response
 from deprecated.sphinx import deprecated
 from pathlib import Path
 from osgeo import gdal
 from osgeo.gdalconst import GA_ReadOnly
-from ipyleaflet import projections
+from ipyleaflet import projections, WMSLayer, LayersControl
 from owslib.wms import WebMapService
 from pyincore.dataservice import DataService
 from pyincore.hazardservice import HazardService
@@ -475,54 +479,83 @@ class GeoUtil:
         return None
 
     @staticmethod
-    def get_wms_map(
-            datasets: list,
-            wms_url="https://dev.in-core.org/geoserver",
-            # wms_url=pyincore_viz_globals.INCORE_GEOSERVER_WMS_URL,
-            layer_check=False,
-    ):
-        """Get a map with WMS layers from a list of datasets using authentication.
+    def start_proxy():
+        """
+        Starts a Flask proxy server on port 3000 if it is not already running.
+        This proxy forwards WMS requests with authentication headers.
+        """
+        app = Flask(__name__)
+
+        # Suppress Flask's built-in logging (set to ERROR level)
+        log = logging.getLogger("werkzeug")
+        log.setLevel(logging.ERROR)
+
+        @app.route("/proxy_wms")
+        def proxy_wms():
+            """
+            Handles WMS requests by forwarding them to the GeoServer with authentication headers.
+
+            Returns:
+                Response: The image response from the GeoServer.
+            """
+            token = GeoUtil.get_token().strip()
+            if token.lower().startswith("bearer "):
+                token = token[7:]
+
+            headers = {
+                "Authorization": f"Bearer {token}",
+                "Accept": "image/png"
+            }
+
+            geoserver_url = pyincore_viz_globals.INCORE_GEOSERVER_WMS_URL
+            params = request.args.to_dict()
+
+            response = requests.get(geoserver_url, headers=headers, params=params)
+            return Response(response.content, content_type=response.headers["Content-Type"])
+
+        def run_flask():
+            """
+            Runs the Flask app on port 3000.
+            """
+            app.run(host="0.0.0.0", port=3000, debug=False, use_reloader=False)
+
+        global flask_thread
+        if "flask_thread" not in globals():
+            flask_thread = threading.Thread(target=run_flask, daemon=True)
+            flask_thread.start()
+            print("Flask proxy server started on " + pyincore_viz_globals.LOCAL_PROXY_URL)
+
+    def get_wms_map(datasets: list, use_local_proxy=False):
+        """
+        Generates an ipyleaflet map with WMS layers for the provided datasets.
 
         Args:
-            datasets (list): list of pyincore Dataset objects.
-            wms_url (str): URL of WMS server.
-            layer_check (bool): boolean for checking the layer availability in WMS server.
+            datasets (list): A list of pyincore Dataset objects.
+            use_local_proxy (bool): If True, uses a local Flask proxy (for local development).
+                                    If False (default), uses the direct GeoServer WMS URL.
 
         Returns:
-            obj: An ipyleaflet Map.
+            obj: An ipyleaflet Map with WMS layers.
         """
-        token = GeoUtil.get_token()
-        if not token:
-            raise Exception("Authentication token not found. Please login to obtain a token.")
 
-        headers = {"Authorization": f"{token}"}
+        # Decide which WMS URL to use
+        if use_local_proxy:
+            GeoUtil.start_proxy()
+            wms_url = pyincore_viz_globals.LOCAL_PROXY_URL
+        else:
+            wms_url = pyincore_viz_globals.INCORE_GEOSERVER_WMS_URL
+
         wms_layers = []
         bbox_all = [9999, 9999, -9999, -9999]
 
-        if layer_check:
-            try:
-                wms = WebMapService(wms_url + "?", version="1.1.1", headers=headers)
-            except lxml.etree.XMLSyntaxError:
-                layer_check = False
-            except Exception:
-                raise Exception("GeoServer failed to set WMS service.")
-
         for dataset in datasets:
             wms_layer_name = "incore:" + dataset.id
-
-            if layer_check:
-                try:
-                    wms[dataset.id].boundingBox
-                except KeyError:
-                    print(f"Error: The layer {dataset.id} does not exist in the WMS server")
-
-            wms_layer = ipylft.WMSLayer(
+            wms_layer = WMSLayer(
                 url=wms_url,
                 layers=wms_layer_name,
                 format="image/png",
                 transparent=True,
                 name=dataset.metadata["title"],
-                headers=headers,  # Pass auth headers to the WMS layer
             )
             wms_layers.append(wms_layer)
 
@@ -534,121 +567,55 @@ class GeoUtil:
         for layer in wms_layers:
             m.add_layer(layer)
 
+        m.add_control(LayersControl())
+
         return m
 
-    # @staticmethod
-    # def get_wms_map(
-    #     datasets: list,
-    #     wms_url=pyincore_viz_globals.INCORE_GEOSERVER_WMS_URL,
-    #     layer_check=False,
-    # ):
-    #     """Get a map with WMS layers from list of datasets.
-    #
-    #     Args:
-    #         datasets (list): list of pyincore Dataset objects.
-    #         wms_url (str): URL of WMS server.
-    #         layer_check (bool): boolean for checking the layer availability in wms server.
-    #
-    #     Returns:
-    #         obj: An ipyleaflet Map.
-    #
-    #     """
-    #     # TODO: how to add a style for each WMS layers (pre-defined styles on WMS server)
-    #     wms_layers = []
-    #     # (min_lat, min_lon, max_lat, max_lon)
-    #     bbox_all = [9999, 9999, -9999, -9999]
-    #     # the reason for checking this layer_check on/off is that
-    #     # the process could take very long time based on the number of layers in geoserver.
-    #     # the process could be relatively faster if there are not many layers in the geoserver
-    #     # but the processing time could increase based upon the increase of the layers in the server
-    #     # by putting on/off for this layer checking, it could make the process faster.
-    #     if layer_check:
-    #         try:
-    #             wms = WebMapService(wms_url + "?", version="1.1.1")
-    #         except lxml.etree.XMLSyntaxError:
-    #             # The error is caused because it failed to parse the geoserver's return xml.
-    #             # This error will happen in geoserver when there is not complete dataset ingested,
-    #             # and it is very hard to avoid due to current operation setting.
-    #             # It should be passed because this is a proof of the geoserver service is working,
-    #             # and the further layer_check related operation should be stopped
-    #             layer_check = False
-    #         except Exception:
-    #             raise Exception("Geoserver failed to set WMS service.")
-    #
-    #     for dataset in datasets:
-    #         wms_layer_name = "incore:" + dataset.id
-    #         # check availability of the wms layer
-    #         # TODO in here, the question is the, should this error quit whole process
-    #         # or just keep going and show the error message for only the layer with error
-    #         # if it needs to throw an error and exit the process, use following code block
-    #         # if layer_check:
-    #         #     wms[dataset.id].boundingBox
-    #         # else:
-    #         #     raise KeyError(
-    #         #         "Error: The layer " + str(dataset.id) + " does not exist in the wms server")
-    #         # if it needs to keep going with showing all the layers, use following code block
-    #         if layer_check:
-    #             try:
-    #                 wms[dataset.id].boundingBox
-    #             except KeyError:
-    #                 print(
-    #                     "Error: The layer "
-    #                     + str(dataset.id)
-    #                     + " does not exist in the wms server"
-    #                 )
-    #         wms_layer = ipylft.WMSLayer(
-    #             url=wms_url,
-    #             layers=wms_layer_name,
-    #             format="image/png",
-    #             transparent=True,
-    #             name=dataset.metadata["title"],
-    #         )
-    #         wms_layers.append(wms_layer)
-    #
-    #         bbox = dataset.metadata["boundingBox"]
-    #         bbox_all = GeoUtil.merge_bbox(bbox_all, bbox)
-    #
-    #     m = GeoUtil.get_ipyleaflet_map(bbox_all)
-    #
-    #     for layer in wms_layers:
-    #         m.add_layer(layer)
-    #
-    #     return m
-
     @staticmethod
-    def get_gdf_wms_map(
-        datasets, wms_datasets, wms_url=pyincore_viz_globals.INCORE_GEOSERVER_WMS_URL
-    ):
-        """Get a map with WMS layers from list of datasets for geopandas and list of datasets for WMS.
+    def get_gdf_wms_map(datasets, wms_datasets, use_local_proxy=False):
+        """
+        Generates an ipyleaflet map combining both GeoDataFrame layers and WMS layers.
+
+        This function provides the flexibility to either:
+        - Use a direct GeoServer WMS URL (default behavior).
+        - Use a local Flask proxy for authentication when running locally.
 
         Args:
-            datasets (list): A list of pyincore dataset objects.
-            wms_datasets (list): A list of pyincore dataset objects for wms layers.
-            wms_url (str): URL of WMS server.
+            datasets (list): A list of pyincore Dataset objects containing GeoDataFrame layers.
+            wms_datasets (list): A list of pyincore Dataset objects for WMS layers.
+            use_local_proxy (bool): If True, uses a local Flask proxy (for local development).
+                                    If False (default), uses the direct GeoServer WMS URL.
 
         Returns:
-            obj: An ipyleaflet Map.
-
+            obj: An ipyleaflet Map with both GeoDataFrame and WMS layers.
         """
-        # TODO: how to add a style for each WMS layers (pre-defined styules on WMS server) and gdf layers
 
-        # (min_lat, min_lon, max_lat, max_lon)
+        # Select WMS URL (direct or through local proxy)
+        if use_local_proxy:
+            GeoUtil.start_proxy()  # Ensure the proxy is running
+            wms_url = pyincore_viz_globals.LOCAL_PROXY_URL
+        else:
+            wms_url = pyincore_viz_globals.INCORE_GEOSERVER_WMS_URL
+
+        # Initialize bounding box
         bbox_all = [9999, 9999, -9999, -9999]
 
+        # Process GeoDataFrame datasets
         geo_data_list = []
         for dataset in datasets:
-            # maybe this part should be moved to Dataset Class
-            gdf = gpd.read_file(dataset.local_file_path)
+            gdf = gpd.read_file(dataset.local_file_path)  # Read shapefile into GeoDataFrame
             geo_data = ipylft.GeoData(geo_dataframe=gdf, name=dataset.metadata["title"])
             geo_data_list.append(geo_data)
 
+            # Update bounding box
             bbox = gdf.total_bounds
             bbox_all = GeoUtil.merge_bbox(bbox_all, bbox)
 
+        # Process WMS datasets
         wms_layers = []
         for dataset in wms_datasets:
             wms_layer_name = "incore:" + dataset.id
-            wms_layer = ipylft.WMSLayer(
+            wms_layer = WMSLayer(
                 url=wms_url,
                 layers=wms_layer_name,
                 format="image/png",
@@ -657,18 +624,23 @@ class GeoUtil:
             )
             wms_layers.append(wms_layer)
 
+            # Update bounding box
             bbox = dataset.metadata["boundingBox"]
             bbox_all = GeoUtil.merge_bbox(bbox_all, bbox)
 
+        # Create ipyleaflet map
         m = GeoUtil.get_ipyleaflet_map(bbox_all)
 
+        # Add WMS layers
         for layer in wms_layers:
             m.add_layer(layer)
 
+        # Add GeoDataFrame layers
         for g in geo_data_list:
             m.add_layer(g)
 
-        m.add_control(ipylft.LayersControl())
+        # Add layer control for visibility toggling
+        m.add_control(LayersControl())
 
         return m
 
