@@ -460,7 +460,7 @@ class GeoUtil:
         m.add_control(ipylft.LayersControl())
         return m
 
-    @staticmethod
+    @deprecated(version='1.12.0', reason="This class is deprecated. There will be no support for WMS layer visualization.")
     def get_wms_map(
         datasets: list,
         wms_url=pyincore_viz_globals.INCORE_GEOSERVER_WMS_URL,
@@ -539,7 +539,7 @@ class GeoUtil:
 
         return m
 
-    @staticmethod
+    @deprecated(version='1.12.0', reason="This class is deprecated. There will be no support for WMS layer visualization.")
     def get_gdf_wms_map(
         datasets, wms_datasets, wms_url=pyincore_viz_globals.INCORE_GEOSERVER_WMS_URL
     ):
