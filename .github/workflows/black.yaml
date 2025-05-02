@@ -1,0 +1,24 @@
+name: Check Lint
+
+on:
+  push:
+    branches:
+      - main
+      - develop
+      - 'release/*'
+
+    tags:
+      - '*'
+
+  pull_request:
+    branches:
+      - main
+      - develop
+      - 'release/*'
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: psf/black@23.3.0
