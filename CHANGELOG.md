@@ -7,7 +7,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 ### Changed
-- Method deprected in geoutil for visualiing WMS layers. [#238](https://github.com/IN-CORE/pyincore-viz/issues/238)
+- Method deprecated in geoutil for visualiing WMS layers. [#238](https://github.com/IN-CORE/pyincore-viz/issues/238)
 
 
 ## [1.11.1] - 2025-02-20
