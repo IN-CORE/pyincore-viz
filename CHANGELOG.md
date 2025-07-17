@@ -6,9 +6,12 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
+
+### Added
+- GitHub action to check linting [#209](https://github.com/IN-CORE/pyincore-viz/issues/209)
+
 ### Changed
 - Method deprecated in geoutil for visualiing WMS layers. [#238](https://github.com/IN-CORE/pyincore-viz/issues/238)
-
 
 ## [1.11.1] - 2025-02-20
 
