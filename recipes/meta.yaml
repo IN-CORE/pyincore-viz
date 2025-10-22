@@ -24,16 +24,16 @@ requirements:
   build:
     - python>=3.9
     - pip
-    - numpy>=1.26.0,<2.0a0
+    - numpy>=1.26.0
  
   host:
     - python>=3.9
     - pip
-    - numpy>=1.26.0,<2.0a0
+    - numpy>=1.26.0
      
   run:
     - python>=3.9
-    - {{ pin_compatible('numpy') }}
+    - numpy>=1.26.0
     - gdal
     - branca>=0.3.0
     - contextily>=1.0.0
