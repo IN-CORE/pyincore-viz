@@ -46,6 +46,7 @@ setup(
     ),
     include_package_data=True,
     package_data={"": ["*.ini"]},
+    python_requires=">=3.11",
     install_requires=[
         "branca>=0.3.0",
         "contextily>=1.0.0",
@@ -56,11 +57,11 @@ setup(
         "lxml>=4.6.3",
         "matplotlib>=3.8.3",
         "networkx>=3.2.1",
-        "numpy>=1.26.0,<2.0a0",
+        "numpy>=2.4.0",
         "owslib>=0.17.1",
-        "pandas>=2.1.2",
+        "pandas>=2.1.2,<3.0a0",
         "pillow",
-        "pyincore>=1.20.0",
+        "pyincore>=1.21.0",
         "rasterio>=1.3.9",
     ],
     extras_require={
