@@ -61,7 +61,7 @@ setup(
         "owslib>=0.17.1",
         "pandas>=2.1.2,<3.0a0",
         "pillow",
-        "pyincore>=1.21.0",
+        "pyincore>=1.23.0",
         "rasterio>=1.3.9",
     ],
     extras_require={

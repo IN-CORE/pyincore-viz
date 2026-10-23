@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Changed
 - Minimum Python raised to 3.11 and NumPy upgraded to 2.4 [#217](https://github.com/IN-CORE/pyincore-viz/issues/217)
+- Minimum pyincore raised to 1.23.0, the first release that allows NumPy 2 [#217](https://github.com/IN-CORE/pyincore-viz/issues/217)
 
 ## [1.12.0] - 2025-07-21
 
