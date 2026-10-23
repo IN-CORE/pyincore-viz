@@ -5,7 +5,7 @@ set -o noglob
 TESTPYPI="--extra-index-url https://test.pypi.org/simple/ --pre"
 
 MODULE="pyincore_viz"
-CONDA_IMPORTS="gdal"
+CONDA_IMPORTS="python>=3.11 gdal"
 
 # setup pip-compile to resolve dependencies, also is minimal version of python
 if [ ! -d /tmp/pyincore-requirements ]; then
