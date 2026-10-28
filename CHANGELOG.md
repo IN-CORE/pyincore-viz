@@ -5,6 +5,11 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## [Unreleased]
+
+### Fixed
+- Require brotli-python 1.2.1 or newer in conda environments to fix CVE-2026-111497 (Broccoli2Shell) [#224](https://github.com/IN-CORE/pyincore-viz/issues/224)
+
 ## [1.12.0] - 2025-07-21
 
 ### Added
