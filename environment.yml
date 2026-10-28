@@ -6,6 +6,7 @@ channels:
 dependencies:
   - gdal
   - branca>=0.3.0
+  - brotli-python>=1.2.1
   - contextily>=1.0.0
   - deprecated
   - geopandas>=0.14.0
